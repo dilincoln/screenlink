@@ -131,7 +131,12 @@ input[type="range"] { padding: 0; accent-color: var(--accent); }
   min-height: 0;
 }
 .brand { display: flex; align-items: center; gap: 10px; padding: 0 6px 8px; font-weight: 700; font-size: 15px; }
-.conn { margin-left: auto; width: 9px; height: 9px; border-radius: 50%; background: var(--live); }
+.bell { margin-left: auto; display: grid; place-items: center; padding: 4px; border: none; background: transparent; color: var(--muted); }
+.bell:hover { background: var(--panel-2); color: var(--fg); }
+.bell .off, .bell.muted .on { display: none; }
+.bell.muted .off { display: block; }
+.bell.muted { color: var(--warn); }
+.conn { width: 9px; height: 9px; border-radius: 50%; background: var(--live); }
 .conn.online { background: var(--ok); }
 .conn.connecting { background: var(--warn); }
 .section-title { padding: 6px 8px 0; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
@@ -358,3 +363,15 @@ code { font-family: ui-monospace, "JetBrains Mono", monospace; font-size: 12px; 
 .volume { display: flex; align-items: center; gap: 8px; }
 .volume input { flex: 1; }
 #volume-out { font-weight: 400; color: var(--muted); }
+
+/* ---------- mute dialog ---------- */
+
+#mute-form section { display: grid; gap: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { padding: 5px 11px; border-radius: 999px; font-size: 13px; }
+.chip.on { background: var(--accent-soft); border-color: var(--accent); }
+.row-inline { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.row-inline input[type="number"] { width: 80px; }
+.row-inline input[type="time"], .row-inline select { width: auto; }
+.quiet { display: grid; gap: 10px; }
+.quiet.disabled { opacity: 0.45; pointer-events: none; }

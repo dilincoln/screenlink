@@ -97,6 +97,9 @@ function render() {
   shownAuthError = false;
 
   $("conn").className = `conn ${state.connection}`;
+  $("mute-btn").classList.toggle("muted", state.mute.muted);
+  $("mute-btn").title = muteText(state.mute);
+  if ($("mute-dialog").open) renderMuteStatus();
   $("conn").title = { online: "Connected", connecting: "Connecting…", offline: "Offline — retrying" }[state.connection];
   if (state.user) {
     $("me-avatar").replaceWith(Object.assign(avatar(state.user, { small: true }), { id: "me-avatar" }));
@@ -438,6 +441,91 @@ $("logout-btn").onclick = async () => {
   await act(() => sl.invoke("auth:logout"));
   $("settings-dialog").close();
 };
+
+// ---------- mute ----------
+
+const DAYS = [["Mon", 1], ["Tue", 2], ["Wed", 3], ["Thu", 4], ["Fri", 5], ["Sat", 6], ["Sun", 0]];
+const PRESETS = [[15, "15 min"], [30, "30 min"], [60, "1 hour"], [120, "2 hours"], [240, "4 hours"], [480, "8 hours"]];
+
+function clock(ts) {
+  const date = new Date(ts);
+  const time = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  return date.toDateString() === new Date().toDateString() ? time : `${date.toLocaleDateString([], { weekday: "short" })} ${time}`;
+}
+
+function muteText(mute) {
+  if (mute.manual === "forever") return "Notifications muted until you turn them back on";
+  if (mute.manual) return `Notifications muted until ${clock(mute.manual)}`;
+  if (mute.quietUntil) return `Quiet hours — notifications muted until ${clock(mute.quietUntil)}`;
+  return "Notifications are on";
+}
+
+function renderMuteStatus() {
+  $("mute-status").textContent = muteText(state.mute);
+  $("mute-off").hidden = !state.mute.manual;
+}
+
+let quietDays = new Set();
+
+function renderQuietDays() {
+  $("quiet-days").replaceChildren(
+    ...DAYS.map(([label, day]) =>
+      h(
+        "button",
+        {
+          type: "button",
+          class: `chip${quietDays.has(day) ? " on" : ""}`,
+          onclick: () => {
+            if (quietDays.has(day)) quietDays.delete(day);
+            else quietDays.add(day);
+            renderQuietDays();
+          },
+        },
+        label,
+      ),
+    ),
+  );
+}
+
+function syncQuietEnabled() {
+  $("quiet-fields").classList.toggle("disabled", !$("mute-form").quietEnabled.checked);
+}
+
+$("mute-btn").onclick = () => {
+  const dialog = openDialog("mute-dialog");
+  const form = $("mute-form");
+  const q = state.settings.quietHours;
+  form.quietEnabled.checked = q.enabled;
+  form.quietStart.value = q.start;
+  form.quietEnd.value = q.end;
+  quietDays = new Set(q.days);
+  renderQuietDays();
+  syncQuietEnabled();
+  renderMuteStatus();
+  return dialog;
+};
+$("mute-form").quietEnabled.addEventListener("change", syncQuietEnabled);
+
+$("mute-presets").replaceChildren(
+  ...PRESETS.map(([min, label]) => h("button", { type: "button", class: "chip", onclick: () => act(() => sl.invoke("mute:set", min)) }, label)),
+);
+$("mute-custom").onclick = () => {
+  const form = $("mute-form");
+  act(() => sl.invoke("mute:set", Number(form.amount.value) * Number(form.unit.value)));
+};
+$("mute-forever").onclick = () => act(() => sl.invoke("mute:set", "forever"));
+$("mute-off").onclick = () => act(() => sl.invoke("mute:set", null));
+
+dialogForm("mute-dialog", async (form) => {
+  if (form.quietEnabled.checked && !quietDays.size) throw new Error("Pick at least one day.");
+  await sl.invoke("quiet:set", {
+    enabled: form.quietEnabled.checked,
+    days: [...quietDays],
+    start: form.quietStart.value,
+    end: form.quietEnd.value,
+  });
+  toast("Quiet hours saved");
+});
 
 // ---------- admin ----------
 // Server-wide view for ADMIN_FINGERPRINT devices: who uses the server, which rooms exist, bans.

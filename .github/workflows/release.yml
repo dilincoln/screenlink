@@ -17,9 +17,9 @@ defaults:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.4
@@ -28,24 +28,27 @@ jobs:
       - run: bun test
 
   build:
+    name: build (${{ matrix.name }})
     needs: test
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
+          - name: Linux
+            os: ubuntu-24.04
             platform: --linux
             files: |
               dist/*.AppImage
               dist/*.deb
               dist/*.pacman
-          - os: windows-latest
+          - name: Windows
+            os: windows-2025
             platform: --win
             files: |
               dist/*.exe
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.4
@@ -68,7 +71,7 @@ jobs:
 
       - run: bunx electron-builder ${{ matrix.platform }} --publish never
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: screenlink-${{ runner.os }}
           path: ${{ matrix.files }}
@@ -77,9 +80,9 @@ jobs:
   release:
     needs: build
     if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           path: out
           merge-multiple: true

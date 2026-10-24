@@ -125,6 +125,20 @@ Parsec uses its own UDP protocol and hardware encoders. Within WebRTC, the close
 - Viewer windows press `I` for live stats (fps, bitrate, decode time, jitter buffer, RTT, hop),
   `O` for 1:1 pixels, double-click/F11 for fullscreen.
 
+## Muting notifications
+
+The bell next to the app name (or **Mute notifications** in the tray menu) mutes the "X is
+sharing" notice and its sound:
+
+- **For a while**: 15 min to 8 hours, or any number of minutes/hours.
+- **Until you turn it back on**.
+- **Quiet hours**: weekly days and a time range, e.g. Mon–Fri 08:00–18:00. A range that crosses
+  midnight (22:00–07:00) belongs to the day it starts on and runs into the next morning.
+
+Sounds of your own stream (viewers joining/leaving) and the stop sound of something you are
+watching still play: they answer something you are doing. The rules live in `client/mute.js`
+(tested in `client/mute.test.js`).
+
 ## Sounds
 
 Played from a hidden window (`client/sound/`), since the main process cannot play audio and the

@@ -21,6 +21,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { muteState } from "./mute.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const asset = (name) => path.join(here, "assets", name);
@@ -35,6 +36,9 @@ const DEFAULTS = {
   relayCapacity: 2,
   notifications: "auto", // auto | popup | native | off
   soundVolume: 70, // 0 mutes
+  // Muting "X is sharing" notices: by hand (timestamp or "forever") and by weekly quiet hours.
+  mutedUntil: null,
+  quietHours: { enabled: false, days: [1, 2, 3, 4, 5], start: "08:00", end: "18:00" },
 
   autostart: false,
   share: { resolution: "1080", fps: 60, bitrate: 12_000_000, codec: "h264", hint: "motion", capacity: 3 },
@@ -66,7 +70,12 @@ let config = structuredClone(DEFAULTS);
 function loadConfig() {
   try {
     const saved = JSON.parse(fs.readFileSync(CONFIG_FILE(), "utf8"));
-    config = { ...DEFAULTS, ...saved, share: { ...DEFAULTS.share, ...saved.share } };
+    config = {
+      ...DEFAULTS,
+      ...saved,
+      share: { ...DEFAULTS.share, ...saved.share },
+      quietHours: { ...DEFAULTS.quietHours, ...saved.quietHours },
+    };
   } catch {
     config = structuredClone(DEFAULTS);
   }
@@ -145,8 +154,10 @@ function snapshot() {
       soundVolume: config.soundVolume,
       autostart: config.autostart,
       share: config.share,
+      quietHours: config.quietHours,
     },
     portalPicker: IS_WAYLAND,
+    mute: muteState(config.mutedUntil, config.quietHours),
   };
 }
 
@@ -465,7 +476,7 @@ function joinAsViewer(streamId) {
 
 function announce(stream) {
   const style = config.notifications === "auto" ? (IS_WAYLAND ? "native" : "popup") : config.notifications;
-  if (style === "off" || viewers.has(stream.id)) return;
+  if (style === "off" || viewers.has(stream.id) || muteState(config.mutedUntil, config.quietHours).muted) return;
   playSound("start");
   const room = rooms.find((r) => r.id === stream.roomId);
   if (style === "native") {
@@ -543,6 +554,79 @@ function playSound(name) {
 
 handle("sound:test", (_e, volume) => soundWin?.webContents.send("sound", { name: "start", volume: Number(volume) / 100 }));
 
+// ---------- mute ----------
+
+const MUTE_OPTIONS = [15, 30, 60, 120, 240, 480]; // minutes
+
+function clockTime(ts) {
+  const date = new Date(ts);
+  const time = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  return date.toDateString() === new Date().toDateString() ? time : `${date.toLocaleDateString([], { weekday: "short" })} ${time}`;
+}
+
+function durationLabel(min) {
+  return min < 60 ? `For ${min} minutes` : `For ${min / 60} hour${min === 60 ? "" : "s"}`;
+}
+
+function setMute(until) {
+  config.mutedUntil = until;
+  saveConfig();
+  pushState();
+}
+
+// Expired mutes and quiet-hours edges change the tray and the UI without any event, so look
+// once in a while and push only when the state actually changed.
+let lastMuteKey = "";
+setInterval(() => {
+  const state = muteState(config.mutedUntil, config.quietHours);
+  if (config.mutedUntil && !state.manual) config.mutedUntil = null;
+  const key = JSON.stringify(state);
+  if (key !== lastMuteKey) {
+    lastMuteKey = key;
+    pushState();
+  }
+}, 20_000);
+
+handle("mute:set", (_e, until) => {
+  if (until === null || until === "forever") return setMute(until);
+  const min = Number(until);
+  if (!(min > 0 && min <= 7 * 24 * 60)) throw new Error("choose between 1 minute and 7 days");
+  setMute(Date.now() + min * 60_000);
+});
+
+handle("quiet:set", (_e, quiet) => {
+  const time = (v) => (/^\d{2}:\d{2}$/.test(v) ? v : null);
+  if (!time(quiet.start) || !time(quiet.end)) throw new Error("invalid time");
+  config.quietHours = {
+    enabled: Boolean(quiet.enabled),
+    days: [...new Set(quiet.days.map(Number).filter((d) => d >= 0 && d <= 6))].sort(),
+    start: quiet.start,
+    end: quiet.end,
+  };
+  saveConfig();
+  pushState();
+});
+
+function muteMenu() {
+  const state = muteState(config.mutedUntil, config.quietHours);
+  const items = [];
+  if (state.manual) {
+    const label = state.manual === "forever" ? "Unmute notifications" : `Unmute notifications (muted until ${clockTime(state.manual)})`;
+    items.push({ label, click: () => setMute(null) });
+  } else {
+    items.push({
+      label: "Mute notifications",
+      submenu: [
+        ...MUTE_OPTIONS.map((min) => ({ label: durationLabel(min), click: () => setMute(Date.now() + min * 60_000) })),
+        { type: "separator" },
+        { label: "Until I turn it back on", click: () => setMute("forever") },
+      ],
+    });
+  }
+  if (state.quietUntil) items.push({ label: `Quiet hours until ${clockTime(state.quietUntil)}`, enabled: false });
+  return items;
+}
+
 // ---------- windows & tray ----------
 
 function showUi() {
@@ -594,7 +678,8 @@ function updateTray() {
   }
   const others = [...streams.values()].filter((s) => s.sharerId !== me?.id);
   const status = connection === "online" ? `Connected as ${me?.name ?? "…"}` : connection === "connecting" ? "Connecting…" : "Offline";
-  tray.setToolTip(live ? `ScreenLink — sharing to ${share.audience.length}` : `ScreenLink — ${status}`);
+  const muted = muteState(config.mutedUntil, config.quietHours).muted ? " (notifications muted)" : "";
+  tray.setToolTip((live ? `ScreenLink — sharing to ${share.audience.length}` : `ScreenLink — ${status}`) + muted);
   tray.setContextMenu(
     Menu.buildFromTemplate([
       { label: status, enabled: false },
@@ -610,6 +695,8 @@ function updateTray() {
           }
         : { label: "No one is sharing", enabled: false },
       ...(live ? [{ label: `Stop sharing (${share.audience.length} watching)`, click: () => stopShare(true) }] : []),
+      { type: "separator" },
+      ...muteMenu(),
       { type: "separator" },
       { label: "Quit", click: () => app.quit() },
     ]),
