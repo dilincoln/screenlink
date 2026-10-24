@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'" />
+    <title>ScreenLink</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="card">
+      <span id="avatar" class="avatar"><i class="dot"></i></span>
+      <div class="text">
+        <div id="headline" class="headline"></div>
+        <div id="detail" class="detail"></div>
+      </div>
+      <div class="actions">
+        <button id="watch" class="primary">Watch</button>
+        <button id="dismiss">Dismiss</button>
+      </div>
+      <div class="timer"></div>
+    </div>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

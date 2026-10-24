@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:" />
+    <title>ScreenLink</title>
+    <link rel="stylesheet" href="ui.css" />
+  </head>
+  <body>
+    <!-- First run: pick a server and a name -->
+    <main id="onboarding" class="onboarding" hidden>
+      <form id="register-form" class="panel narrow">
+        <img src="../assets/icon.png" alt="" width="56" height="56" />
+        <h1>ScreenLink</h1>
+        <p class="muted">Low-latency screen sharing with your friends. Video goes peer to peer; the server only introduces you.</p>
+        <label>Server
+          <input name="serverUrl" type="url" required placeholder="http://localhost:3000" />
+        </label>
+        <label id="password-field" hidden>Server password
+          <input name="password" type="password" autocomplete="current-password" placeholder="Ask whoever runs the server" />
+        </label>
+        <label>Your name
+          <input name="name" maxlength="40" placeholder="How friends will see you" />
+          <span class="muted small">Your account is tied to this device: signing in again here brings it back.</span>
+        </label>
+        <p id="register-error" class="error" hidden></p>
+        <button class="primary wide" type="submit">Continue</button>
+      </form>
+    </main>
+
+    <div id="app" class="app" hidden>
+      <aside class="sidebar">
+        <div class="brand">
+          <img src="../assets/icon.png" alt="" width="26" height="26" />
+          <span>ScreenLink</span>
+          <span id="conn" class="conn" title="Server connection"></span>
+        </div>
+        <div class="section-title">Rooms</div>
+        <nav id="room-list" class="room-list"></nav>
+        <button id="admin-btn" class="admin-btn" hidden>Admin</button>
+        <div class="side-actions">
+          <button id="new-room-btn">New room</button>
+          <button id="join-room-btn">Join with code</button>
+        </div>
+        <button id="me-btn" class="me" title="Settings">
+          <span id="me-avatar" class="avatar small"></span>
+          <span id="me-name" class="ellipsis"></span>
+          <span class="gear">⚙</span>
+        </button>
+      </aside>
+
+      <section id="content" class="content"></section>
+    </div>
+
+    <!-- Dialogs -->
+    <dialog id="new-room-dialog">
+      <form method="dialog" id="new-room-form">
+        <h2>New room</h2>
+        <label>Name <input name="name" required maxlength="60" placeholder="Friday games" /></label>
+        <p class="error" hidden></p>
+        <div class="dialog-actions">
+          <button value="cancel" formnovalidate>Cancel</button>
+          <button class="primary" value="ok">Create</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="join-room-dialog">
+      <form method="dialog" id="join-room-form">
+        <h2>Join a room</h2>
+        <label>Invite code <input name="code" required class="mono" placeholder="XXXX-XXXX-XXXX" autocomplete="off" /></label>
+        <p class="error" hidden></p>
+        <div class="dialog-actions">
+          <button value="cancel" formnovalidate>Cancel</button>
+          <button class="primary" value="ok">Join</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="share-dialog" class="wide-dialog">
+      <form method="dialog" id="share-form">
+        <h2>Share your screen <span id="share-room" class="muted"></span></h2>
+
+        <div id="portal-note" class="note" hidden>
+          Your desktop will ask which screen or window to share after you press <b>Start</b>.
+        </div>
+        <div id="source-picker">
+          <div class="tabs">
+            <button type="button" data-kind="screen" class="tab on">Screens</button>
+            <button type="button" data-kind="window" class="tab">Windows</button>
+            <button type="button" id="refresh-sources" class="ghost" title="Refresh">↻</button>
+          </div>
+          <div id="sources" class="sources"></div>
+        </div>
+
+        <div class="grid">
+          <label>Title <input name="title" maxlength="80" placeholder="What you are sharing" /></label>
+          <label>Resolution
+            <select name="resolution">
+              <option value="native">Native</option>
+              <option value="2160">2160p (4K)</option>
+              <option value="1440">1440p</option>
+              <option value="1080">1080p</option>
+              <option value="720">720p</option>
+              <option value="480">480p</option>
+            </select>
+          </label>
+          <label>Frame rate
+            <select name="fps">
+              <option value="30">30 fps</option>
+              <option value="60">60 fps</option>
+              <option value="120">120 fps</option>
+              <option value="144">144 fps</option>
+            </select>
+          </label>
+          <label>Codec
+            <select name="codec">
+              <option value="h264">H.264 — hardware, lowest latency</option>
+              <option value="av1">AV1 — best quality per bit</option>
+              <option value="vp9">VP9</option>
+              <option value="vp8">VP8 — most compatible</option>
+            </select>
+          </label>
+          <label>Optimize for
+            <select name="hint">
+              <option value="motion">Motion — games, video (keeps fps)</option>
+              <option value="detail">Detail — text, code (keeps sharpness)</option>
+            </select>
+          </label>
+          <label>Direct viewers
+            <select name="capacity">
+              <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+              <option value="4">4</option><option value="6">6</option><option value="8">8</option>
+            </select>
+          </label>
+          <label class="span2"><span>Bitrate <output id="bitrate-out"></output></span>
+            <input name="bitrate" type="range" min="1" max="80" step="1" />
+          </label>
+        </div>
+        <p class="muted small">
+          You upload one copy per <b>direct viewer</b>; everyone beyond that gets the video relayed by other viewers.
+          Upload needed: <b id="upload-need"></b>.
+        </p>
+        <p class="error" hidden></p>
+        <div class="dialog-actions">
+          <button value="cancel" formnovalidate>Cancel</button>
+          <button class="primary" value="ok" id="share-start">Start sharing</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="settings-dialog">
+      <form method="dialog" id="settings-form">
+        <h2>Settings</h2>
+        <label>Your name <input name="name" required maxlength="40" /></label>
+        <label>Relay for others
+          <select name="relayCapacity">
+            <option value="0">Off — only watch</option>
+            <option value="1">Up to 1 viewer</option>
+            <option value="2">Up to 2 viewers</option>
+            <option value="3">Up to 3 viewers</option>
+            <option value="4">Up to 4 viewers</option>
+          </select>
+          <span class="muted small">While watching, forward the video to this many other members. Each one costs one stream of upload and a hardware encode.</span>
+        </label>
+        <label>When someone starts sharing
+          <select name="notifications">
+            <option value="auto">Show a notification (automatic style)</option>
+            <option value="popup">Show a ScreenLink popup</option>
+            <option value="native">Show a system notification</option>
+            <option value="off">Do nothing</option>
+          </select>
+        </label>
+        <label><span>Sound volume <output id="volume-out"></output></span>
+          <div class="volume">
+            <input name="soundVolume" type="range" min="0" max="100" step="5" />
+            <button type="button" id="test-sound" class="ghost" title="Play the start sound">▶ Test</button>
+          </div>
+          <span class="muted small">Stream started/stopped, and viewers joining/leaving your stream. 0 mutes.</span>
+        </label>
+        <label class="check"><input type="checkbox" name="autostart" /> Start with the system (in the tray)</label>
+        <label>Server
+          <input name="serverUrl" type="url" required />
+          <span class="muted small">Changing the server signs you out: accounts and rooms live on the server.</span>
+        </label>
+        <p class="error" hidden></p>
+        <div class="dialog-actions">
+          <button type="button" id="logout-btn" class="danger ghost">Sign out</button>
+          <span class="spacer"></span>
+          <button value="cancel" formnovalidate>Cancel</button>
+          <button class="primary" value="ok">Save</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="device-dialog">
+      <form method="dialog">
+        <h2>This device</h2>
+        <p class="muted">The server knows this install by its fingerprint. To make it an admin, put it in <code>ADMIN_FINGERPRINT</code> on the server.</p>
+        <div class="fingerprint">
+          <span id="fingerprint" class="mono"></span>
+          <button type="button" id="copy-fingerprint">Copy</button>
+        </div>
+        <p class="error" hidden></p>
+        <div class="dialog-actions">
+          <button value="cancel">Close</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div id="toast" class="toast" hidden></div>
+
+    <script type="module" src="ui.js"></script>
+  </body>
+</html>

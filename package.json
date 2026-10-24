@@ -1,0 +1,27 @@
+{
+  "name": "screenlink",
+  "productName": "ScreenLink",
+  "version": "0.1.0",
+  "description": "Low-latency screen sharing between friends, relayed peer to peer",
+  "private": true,
+  "type": "module",
+  "main": "client/main.js",
+  "scripts": {
+    "server": "bun run server/index.ts",
+    "dev:server": "bun --watch server/index.ts",
+    "start": "electron .",
+    "test": "bun test",
+    "postinstall": "bun node_modules/electron/install.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.0",
+    "electron": "^44.9.0",
+    "typescript": "^5.9.0"
+  },
+  "trustedDependencies": ["electron"],
+  "author": {
+    "name": "Diego Lincoln",
+    "email": "diego@mutualtecnologia.com.br"
+  }
+}

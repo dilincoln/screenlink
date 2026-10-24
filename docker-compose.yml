@@ -1,0 +1,28 @@
+# ScreenLink server. Works as-is on Coolify: SERVICE_FQDN_SCREENLINK_3000 makes Coolify assign a
+# domain with HTTPS and route it to port 3000 (WebSockets included). The variables with :? are
+# required and show up in Coolify's Environment Variables tab.
+#
+# Outside Coolify: `SERVER_PASSWORD=... docker compose up -d` and add `ports: ["3000:3000"]`
+# (or put it behind your own reverse proxy with WebSocket support).
+services:
+  screenlink:
+    build: .
+    restart: unless-stopped
+    environment:
+      - SERVICE_FQDN_SCREENLINK_3000
+      - "SERVER_PASSWORD=${SERVER_PASSWORD:?Set SERVER_PASSWORD - only people with it can use the server}"
+      - ADMIN_FINGERPRINT=${ADMIN_FINGERPRINT:-}
+      - ICE_SERVERS=${ICE_SERVERS:-}
+      - MAX_RELAY_DEPTH=${MAX_RELAY_DEPTH:-4}
+      - RECONNECT_GRACE_MS=${RECONNECT_GRACE_MS:-20000}
+    volumes:
+      - screenlink-data:/data
+    healthcheck:
+      test: ["CMD", "bun", "-e", "fetch('http://localhost:3000/api/health').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 5s
+      retries: 3
+
+volumes:
+  screenlink-data:

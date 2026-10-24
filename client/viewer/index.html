@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; media-src 'self' blob: mediastream:" />
+    <title>ScreenLink</title>
+    <link rel="stylesheet" href="viewer.css" />
+  </head>
+  <body>
+    <video id="video" autoplay muted playsinline disablepictureinpicture></video>
+
+    <div id="status" class="status">
+      <div class="spinner"></div>
+      <p id="status-text">Connecting…</p>
+    </div>
+
+    <header id="bar" class="bar">
+      <div class="who">
+        <span id="avatar" class="avatar"></span>
+        <div>
+          <div id="title" class="title"></div>
+          <div id="route" class="route"></div>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="stats-btn" title="Stats (I)">Stats</button>
+        <button id="fit-btn" title="Fit or 1:1 pixels (O)">Fit</button>
+        <button id="fs-btn" title="Fullscreen (F11, double-click)">Fullscreen</button>
+      </div>
+    </header>
+
+    <aside id="stats" class="stats" hidden></aside>
+
+    <script type="module" src="viewer.js"></script>
+  </body>
+</html>

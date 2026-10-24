@@ -1,0 +1,4 @@
+*
+!server/db.ts
+!server/tree.ts
+!server/index.ts

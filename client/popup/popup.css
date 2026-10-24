@@ -1,0 +1,94 @@
+:root {
+  color-scheme: dark;
+  --bg: #171a21;
+  --fg: #eef0f6;
+  --muted: #9aa1b2;
+  --line: rgba(255, 255, 255, 0.1);
+  --accent: #4f6bed;
+  --live: #e5484d;
+  font: 13px/1.4 system-ui, "Segoe UI", "Noto Sans", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+}
+
+.card {
+  position: relative;
+  height: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 1fr auto;
+  column-gap: 12px;
+  row-gap: 10px;
+  padding: 14px 14px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--bg);
+  color: var(--fg);
+  overflow: hidden;
+  animation: enter 0.22s ease-out;
+}
+@keyframes enter { from { opacity: 0; transform: translateY(12px); } }
+
+.avatar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--accent);
+  font-size: 16px;
+  font-weight: 700;
+}
+.dot {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--bg);
+  border-radius: 50%;
+  background: var(--live);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse { 50% { opacity: 0.4; } }
+
+.text { min-width: 0; align-self: center; }
+.headline, .detail { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.headline { font-weight: 600; font-size: 14px; }
+.detail { color: var(--muted); }
+
+.actions { grid-column: 1 / -1; display: flex; gap: 8px; justify-content: flex-end; }
+button {
+  font: inherit;
+  font-weight: 600;
+  color: var(--fg);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+button:hover { background: rgba(255, 255, 255, 0.12); }
+button.primary { background: var(--accent); border-color: var(--accent); }
+button.primary:hover { filter: brightness(1.1); }
+
+.timer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background: var(--accent);
+  transform-origin: left;
+  animation: drain 20s linear forwards;
+}
+@keyframes drain { to { transform: scaleX(0); } }
