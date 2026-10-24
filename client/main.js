@@ -55,6 +55,8 @@ app.commandLine.appendSwitch("force-fieldtrials", "WebRTC-ZeroPlayoutDelay/min_p
 
 if (!app.requestSingleInstanceLock()) app.exit(0);
 app.setName("ScreenLink");
+// Windows only shows native notifications for an app id that matches the installer's appId.
+if (process.platform === "win32") app.setAppUserModelId("io.github.dilincoln.screenlink");
 
 // ---------- config ----------
 
@@ -638,7 +640,9 @@ function applyAutostart() {
     fs.rmSync(file, { force: true });
     return;
   }
-  const exec = app.isPackaged ? `"${process.execPath}"` : `"${process.execPath}" "${app.getAppPath()}"`;
+  // An AppImage runs from a temporary mount; $APPIMAGE is the file that survives a reboot.
+  const bin = process.env.APPIMAGE ?? process.execPath;
+  const exec = app.isPackaged ? `"${bin}"` : `"${bin}" "${app.getAppPath()}"`;
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(
     file,

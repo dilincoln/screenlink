@@ -8,6 +8,20 @@ popup and can watch.
   signaling. **Video never touches the server.**
 - **Client** — Electron tray app. Screen/window picker, resolution, frame rate, bitrate, codec.
 
+## Download
+
+Installers are on the [Releases](https://github.com/dilincoln/screenlink/releases) page:
+
+- **Windows**: `ScreenLink-x.y.z-win-setup.exe` (installer) or `-win-portable.exe` (no install).
+  The builds are not code-signed, so SmartScreen asks for confirmation on first run
+  (*More info → Run anyway*).
+- **Linux**: `.AppImage` (needs FUSE 2: `fuse2` on Arch, `libfuse2` on Debian/Ubuntu), `.deb`,
+  or `.pacman` (`sudo pacman -U ScreenLink-*.pacman`).
+
+To publish a new version, push a tag: `git tag v0.2.0 && git push origin v0.2.0`. The
+[Release workflow](.github/workflows/release.yml) runs the tests, builds Linux and Windows with
+that version and creates the release. `bun run dist` builds locally into `dist/`.
+
 ## Running
 
 ```sh
