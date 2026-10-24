@@ -1,16 +1,80 @@
 import { Fanout } from "../shared/rtc.js";
 
+// The main process may send a port with system audio PCM (Windows, see system-audio.js). Listen
+// before asking for the settings, so it cannot arrive while nobody is listening.
+const audioPort = new Promise((resolve) => {
+  window.addEventListener("message", (event) => {
+    if (event.data === "system-audio-port") resolve(event.ports[0]);
+  });
+});
+
+const NO_PROCESSING = { echoCancellation: false, noiseSuppression: false, autoGainControl: false };
+
+/** Turns 48 kHz stereo s16 chunks from the port into a live audio track. */
+function pcmTrack(port) {
+  const generator = new MediaStreamTrackGenerator({ kind: "audio" });
+  const writer = generator.writable.getWriter();
+  let frames = 0;
+  port.onmessage = ({ data }) => {
+    const bytes = data instanceof Uint8Array ? data : new Uint8Array(data);
+    const numberOfFrames = bytes.byteLength / 4;
+    if (!numberOfFrames) return;
+    const timestamp = Math.round((frames * 1e6) / 48_000);
+    frames += numberOfFrames;
+    writer
+      .write(new AudioData({ format: "s16", sampleRate: 48_000, numberOfChannels: 2, numberOfFrames, timestamp, data: bytes }))
+      .catch(() => {});
+  };
+  port.start();
+  return generator;
+}
+
+/** The virtual microphone venmic creates (Linux); it can take a moment to show up. */
+async function deviceTrack(label) {
+  for (let i = 0; i < 20; i++) {
+    const device = (await navigator.mediaDevices.enumerateDevices()).find((d) => d.kind === "audioinput" && d.label === label);
+    if (device) {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: { deviceId: { exact: device.deviceId }, channelCount: 2, sampleRate: 48_000, ...NO_PROCESSING },
+      });
+      return stream.getAudioTracks()[0];
+    }
+    await new Promise((r) => setTimeout(r, 100));
+  }
+  throw new Error(`audio device ${label} not found`);
+}
+
+/** System audio minus Discord and ScreenLink, as planned by the main process. */
+async function systemAudioTrack(plan) {
+  if (plan?.kind === "device") return deviceTrack(plan.label);
+  if (plan?.kind === "pcm") return pcmTrack(await audioPort);
+  return null;
+}
+
 /**
  * Captures the chosen screen/window. Scaling happens in the capturer (maxWidth/maxHeight keep the
  * aspect ratio), which is cheaper than capturing at full size and asking the encoder to shrink.
  *
- * System audio is everything the machine plays: WASAPI loopback on Windows, the monitor of the
- * default output on Linux (PulseaudioLoopbackForScreenShare, works on PipeWire too). It has to be
- * requested in the same call as the desktop video.
+ * Plain system audio (the "loopback" plan) is everything the machine plays: WASAPI loopback on
+ * Windows, the monitor of the default output on Linux (PulseaudioLoopbackForScreenShare). It has
+ * to be requested in the same call as the desktop video.
  */
-async function capture(sourceId, s) {
+async function capture(sourceId, s, audioPlan) {
   const mandatory = { chromeMediaSource: "desktop", chromeMediaSourceId: sourceId, maxFrameRate: s.fps };
   if (s.width) Object.assign(mandatory, { maxWidth: s.width, maxHeight: s.height });
+  if (s.audio && audioPlan?.kind !== "loopback") {
+    try {
+      const media = await navigator.mediaDevices.getUserMedia({ audio: false, video: { mandatory } });
+      const track = await systemAudioTrack(audioPlan);
+      if (track) {
+        media.addTrack(track);
+        return media;
+      }
+      media.getTracks().forEach((t) => t.stop());
+    } catch (err) {
+      console.warn("system audio without Discord failed, falling back to plain loopback:", err);
+    }
+  }
   if (s.audio) {
     try {
       return await navigator.mediaDevices.getUserMedia({ audio: { mandatory: { chromeMediaSource: "desktop" } }, video: { mandatory } });
@@ -30,11 +94,11 @@ async function capture(sourceId, s) {
   }
 }
 
-const { sourceId, settings, iceServers } = await sl.invoke("bc:init");
+const { sourceId, settings, iceServers, audioPlan } = await sl.invoke("bc:init");
 
 let media;
 try {
-  media = await capture(sourceId, settings);
+  media = await capture(sourceId, settings, audioPlan);
 } catch (err) {
   await sl.invoke("bc:failed", `could not capture: ${err.message}`);
   throw err;

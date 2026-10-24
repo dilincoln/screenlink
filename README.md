@@ -164,10 +164,17 @@ A viewer that only moves inside the relay tree (or reconnects) makes no sound.
   "someone is sharing" uses a system notification (Wayland apps cannot place a popup in a corner).
 - **X11 / Windows / macOS**: in-app picker with thumbnails, and a ScreenLink popup in the
   bottom-right corner.
-- **System audio** works on Windows (WASAPI loopback) and Linux (the monitor of the default
-  output, via Chromium's `PulseaudioLoopbackForScreenShare`; PipeWire included). It is everything
-  the computer plays, so a call or another stream you watch goes along too. If the loopback is not
-  available the share starts without audio instead of failing.
+- **System audio** is everything the computer plays **except Discord and ScreenLink itself**, so
+  friends in a Discord call with you do not hear their own voices back, and ScreenLink's sounds
+  (or a stream you are watching) stay out (`client/system-audio.js`):
+  - Linux: [venmic](https://github.com/Vencord/venmic) builds a virtual microphone in PipeWire
+    fed by every app on the default output except Discord (Discord, PTB, Canary, Vesktop,
+    Equibop) and ScreenLink, including apps that start playing later.
+  - Windows: WASAPI process loopback in *exclude* mode ([loopback-capture](https://github.com/WerdoxDev/application-loopback),
+    Windows 10 2004+). It can exclude one process tree: Discord's while it runs (checked every
+    10 s), ScreenLink's otherwise.
+  - If the native capture fails, it falls back to plain loopback (everything), and to no audio if
+    even that is unavailable, rather than failing to share.
 
 ## Layout
 

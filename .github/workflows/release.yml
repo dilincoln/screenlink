@@ -71,6 +71,25 @@ jobs:
 
       - run: bunx electron-builder ${{ matrix.platform }} --publish never
 
+      # The native audio capture must load from inside the packaged app (asar unpacked). A short
+      # exclude-mode capture is informative only: CI machines may have no audio device.
+      - if: runner.os == 'Windows'
+        env:
+          ELECTRON_RUN_AS_NODE: "1"
+        run: |
+          ./dist/win-unpacked/ScreenLink.exe -e '
+            const { LoopbackCapture } = require(process.cwd() + "/dist/win-unpacked/resources/app.asar/node_modules/loopback-capture");
+            console.log("loopback-capture loaded");
+            try {
+              const capture = new LoopbackCapture();
+              let bytes = 0;
+              capture.start(process.pid, false, (chunk) => (bytes += chunk.length));
+              setTimeout(() => { capture.stop(); console.log("exclude-mode capture: " + bytes + " bytes in 2 s"); process.exit(0); }, 2000);
+            } catch (err) {
+              console.log("exclude-mode capture unavailable here: " + err.message);
+            }
+          '
+
       - uses: actions/upload-artifact@v7
         with:
           name: screenlink-${{ runner.os }}

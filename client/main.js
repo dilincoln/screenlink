@@ -22,6 +22,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { muteState } from "./mute.js";
+import { startSystemAudio, stopSystemAudio } from "./system-audio.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const asset = (name) => path.join(here, "assets", name);
@@ -425,6 +426,7 @@ async function stopShare(tellServer) {
   const s = share;
   if (!s) return;
   share = null;
+  stopSystemAudio();
   if (s.streamId && !quitting) playSound("stop");
   if (tellServer && s.streamId) await request("stream.stop", { streamId: s.streamId }).catch(() => {});
   s.ready.reject(new Error("sharing stopped"));
@@ -831,9 +833,10 @@ handle("stream:watch", (_e, streamId) => watch(streamId));
 handle("clipboard:write", (_e, text) => clipboard.writeText(String(text)));
 
 // Broadcaster window
-handle("bc:init", (event) => {
+handle("bc:init", async (event) => {
   if (share?.win.webContents !== event.sender) throw new Error("no pending share");
-  return { sourceId: share.sourceId, settings: share.settings, iceServers };
+  const audioPlan = share.settings.audio ? await startSystemAudio(event.sender) : null;
+  return { sourceId: share.sourceId, settings: share.settings, iceServers, audioPlan };
 });
 handle("bc:started", async (event, { audio } = {}) => {
   const s = share;

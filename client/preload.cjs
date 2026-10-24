@@ -4,6 +4,9 @@ const { contextBridge, ipcRenderer } = require("electron");
 const LISTEN = new Set(["state", "encoder", "rtc", "ended", "sound"]);
 const SEND = new Set(["rtc:send", "popup:watch", "popup:close"]);
 
+// A MessagePort cannot cross the context bridge; window.postMessage is how it reaches the page.
+ipcRenderer.on("system-audio-port", (event) => window.postMessage("system-audio-port", "*", event.ports));
+
 contextBridge.exposeInMainWorld("sl", {
   /** Calls a main-process handler; throws its error message. */
   async invoke(channel, ...args) {

@@ -1,7 +1,7 @@
 {
   "name": "screenlink",
   "productName": "ScreenLink",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Low-latency screen sharing between friends, relayed peer to peer",
   "private": true,
   "type": "module",
@@ -73,7 +73,15 @@
     "portable": {
       "artifactName": "ScreenLink-${version}-win-portable.${ext}"
     },
-    "publish": null
+    "publish": null,
+    "asarUnpack": [
+      "**/*.node"
+    ],
+    "npmRebuild": false
   },
-  "desktopName": "screenlink.desktop"
+  "desktopName": "screenlink.desktop",
+  "optionalDependencies": {
+    "@vencord/venmic": "7.2.3",
+    "loopback-capture": "3.0.2"
+  }
 }
