@@ -28,7 +28,7 @@ const ADMINS = new Set(
 const store = new Store(DB_FILE);
 
 type Socket = ServerWebSocket<{ user: AuthUser }>;
-type StreamSettings = { width: number; height: number; fps: number; bitrate: number; codec: string; hint: string };
+type StreamSettings = { width: number; height: number; fps: number; bitrate: number; codec: string; hint: string; audio: boolean };
 type Stream = {
   id: string;
   roomId: string;
@@ -255,6 +255,7 @@ function startStream(user: User, msg: any) {
     bitrate: Number(s.bitrate) || 8_000_000,
     codec: String(s.codec ?? "auto"),
     hint: String(s.hint ?? "motion"),
+    audio: s.audio === true,
   };
   const stream: Stream = {
     id: crypto.randomUUID(),

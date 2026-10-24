@@ -4,6 +4,8 @@
 // child. The parent offers; the child answers. A viewer is both: an Upstream (its parent) and a
 // Fanout (its own children, which get the track it receives).
 
+const AUDIO_BITRATE = 128_000;
+
 const CODEC_MIME = { h264: "video/H264", vp8: "video/VP8", vp9: "video/VP9", av1: "video/AV1", h265: "video/H265" };
 
 /** Puts the chosen codec first; the other side picks the first one it can decode. */
@@ -25,18 +27,35 @@ function score(c) {
 }
 
 /**
- * Chrome starts a new connection at ~300 kbps and ramps up over several seconds. These
- * Chrome-only fmtp hints make it start near the target bitrate, which is what makes the first
- * seconds of a stream sharp instead of a blurry ramp.
+ * Tunes the answer before the sender applies it (it is the remote description on the sending
+ * side, and the sender obeys its parameters):
+ * - video: Chrome starts a new connection at ~300 kbps and ramps up over several seconds. These
+ *   Chrome-only fmtp hints make it start near the target bitrate, so the first seconds are sharp.
+ * - audio: stereo Opus at a music-grade bitrate (the defaults are mono and tuned for voice).
  */
-function tuneSdp(sdp, bitrate) {
+export function tuneSdp(sdp, bitrate) {
   const kbps = Math.round(bitrate / 1000);
   const start = Math.round(kbps * 0.7);
   const min = Math.min(1000, Math.round(kbps * 0.1));
-  return sdp.replace(/^(a=fmtp:\d+ .*)$/gm, (line) =>
-    line.includes("x-google-") || line.includes("apt=") ? line
-      : `${line};x-google-start-bitrate=${start};x-google-min-bitrate=${min};x-google-max-bitrate=${kbps}`,
-  );
+  return sdp
+    .split(/(?=^m=)/m)
+    .map((section) => {
+      if (section.startsWith("m=video")) {
+        return section.replace(/^(a=fmtp:\d+ .*?)(?=\r?$)/gm, (line) =>
+          line.includes("x-google-") || line.includes("apt=") ? line
+            : `${line};x-google-start-bitrate=${start};x-google-min-bitrate=${min};x-google-max-bitrate=${kbps}`,
+        );
+      }
+      if (section.startsWith("m=audio")) {
+        const opus = section.match(/^a=rtpmap:(\d+) opus\/48000/m)?.[1];
+        if (!opus) return section;
+        return section.replace(new RegExp(`^(a=fmtp:${opus} .*?)(?=\\r?$)`, "m"), (line) =>
+          line.includes("stereo=1") ? line : `${line};stereo=1;sprop-stereo=1;maxaveragebitrate=${AUDIO_BITRATE}`,
+        );
+      }
+      return section;
+    })
+    .join("");
 }
 
 /** Serializes async work per connection so candidates never race the descriptions. */
@@ -45,10 +64,13 @@ function queue() {
   return (fn) => (tail = tail.then(fn).catch((err) => console.warn("[rtc]", err)));
 }
 
-/** Sends one track to N children (sharer: the capture; viewer: the track it receives). */
+/**
+ * Sends the stream to N children (sharer: the capture; viewer: the tracks it receives). Video
+ * always; audio when the stream has it (settings.audio).
+ */
 export class Fanout {
   /**
-   * @param {{ iceServers: RTCIceServer[], settings: { bitrate: number, fps: number, codec: string, hint: string },
+   * @param {{ iceServers: RTCIceServer[], settings: { bitrate: number, fps: number, codec: string, hint: string, audio?: boolean },
    *           send: (msg: object) => void, onChange?: () => void }} opts
    */
   constructor({ iceServers, settings, send, onChange }) {
@@ -56,8 +78,8 @@ export class Fanout {
     this.settings = settings;
     this.send = send;
     this.onChange = onChange ?? (() => {});
-    this.track = null;
-    /** @type {Map<string, { pc: RTCPeerConnection, peerId: string, peerName: string, sender: RTCRtpSender, run: Function }>} */
+    this.tracks = { video: null, audio: null };
+    /** @type {Map<string, { pc: RTCPeerConnection, peerId: string, peerName: string, senders: { video: RTCRtpSender, audio?: RTCRtpSender }, run: Function }>} */
     this.children = new Map();
   }
 
@@ -65,21 +87,32 @@ export class Fanout {
     return this.children.size;
   }
 
+  /** Sets the source for the track's kind; children keep their connections. */
   setTrack(track) {
-    this.track = track;
-    if (track) track.contentHint = this.settings.hint === "detail" ? "detail" : "motion";
-    for (const child of this.children.values()) child.sender.replaceTrack(track).catch(() => {});
+    this.tracks[track.kind] = track;
+    if (track.kind === "video") track.contentHint = this.settings.hint === "detail" ? "detail" : "motion";
+    else track.contentHint = "music";
+    for (const child of this.children.values()) child.senders[track.kind]?.replaceTrack(track).catch(() => {});
   }
 
   add(connId, peerId, peerName) {
     this.remove(connId);
     const pc = new RTCPeerConnection({ iceServers: this.iceServers, bundlePolicy: "max-bundle" });
-    const transceiver = pc.addTransceiver(this.track ?? "video", {
+    const transceiver = pc.addTransceiver(this.tracks.video ?? "video", {
       direction: "sendonly",
       sendEncodings: [{ maxBitrate: this.settings.bitrate, maxFramerate: this.settings.fps, priority: "high", networkPriority: "high" }],
     });
     preferCodec(transceiver, this.settings.codec);
-    const child = { pc, peerId, peerName, sender: transceiver.sender, run: queue() };
+    const senders = { video: transceiver.sender };
+    if (this.settings.audio) {
+      // Deliberately not tied to the video (no shared MediaStream): A/V sync would make the
+      // receiver hold video back to match the audio jitter buffer, costing tens of ms.
+      senders.audio = pc.addTransceiver(this.tracks.audio ?? "audio", {
+        direction: "sendonly",
+        sendEncodings: [{ maxBitrate: AUDIO_BITRATE, priority: "high", networkPriority: "high" }],
+      }).sender;
+    }
+    const child = { pc, peerId, peerName, senders, run: queue() };
     this.children.set(connId, child);
 
     pc.onicecandidate = ({ candidate }) => {
@@ -94,7 +127,7 @@ export class Fanout {
         await pc.setLocalDescription();
         this.send({ type: "signal", connId, to: peerId, data: { sdp: pc.localDescription.toJSON() } });
       });
-    child.run(() => this.applyEncoding(child.sender));
+    child.run(() => this.applyEncoding(child.senders.video));
     this.onChange();
   }
 
@@ -117,7 +150,7 @@ export class Fanout {
     child.run(async () => {
       if (data.sdp) {
         await child.pc.setRemoteDescription({ type: data.sdp.type, sdp: tuneSdp(data.sdp.sdp, this.settings.bitrate) });
-        await this.applyEncoding(child.sender);
+        await this.applyEncoding(child.senders.video);
       } else if (data.candidate) {
         await child.pc.addIceCandidate(data.candidate);
       }
@@ -230,9 +263,11 @@ export class Upstream {
     if (!this.pc) return null;
     const report = await this.pc.getStats();
     let inbound = null;
+    let audio = null;
     let pair = null;
     for (const s of report.values()) {
       if (s.type === "inbound-rtp" && s.kind === "video") inbound = s;
+      if (s.type === "inbound-rtp" && s.kind === "audio") audio = s;
       if (s.type === "candidate-pair" && s.nominated && s.state === "succeeded") pair = s;
     }
     if (!inbound) return null;
@@ -252,6 +287,9 @@ export class Upstream {
       dropped: inbound.framesDropped ?? 0,
       rttMs: pair?.currentRoundTripTime != null ? pair.currentRoundTripTime * 1000 : null,
       route: local?.candidateType === "relay" ? "TURN" : local ? "direct" : null,
+      audioBytes: audio?.bytesReceived ?? null,
+      audioCodec: audio?.codecId ? report.get(audio.codecId)?.mimeType?.split("/")[1] : null,
+      audioChannels: audio?.codecId ? report.get(audio.codecId)?.channels ?? null : null,
     };
   }
 }

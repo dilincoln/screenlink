@@ -122,8 +122,13 @@ Parsec uses its own UDP protocol and hardware encoders. Within WebRTC, the close
 - **Capture-side scaling** (keeps the aspect ratio) instead of capturing full-size and shrinking.
 - **"Optimize for"**: *Motion* keeps the frame rate (drops resolution under pressure); *Detail*
   keeps text sharp (drops frames).
-- Viewer windows press `I` for live stats (fps, bitrate, decode time, jitter buffer, RTT, hop),
-  `O` for 1:1 pixels, double-click/F11 for fullscreen.
+- Viewer windows press `I` for live stats (fps, bitrate, audio, decode time, jitter buffer, RTT,
+  hop), `O` for 1:1 pixels, double-click/F11 for fullscreen. **Right-click** opens a menu with the
+  stream's volume (remembered per person sharing); `M` mutes.
+- **Audio**: Opus stereo at 128 kbps with voice processing off (no echo cancellation or noise
+  suppression, which ruin music and game audio). Audio and video are deliberately *not* lip-synced:
+  syncing makes the receiver hold video back to match the audio jitter buffer (tens of ms), and
+  video latency wins here. Relays forward the audio along with the video.
 
 ## Muting notifications
 
@@ -159,7 +164,10 @@ A viewer that only moves inside the relay tree (or reconnects) makes no sound.
   "someone is sharing" uses a system notification (Wayland apps cannot place a popup in a corner).
 - **X11 / Windows / macOS**: in-app picker with thumbnails, and a ScreenLink popup in the
   bottom-right corner.
-- Video only; system audio is not captured yet.
+- **System audio** works on Windows (WASAPI loopback) and Linux (the monitor of the default
+  output, via Chromium's `PulseaudioLoopbackForScreenShare`; PipeWire included). It is everything
+  the computer plays, so a call or another stream you watch goes along too. If the loopback is not
+  available the share starts without audio instead of failing.
 
 ## Layout
 

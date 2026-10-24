@@ -137,6 +137,12 @@
               <option value="4">4</option><option value="6">6</option><option value="8">8</option>
             </select>
           </label>
+          <label>Audio
+            <select name="audio">
+              <option value="off">No audio</option>
+              <option value="system">System audio — everything you hear</option>
+            </select>
+          </label>
           <label class="span2"><span>Bitrate <output id="bitrate-out"></output></span>
             <input name="bitrate" type="range" min="1" max="80" step="1" />
           </label>
@@ -144,6 +150,9 @@
         <p class="muted small">
           You upload one copy per <b>direct viewer</b>; everyone beyond that gets the video relayed by other viewers.
           Upload needed: <b id="upload-need"></b>.
+        </p>
+        <p id="audio-note" class="note small" hidden>
+          System audio sends everything this computer plays, including calls and other streams you are watching.
         </p>
         <p class="error" hidden></p>
         <div class="dialog-actions">

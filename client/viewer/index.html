@@ -8,6 +8,8 @@
   </head>
   <body>
     <video id="video" autoplay muted playsinline disablepictureinpicture></video>
+    <!-- Separate from the video on purpose: see Fanout in shared/rtc.js (no A/V sync). -->
+    <audio id="audio" autoplay></audio>
 
     <div id="status" class="status">
       <div class="spinner"></div>
@@ -30,6 +32,20 @@
     </header>
 
     <aside id="stats" class="stats" hidden></aside>
+
+    <!-- Right-click menu -->
+    <div id="menu" class="menu" role="menu" hidden>
+      <div class="menu-volume">
+        <button id="mute-toggle" class="icon" title="Mute (M)"></button>
+        <input id="volume" type="range" min="0" max="100" step="1" aria-label="Volume" />
+        <span id="volume-out" class="volume-out"></span>
+      </div>
+      <p id="no-audio" class="menu-note" hidden>This stream has no audio</p>
+      <div class="sep"></div>
+      <button data-action="fullscreen" role="menuitem">Fullscreen <kbd>F11</kbd></button>
+      <button data-action="stats" role="menuitem">Stats <kbd>I</kbd></button>
+      <button data-action="fit" role="menuitem">1:1 pixels <kbd>O</kbd></button>
+    </div>
 
     <script type="module" src="viewer.js"></script>
   </body>

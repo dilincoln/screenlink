@@ -41,13 +41,13 @@ const DEFAULTS = {
   quietHours: { enabled: false, days: [1, 2, 3, 4, 5], start: "08:00", end: "18:00" },
 
   autostart: false,
-  share: { resolution: "1080", fps: 60, bitrate: 12_000_000, codec: "h264", hint: "motion", capacity: 3 },
+  share: { resolution: "1080", fps: 60, bitrate: 12_000_000, codec: "h264", hint: "motion", capacity: 3, audio: false },
 };
 
 // ---------- low-latency / hardware video ----------
 // Hardware encode/decode where the GPU supports it (VA-API on Linux), and a zero playout delay
 // on the receiving side, which is the trick Chrome Remote Desktop uses for interactive streams.
-const features = ["WebRTCPipeWireCapturer"];
+const features = ["WebRTCPipeWireCapturer", "PulseaudioLoopbackForScreenShare"];
 if (process.platform === "linux") features.push("VaapiVideoDecoder", "VaapiVideoEncoder", "VaapiVideoDecodeLinuxGL", "AcceleratedVideoEncoder");
 app.commandLine.appendSwitch("enable-features", features.join(","));
 app.commandLine.appendSwitch("ignore-gpu-blocklist");
@@ -835,9 +835,10 @@ handle("bc:init", (event) => {
   if (share?.win.webContents !== event.sender) throw new Error("no pending share");
   return { sourceId: share.sourceId, settings: share.settings, iceServers };
 });
-handle("bc:started", async (event) => {
+handle("bc:started", async (event, { audio } = {}) => {
   const s = share;
   if (s?.win.webContents !== event.sender) throw new Error("no pending share");
+  s.settings.audio = Boolean(audio); // the capture may have come without audio
   try {
     const { stream } = await request("stream.start", {
       roomId: s.roomId,
@@ -919,7 +920,8 @@ app.whenReady().then(() => {
   // Fallback capture path (getDisplayMedia) used by the broadcaster if the legacy one fails.
   session.defaultSession.setDisplayMediaRequestHandler(async (_req, cb) => {
     const sources = await desktopCapturer.getSources({ types: ["screen", "window"] }).catch(() => []);
-    cb({ video: sources.find((s) => s.id === share?.sourceId) ?? sources[0] });
+    const video = sources.find((s) => s.id === share?.sourceId) ?? sources[0];
+    cb(share?.settings.audio ? { video, audio: "loopback" } : { video });
   });
 
   createSoundWindow();

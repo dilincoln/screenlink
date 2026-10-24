@@ -133,3 +133,41 @@ button.on { border-color: var(--accent); background: rgba(79, 107, 237, 0.25); }
 .stats[hidden] { display: none; }
 .stats dt { color: var(--muted); }
 .stats dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* ---------- right-click menu ---------- */
+
+.menu {
+  position: fixed;
+  z-index: 10;
+  min-width: 240px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(22, 24, 31, 0.96);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  display: grid;
+  gap: 2px;
+}
+.menu[hidden] { display: none; }
+.menu > button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  padding: 7px 10px;
+}
+.menu > button:hover { background: rgba(255, 255, 255, 0.08); }
+.menu kbd { font: 11px ui-monospace, monospace; color: var(--muted); }
+.menu .sep { height: 1px; margin: 4px 2px; background: var(--line); }
+.menu-volume { display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 4px; }
+.menu-volume.disabled { opacity: 0.4; pointer-events: none; }
+.menu-volume input { flex: 1; accent-color: var(--accent); }
+.menu .icon { border: none; background: transparent; padding: 4px 6px; font-size: 15px; line-height: 1; }
+.menu .icon:hover { background: rgba(255, 255, 255, 0.08); }
+.volume-out { width: 38px; text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12px; }
+.menu-note { margin: 0 8px 4px; color: var(--muted); font-size: 12px; }

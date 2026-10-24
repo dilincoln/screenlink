@@ -34,7 +34,8 @@ function avatar(user, { presence, small } = {}) {
 
 function spec(settings) {
   const res = settings.height ? `${settings.height}p` : "native";
-  return `${res} · ${settings.fps} fps · ${(settings.bitrate / 1e6).toFixed(0)} Mbps · ${CODEC_LABEL[settings.codec] ?? settings.codec}`;
+  const audio = settings.audio ? " · 🔊 audio" : "";
+  return `${res} · ${settings.fps} fps · ${(settings.bitrate / 1e6).toFixed(0)} Mbps · ${CODEC_LABEL[settings.codec] ?? settings.codec}${audio}`;
 }
 
 let toastTimer = null;
@@ -720,6 +721,7 @@ async function openShare(room) {
   form.codec.value = d.codec;
   form.hint.value = d.hint;
   form.capacity.value = String(d.capacity);
+  form.audio.value = d.audio ? "system" : "off";
   form.bitrate.value = String(Math.round(d.bitrate / 1e6));
   delete form.title.dataset.touched;
   $("share-room").textContent = `in ${room.name}`;
@@ -777,9 +779,11 @@ function updateBitrate() {
   const mbps = Number(form.bitrate.value);
   $("bitrate-out").textContent = `${mbps} Mbps`;
   $("upload-need").textContent = `up to ${mbps * Number(form.capacity.value)} Mbps (${mbps} × ${form.capacity.value})`;
+  $("audio-note").hidden = form.audio.value !== "system";
 }
 $("share-form").bitrate.addEventListener("input", updateBitrate);
 $("share-form").capacity.addEventListener("change", updateBitrate);
+$("share-form").audio.addEventListener("change", updateBitrate);
 
 dialogForm("share-dialog", async (form) => {
   if (!state.portalPicker && !sourceId) throw new Error("Pick a screen or a window.");
@@ -794,6 +798,7 @@ dialogForm("share-dialog", async (form) => {
       codec: form.codec.value,
       hint: form.hint.value,
       capacity: Number(form.capacity.value),
+      audio: form.audio.value === "system",
     },
   });
   delete form.title.dataset.touched;

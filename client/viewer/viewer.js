@@ -2,6 +2,7 @@ import { Fanout, Upstream } from "../shared/rtc.js";
 
 const $ = (id) => document.getElementById(id);
 const video = $("video");
+const audio = $("audio");
 
 const { stream, iceServers } = await sl.invoke("viewer:init");
 
@@ -28,8 +29,12 @@ const upstream = new Upstream({
   iceServers,
   send,
   onTrack(track) {
-    video.srcObject = new MediaStream([track]);
     fanout.setTrack(track); // children keep their connections; only the source changes
+    if (track.kind === "audio") {
+      audio.srcObject = new MediaStream([track]);
+      return;
+    }
+    video.srcObject = new MediaStream([track]);
     clearTimeout(watchdog);
     setStatus(null);
   },
@@ -99,6 +104,7 @@ sl.on("ended", () => {
   upstream.close();
   fanout.closeAll();
   video.srcObject = null;
+  audio.srcObject = null;
   setStatus(`${stream.sharerName} stopped sharing.`, true);
   setTimeout(() => window.close(), 4000);
 });
@@ -133,15 +139,79 @@ $("fit-btn").onclick = toggleFit;
 video.ondblclick = toggleFullscreen;
 document.addEventListener("keydown", (e) => {
   if (e.key === "F11") toggleFullscreen();
+  else if (e.key === "Escape") closeMenu();
   else if (e.key.toLowerCase() === "i") toggleStats();
   else if (e.key.toLowerCase() === "o") toggleFit();
+  else if (e.key.toLowerCase() === "m") setVolume({ muted: !sound.muted });
+});
+
+// ---------- volume (right-click menu) ----------
+// Remembered per sharer: someone who streams loud games keeps a lower volume next time.
+
+const VOLUME_KEY = `volume:${stream.sharerId}`;
+let sound = { volume: 100, muted: false };
+try {
+  sound = { ...sound, ...JSON.parse(localStorage.getItem(VOLUME_KEY) ?? "{}") };
+} catch {}
+
+function setVolume(patch) {
+  sound = { ...sound, ...patch };
+  audio.volume = sound.volume / 100;
+  audio.muted = sound.muted || sound.volume === 0;
+  $("volume").value = String(sound.volume);
+  $("volume-out").textContent = audio.muted ? "muted" : `${sound.volume}%`;
+  $("mute-toggle").textContent = audio.muted ? "🔇" : sound.volume < 50 ? "🔉" : "🔊";
+  try {
+    localStorage.setItem(VOLUME_KEY, JSON.stringify(sound));
+  } catch {}
+}
+setVolume({});
+
+$("volume").addEventListener("input", (e) => setVolume({ volume: Number(e.target.value), muted: false }));
+$("mute-toggle").onclick = () => setVolume({ muted: !sound.muted });
+$("no-audio").hidden = Boolean(stream.settings.audio);
+document.querySelector(".menu-volume").classList.toggle("disabled", !stream.settings.audio);
+
+function openMenu(x, y) {
+  const menu = $("menu");
+  menu.hidden = false;
+  const { width, height } = menu.getBoundingClientRect();
+  menu.style.left = `${Math.min(x, innerWidth - width - 8)}px`;
+  menu.style.top = `${Math.min(y, innerHeight - height - 8)}px`;
+  document.body.classList.remove("idle");
+  clearTimeout(idleTimer);
+}
+
+function closeMenu() {
+  if ($("menu").hidden) return;
+  $("menu").hidden = true;
+  wake();
+}
+
+document.addEventListener("contextmenu", (e) => {
+  e.preventDefault();
+  openMenu(e.clientX, e.clientY);
+});
+document.addEventListener("mousedown", (e) => {
+  if (!$("menu").contains(e.target)) closeMenu();
+});
+window.addEventListener("blur", closeMenu);
+$("menu").addEventListener("click", (e) => {
+  const action = e.target.closest("button[data-action]")?.dataset.action;
+  if (!action) return;
+  closeMenu();
+  if (action === "fullscreen") toggleFullscreen();
+  else if (action === "stats") toggleStats();
+  else if (action === "fit") toggleFit();
 });
 
 let idleTimer = null;
 function wake() {
   document.body.classList.remove("idle");
   clearTimeout(idleTimer);
-  idleTimer = setTimeout(() => document.body.classList.add("idle"), 2500);
+  idleTimer = setTimeout(() => {
+    if ($("menu").hidden) document.body.classList.add("idle");
+  }, 2500);
 }
 document.addEventListener("mousemove", wake);
 wake();
@@ -152,7 +222,9 @@ let last = null;
 setInterval(async () => {
   const s = await upstream.stats().catch(() => null);
   if (!s) return;
-  const mbps = last && s.timestamp > last.timestamp ? ((s.bytes - last.bytes) * 8) / ((s.timestamp - last.timestamp) * 1000) : 0;
+  const elapsed = last && s.timestamp > last.timestamp ? s.timestamp - last.timestamp : 0;
+  const mbps = elapsed ? ((s.bytes - last.bytes) * 8) / (elapsed * 1000) : 0;
+  const audioKbps = elapsed && s.audioBytes != null && last.audioBytes != null ? ((s.audioBytes - last.audioBytes) * 8) / elapsed : null;
   last = s;
   if ($("stats").hidden) return;
   const rows = [
@@ -160,6 +232,7 @@ setInterval(async () => {
     ["fps", s.fps],
     ["bitrate", `${mbps.toFixed(mbps < 1 ? 2 : 1)} Mbps`],
     ["codec", s.codec ?? "—"],
+    ["audio", s.audioCodec ? `${s.audioCodec} ${s.audioChannels === 2 ? "stereo" : "mono"} · ${audioKbps == null ? "…" : audioKbps.toFixed(0)} kbps` : "none"],
     ["decoder", s.decoder ?? "—"],
     ["decode", `${s.decodeMs.toFixed(1)} ms`],
     ["jitter buffer", `${s.jitterBufferMs.toFixed(0)} ms`],
