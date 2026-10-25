@@ -136,6 +136,9 @@ input[type="range"] { padding: 0; accent-color: var(--accent); }
 .bell .off, .bell.muted .on { display: none; }
 .bell.muted .off { display: block; }
 .bell.muted { color: var(--warn); }
+.bell.theme { margin-left: 0; }
+.theme .sun, .theme.light .moon { display: none; }
+.theme.light .sun { display: block; }
 .conn { width: 9px; height: 9px; border-radius: 50%; background: var(--live); }
 .conn.online { background: var(--ok); }
 .conn.connecting { background: var(--warn); }

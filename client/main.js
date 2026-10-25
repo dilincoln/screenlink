@@ -11,6 +11,7 @@ import {
   Menu,
   Notification,
   nativeImage,
+  nativeTheme,
   ipcMain,
   desktopCapturer,
   screen,
@@ -44,6 +45,7 @@ const DEFAULTS = {
   quietHours: { enabled: false, days: [1, 2, 3, 4, 5], start: "08:00", end: "18:00" },
 
   autostart: false,
+  theme: "system", // system | light | dark
   share: { resolution: "1080", fps: 60, bitrate: 12_000_000, codec: "h264", hint: "motion", capacity: 3, audio: false },
 };
 
@@ -83,6 +85,9 @@ function loadConfig() {
     config = structuredClone(DEFAULTS);
   }
 }
+
+// The pages pick their colors with prefers-color-scheme, which follows nativeTheme.themeSource.
+const THEMES = ["system", "light", "dark"];
 
 function saveConfig() {
   fs.mkdirSync(path.dirname(CONFIG_FILE()), { recursive: true });
@@ -158,10 +163,12 @@ function snapshot() {
       notifications: config.notifications,
       soundVolume: config.soundVolume,
       autostart: config.autostart,
+      theme: config.theme,
       share: config.share,
       quietHours: config.quietHours,
     },
     portalPicker: IS_WAYLAND,
+    dark: nativeTheme.shouldUseDarkColors,
     update,
     popupPlaceable: !IS_WAYLAND,
     mute: muteState(config.mutedUntil, config.quietHours),
@@ -677,7 +684,7 @@ function showUi() {
     minHeight: 480,
     title: "ScreenLink",
     icon: asset("icon.png"),
-    backgroundColor: "#111318",
+    backgroundColor: nativeTheme.shouldUseDarkColors ? "#111318" : "#f6f7fa",
     autoHideMenuBar: true,
     webPreferences: { preload: PRELOAD },
   });
@@ -832,6 +839,10 @@ handle("settings:set", (_e, patch) => {
     config.autostart = Boolean(patch.autostart);
     applyAutostart();
   }
+  if (THEMES.includes(patch.theme)) {
+    config.theme = patch.theme;
+    nativeTheme.themeSource = config.theme;
+  }
   if (serverChanged) {
     // Accounts live on a server: a new server means a new account.
     config.serverUrl = patch.serverUrl.replace(/\/+$/, "");
@@ -952,6 +963,8 @@ app.on("window-all-closed", () => {
 app.whenReady().then(() => {
   loadConfig();
   loadIdentity();
+  nativeTheme.themeSource = THEMES.includes(config.theme) ? config.theme : "system";
+  nativeTheme.on("updated", pushState);
   const allowed = new Set(["media", "display-capture", "fullscreen", "clipboard-sanitized-write", "notifications"]);
   session.defaultSession.setPermissionRequestHandler((_wc, permission, cb) => cb(allowed.has(permission)));
   session.defaultSession.setPermissionCheckHandler((_wc, permission) => allowed.has(permission));

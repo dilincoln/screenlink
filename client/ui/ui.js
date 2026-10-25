@@ -101,6 +101,8 @@ function render() {
   $("mute-btn").classList.toggle("muted", state.mute.muted);
   $("mute-btn").title = muteText(state.mute);
   if ($("mute-dialog").open) renderMuteStatus();
+  $("theme-btn").classList.toggle("light", !state.dark);
+  $("theme-btn").title = state.dark ? "Switch to light theme" : "Switch to dark theme";
   $("update-btn").hidden = !state.update;
   if (state.update) $("update-btn").textContent = `Update available: ${state.update.version}`;
   $("conn").title = { online: "Connected", connecting: "Connecting…", offline: "Offline — retrying" }[state.connection];
@@ -418,6 +420,7 @@ $("me-btn").onclick = () => {
   form.soundVolume.value = String(state.settings.soundVolume);
   updateVolume();
   form.autostart.checked = state.settings.autostart;
+  form.theme.value = state.settings.theme;
   form.serverUrl.value = state.serverUrl;
 };
 
@@ -431,6 +434,7 @@ dialogForm("settings-dialog", async (form) => {
     notifications: form.notifications.value,
     soundVolume: Number(form.soundVolume.value),
     autostart: form.autostart.checked,
+    theme: form.theme.value,
     serverUrl: form.serverUrl.value,
   });
 });
@@ -496,6 +500,8 @@ function renderQuietDays() {
 function syncQuietEnabled() {
   $("quiet-fields").classList.toggle("disabled", !$("mute-form").quietEnabled.checked);
 }
+
+$("theme-btn").onclick = () => sl.invoke("settings:set", { theme: state.dark ? "light" : "dark" });
 
 $("update-btn").onclick = () => sl.invoke("update:open");
 
