@@ -33,14 +33,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # One Linux format per job: electron-builder packs targets one after another, so three in
+        # one job took twice as long as the Windows build.
         include:
-          - name: Linux
+          - name: Linux AppImage
             os: ubuntu-24.04
-            platform: --linux
-            files: |
-              dist/*.AppImage
-              dist/*.deb
-              dist/*.pacman
+            platform: --linux AppImage
+            files: dist/*.AppImage
+          - name: Linux deb
+            os: ubuntu-24.04
+            platform: --linux deb
+            files: dist/*.deb
+          - name: Linux pacman
+            os: ubuntu-24.04
+            platform: --linux pacman
+            files: dist/*.pacman
           - name: Windows
             os: windows-2025
             platform: --win
@@ -54,7 +61,7 @@ jobs:
           bun-version: 1.4.4
 
       # The .pacman target packs with bsdtar.
-      - if: runner.os == 'Linux'
+      - if: matrix.name == 'Linux pacman'
         run: sudo apt-get update && sudo apt-get install -y libarchive-tools
 
       - run: bun install --frozen-lockfile
@@ -92,7 +99,7 @@ jobs:
 
       - uses: actions/upload-artifact@v7
         with:
-          name: screenlink-${{ runner.os }}
+          name: screenlink-${{ matrix.name }}
           path: ${{ matrix.files }}
           if-no-files-found: error
 
