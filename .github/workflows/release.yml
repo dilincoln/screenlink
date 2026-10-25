@@ -1,21 +1,50 @@
-# Builds the desktop app for Linux and Windows. Pushing a tag like v0.2.0 runs the tests, builds
-# both platforms with that version and publishes a GitHub release with the installers. Running it
-# by hand (Actions → Release → Run workflow) only builds and keeps the files as workflow artifacts.
+# Builds the desktop app for Linux and Windows. Every push to main is a new version: it runs the
+# tests, builds both platforms and publishes a GitHub release (and its tag) with the installers.
+# Running it by hand (Actions → Release → Run workflow) only builds and keeps the files as workflow
+# artifacts.
 name: Release
 
 on:
   push:
-    tags: ["v*"]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: write
+
+# One run at a time, so two quick pushes can't both pick the same version. A push that arrives
+# while another is waiting replaces it; the newer commit contains the older one anyway.
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 defaults:
   run:
     shell: bash
 
 jobs:
+  # The next patch after the latest v* tag (v0.4.1 -> 0.4.2). Raising "version" in package.json
+  # above that starts a new minor or major: 0.5.0 there makes the next release 0.5.0.
+  version:
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.next.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - id: next
+        run: |
+          pkg=$(jq -r .version package.json)
+          last=$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -1)
+          next=$pkg
+          if [ -n "$last" ]; then
+            IFS=. read -r major minor patch <<< "${last#v}"
+            next=$(printf '%s\n%s\n' "$pkg" "$major.$minor.$((patch + 1))" | sort -V | tail -1)
+          fi
+          echo "Releasing $next (latest tag: ${last:-none}, package.json: $pkg)"
+          echo "version=$next" >> "$GITHUB_OUTPUT"
+
   test:
     runs-on: ubuntu-24.04
     steps:
@@ -29,7 +58,7 @@ jobs:
 
   build:
     name: build (${{ matrix.name }})
-    needs: test
+    needs: [version, test]
     strategy:
       fail-fast: false
       matrix:
@@ -59,13 +88,14 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
-      # The tag is the version: v0.2.0 -> 0.2.0 in the installers and in the app.
-      - if: startsWith(github.ref, 'refs/tags/v')
+      # The computed version goes into the installers and the app.
+      - env:
+          VERSION: ${{ needs.version.outputs.version }}
         run: |
           bun -e '
             const fs = require("fs");
             const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
-            pkg.version = process.env.GITHUB_REF_NAME.slice(1);
+            pkg.version = process.env.VERSION;
             fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n");
           '
 
@@ -97,8 +127,8 @@ jobs:
           if-no-files-found: error
 
   release:
-    needs: build
-    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [version, build]
+    if: github.event_name == 'push'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/download-artifact@v8
@@ -106,10 +136,13 @@ jobs:
           path: out
           merge-multiple: true
       - run: ls -la out
+      # Creates the tag on the pushed commit. A tag made with this token starts no new run.
       - env:
           GH_TOKEN: ${{ github.token }}
+          TAG: v${{ needs.version.outputs.version }}
         run: |
-          gh release create "$GITHUB_REF_NAME" out/* \
+          gh release create "$TAG" out/* \
             --repo "$GITHUB_REPOSITORY" \
-            --title "ScreenLink $GITHUB_REF_NAME" \
+            --target "$GITHUB_SHA" \
+            --title "ScreenLink $TAG" \
             --generate-notes
