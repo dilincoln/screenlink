@@ -101,6 +101,8 @@ function render() {
   $("mute-btn").classList.toggle("muted", state.mute.muted);
   $("mute-btn").title = muteText(state.mute);
   if ($("mute-dialog").open) renderMuteStatus();
+  $("update-btn").hidden = !state.update;
+  if (state.update) $("update-btn").textContent = `Update available: ${state.update.version}`;
   $("conn").title = { online: "Connected", connecting: "Connecting…", offline: "Offline — retrying" }[state.connection];
   if (state.user) {
     $("me-avatar").replaceWith(Object.assign(avatar(state.user, { small: true }), { id: "me-avatar" }));
@@ -494,6 +496,8 @@ function renderQuietDays() {
 function syncQuietEnabled() {
   $("quiet-fields").classList.toggle("disabled", !$("mute-form").quietEnabled.checked);
 }
+
+$("update-btn").onclick = () => sl.invoke("update:open");
 
 $("mute-btn").onclick = () => {
   const dialog = openDialog("mute-dialog");

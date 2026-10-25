@@ -16,6 +16,7 @@ import {
   screen,
   session,
   clipboard,
+  shell,
 } from "electron";
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -23,6 +24,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { muteState } from "./mute.js";
 import { startSystemAudio, stopSystemAudio } from "./system-audio.js";
+import { RELEASES_API, availableUpdate } from "./update.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const asset = (name) => path.join(here, "assets", name);
@@ -132,6 +134,8 @@ let share = null;
 const viewers = new Map(); // streamId -> BrowserWindow
 const endedViewers = new WeakSet(); // viewer windows already told their stream ended
 const popups = new Map(); // streamId -> BrowserWindow
+/** A newer release on GitHub: { version, url } or null. */
+let update = null;
 
 function snapshot() {
   return {
@@ -158,6 +162,7 @@ function snapshot() {
       quietHours: config.quietHours,
     },
     portalPicker: IS_WAYLAND,
+    update,
     popupPlaceable: !IS_WAYLAND,
     mute: muteState(config.mutedUntil, config.quietHours),
   };
@@ -634,6 +639,29 @@ function muteMenu() {
   return items;
 }
 
+// ---------- updates ----------
+// Asks GitHub for the latest release now and then; a newer one shows up in the UI and the tray.
+
+const UPDATE_EVERY = 6 * 60 * 60 * 1000;
+
+async function checkForUpdate() {
+  try {
+    const res = await fetch(RELEASES_API, {
+      headers: { Accept: "application/vnd.github+json", "User-Agent": `ScreenLink/${app.getVersion()}` },
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!res.ok) return; // offline, rate-limited: try again next time
+    const found = availableUpdate(await res.json(), app.getVersion());
+    if (found?.version === update?.version) return;
+    update = found;
+    pushState();
+  } catch {}
+}
+
+function openUpdate() {
+  if (update) shell.openExternal(update.url);
+}
+
 // ---------- windows & tray ----------
 
 function showUi() {
@@ -691,6 +719,7 @@ function updateTray() {
     Menu.buildFromTemplate([
       { label: status, enabled: false },
       { label: "Open ScreenLink", click: showUi },
+      ...(update ? [{ label: `Update available: ${update.version}`, click: openUpdate }] : []),
       { type: "separator" },
       others.length
         ? {
@@ -835,6 +864,7 @@ handle("sources:list", async () => {
 handle("share:start", (_e, opts) => startShare(opts).then(() => snapshot().sharing));
 handle("share:stop", () => stopShare(true));
 handle("stream:watch", (_e, streamId) => watch(streamId));
+handle("update:open", () => openUpdate());
 handle("clipboard:write", (_e, text) => clipboard.writeText(String(text)));
 
 // Broadcaster window
@@ -936,4 +966,6 @@ app.whenReady().then(() => {
   createTray();
   if (!process.argv.includes("--hidden") || !config.token || !tray) showUi();
   connect();
+  checkForUpdate();
+  setInterval(checkForUpdate, UPDATE_EVERY);
 });
