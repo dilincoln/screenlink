@@ -84,7 +84,7 @@ body.idle { cursor: none; }
   backdrop-filter: blur(12px);
   transition: opacity 0.2s, transform 0.2s;
 }
-body.idle .bar { opacity: 0; transform: translateY(-8px); pointer-events: none; }
+body:not(.bar-shown) .bar { opacity: 0; transform: translateY(-8px); pointer-events: none; }
 
 .who { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .who > div { min-width: 0; }

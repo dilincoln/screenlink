@@ -409,7 +409,10 @@ $("me-btn").onclick = () => {
   const form = dialog.querySelector("form");
   form.name.value = state.user?.name ?? "";
   form.relayCapacity.value = String(state.settings.relayCapacity);
-  form.notifications.value = state.settings.notifications;
+  const popupOption = form.notifications.querySelector('option[value="popup"]');
+  popupOption.disabled = !state.popupPlaceable;
+  popupOption.textContent = state.popupPlaceable ? "Show a ScreenLink popup" : "Show a ScreenLink popup (not on Wayland)";
+  form.notifications.value = state.popupPlaceable || state.settings.notifications !== "popup" ? state.settings.notifications : "native";
   form.soundVolume.value = String(state.settings.soundVolume);
   updateVolume();
   form.autostart.checked = state.settings.autostart;

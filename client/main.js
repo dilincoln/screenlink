@@ -158,6 +158,7 @@ function snapshot() {
       quietHours: config.quietHours,
     },
     portalPicker: IS_WAYLAND,
+    popupPlaceable: !IS_WAYLAND,
     mute: muteState(config.mutedUntil, config.quietHours),
   };
 }
@@ -477,7 +478,11 @@ function joinAsViewer(streamId) {
 // ---------- notifications ----------
 
 function announce(stream) {
-  const style = config.notifications === "auto" ? (IS_WAYLAND ? "native" : "popup") : config.notifications;
+  // Wayland doesn't let a window place itself: the compositor ignores setPosition and drops the
+  // popup in the middle of the screen. So there it is always a system notification.
+  const style = config.notifications === "auto" || (IS_WAYLAND && config.notifications === "popup")
+    ? (IS_WAYLAND ? "native" : "popup")
+    : config.notifications;
   if (style === "off" || viewers.has(stream.id) || muteState(config.mutedUntil, config.quietHours).muted) return;
   playSound("start");
   const room = rooms.find((r) => r.id === stream.roomId);

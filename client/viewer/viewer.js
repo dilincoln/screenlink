@@ -206,14 +206,31 @@ $("menu").addEventListener("click", (e) => {
 });
 
 let idleTimer = null;
+let overBar = false;
 function wake() {
   document.body.classList.remove("idle");
   clearTimeout(idleTimer);
+  // The pointer resting on the bar keeps it (and the cursor) up.
+  if (overBar) return;
   idleTimer = setTimeout(() => {
     if ($("menu").hidden) document.body.classList.add("idle");
   }, 2500);
 }
-document.addEventListener("mousemove", wake);
+
+// The bar shows only while the pointer is over its strip at the top, not on any movement.
+const BAR_REACH = 24; // px below the bar that still counts, so it shows a touch before you reach it
+function showBar(on) {
+  overBar = on;
+  document.body.classList.toggle("bar-shown", on);
+}
+document.addEventListener("mousemove", (e) => {
+  showBar(e.clientY <= $("bar").getBoundingClientRect().bottom + BAR_REACH);
+  wake();
+});
+document.documentElement.addEventListener("mouseleave", () => {
+  showBar(false);
+  wake();
+});
 wake();
 
 // ---------- stats ----------
