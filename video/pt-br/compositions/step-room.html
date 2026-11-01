@@ -1,0 +1,77 @@
+<!-- Scene 4 (28.92 → 34.74 s): step 1. Lucas's real ScreenLink window (assets/screens/lucas-room.png,
+     captured from client/ui with the demo database), the invite code copied, and the friends
+     answering in the chat. Coordinates come from assets/screens/rects.json (CSS px × 0.875). -->
+<template id="step-room-template">
+  <div data-hf-id="hf-lwto" data-composition-id="step-room" data-width="1920" data-height="1080" data-duration="5.82">
+    <div data-hf-id="hf-fq4l" class="sr-ground"></div>
+    <div data-hf-id="hf-8akm" class="sr-cam" id="sr-cam">
+    <div data-hf-id="hf-y75o" class="sr-text" id="sr-text">
+      <div data-hf-id="hf-fh1l" class="sr-num" id="sr-num">1</div>
+      <div data-hf-id="hf-doub" class="sr-title" id="sr-title">Cria uma sala.</div>
+      <div data-hf-id="hf-jh3n" class="sr-sub" id="sr-sub">Manda o código no grupo.</div>
+    </div>
+    <div data-hf-id="hf-hl0p" class="appwin sr-win" id="sr-win">
+      <div data-hf-id="hf-635v" class="tbar"><i data-hf-id="hf-wt6k"></i><i data-hf-id="hf-zeb8"></i><i data-hf-id="hf-y7e5"></i><span data-hf-id="hf-ag0p">ScreenLink</span></div>
+      <img data-hf-id="hf-b47q" class="shot" src="assets/screens/lucas-room.png" alt="" />
+      <i data-hf-id="hf-ulty" class="sr-hl" id="sr-hl"></i>
+      <div data-hf-id="hf-sra9" class="toast-app sr-toast" id="sr-toast">Invite code copied</div>
+    </div>
+    <svg data-hf-id="hf-jxpo" class="cursor" id="sr-cursor" viewBox="0 0 24 24"><path data-hf-id="hf-ds6k" d="M4 2 L4 19 L8.5 15 L11.5 22 L14.5 20.7 L11.6 14 L18 14 Z" fill="#fff" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/></svg>
+    </div>
+    <div data-hf-id="hf-km7e" class="sr-chat" id="sr-chat">
+      <div data-hf-id="hf-jyvk" class="sr-chead"><b data-hf-id="hf-yoxe">#</b> geral</div>
+      <div data-hf-id="hf-61zu" class="cmsg" id="sr-m1"><span data-hf-id="hf-tzl9" class="av" style="background:hsl(164 55% 48%)">L</span><div data-hf-id="hf-yeow"><div data-hf-id="hf-y7yw"><span data-hf-id="hf-1y3d" class="nm" style="color:hsl(164 70% 60%)">Lucas</span><span data-hf-id="hf-pyx8" class="tm">agora</span></div><div data-hf-id="hf-mxju" class="tx">entra aí <img data-hf-id="hf-eo1d" class="em" src="assets/emoji/1f525.svg" alt="" /> <span data-hf-id="hf-92t1" class="sr-code">K7QM-XR4P-9TZN</span></div></div></div>
+      <div data-hf-id="hf-23vt" class="cmsg" id="sr-m2"><span data-hf-id="hf-5jsc" class="av" style="background:hsl(42 55% 48%)">B</span><div data-hf-id="hf-x11t"><div data-hf-id="hf-xfcu"><span data-hf-id="hf-0adv" class="nm" style="color:hsl(42 80% 64%)">Bia</span><span data-hf-id="hf-l5wk" class="tm">agora</span></div><div data-hf-id="hf-djjz" class="tx">entrei <img data-hf-id="hf-kyj8" class="em" src="assets/emoji/1f60e.svg" alt="" /></div></div></div>
+      <div data-hf-id="hf-1c80" class="cmsg" id="sr-m3"><span data-hf-id="hf-mv8i" class="av" style="background:hsl(2 55% 48%)">R</span><div data-hf-id="hf-w8fr"><div data-hf-id="hf-wmqs"><span data-hf-id="hf-cqb6" class="nm" style="color:hsl(2 80% 70%)">Rafa</span><span data-hf-id="hf-jyzh" class="tm">agora</span></div><div data-hf-id="hf-q5ew" class="tx">bora!! cadê o boss</div></div></div>
+    </div>
+    <style>
+      @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-Regular.ttf"); font-display: block; }
+      [data-composition-id="step-room"] { position: absolute; inset: 0; overflow: hidden; }
+      .sr-ground { position: absolute; inset: 0; background: #e9ebf2; }
+      .sr-text { position: absolute; left: 110px; top: 150px; width: 560px; }
+      .sr-num { font-family: "Anton", sans-serif; font-size: 230px; line-height: 0.9; color: #4f6bed; }
+      .sr-title { margin-top: 26px; font: 800 80px/1.02 Inter; letter-spacing: -0.03em; color: #111318; }
+      .sr-sub { margin-top: 20px; font: 500 40px/1.25 Inter; color: #4a5163; }
+      .sr-cam { position: absolute; inset: 0; transform-origin: 1450px 236px; }
+      .sr-win { left: 700px; top: 150px; width: 1120px; }
+      .sr-hl { position: absolute; left: 841.8px; top: 68.9px; width: 55px; height: 31.5px; border-radius: 7px; background: rgba(79,107,237,.45); opacity: 0; }
+      .sr-toast { left: 560px; top: 640px; opacity: 0; }
+      .sr-chat { position: absolute; left: 70px; top: 610px; width: 860px; padding: 18px 34px 22px; border-radius: 22px; background: #2b2d31; box-shadow: 0 30px 80px rgba(5,8,20,.45); opacity: 0; }
+      .sr-chead { color: #f2f3f5; font: 800 26px Inter; padding-bottom: 10px; margin-bottom: 6px; border-bottom: 2px solid #232428; }
+      .sr-chead b { color: #80848e; font-weight: 600; margin-right: 6px; }
+      .sr-code { font: 700 30px "JetBrains Mono", monospace; background: #1e1f22; color: #8ea2ff; padding: 4px 12px; border-radius: 8px; }
+    </style>
+    <script>
+      (function () {
+        const tl = gsap.timeline({ paused: true });
+        tl.fromTo("#sr-win", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 0);
+        tl.fromTo("#sr-num", { scale: 0.4, opacity: 0, transformOrigin: "0% 80%" }, { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(2)" }, 0.05);
+        tl.fromTo("#sr-title", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "power3.out" }, 0.18);
+        tl.fromTo("#sr-sub", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "power3.out" }, 0.3);
+
+        // Copy the invite code: the camera goes to it so the code reads on a phone.
+        tl.fromTo("#sr-cam", { scale: 1, x: 0, y: 0 }, { scale: 1.75, x: -490, y: 170, duration: 0.6, ease: "power3.inOut" }, 1.0);
+        tl.to("#sr-cam", { scale: 1, x: 0, y: 0, duration: 0.45, ease: "power3.inOut" }, 2.5);
+        tl.fromTo("#sr-cursor", { x: 1700, y: 760 }, { x: 1560, y: 230, duration: 1.0, ease: "power3.inOut" }, 1.0);
+        tl.to("#sr-cursor", { scale: 0.82, duration: 0.07, transformOrigin: "0 0" }, 2.15);
+        tl.to("#sr-cursor", { scale: 1, duration: 0.12 }, 2.22);
+        tl.fromTo("#sr-hl", { opacity: 0 }, { opacity: 1, duration: 0.08, immediateRender: false }, 2.16);
+        tl.to("#sr-hl", { opacity: 0, duration: 0.3 }, 2.4);
+        tl.fromTo("#sr-toast", { opacity: 0, y: 16, xPercent: -50 }, { opacity: 1, y: 0, xPercent: -50, duration: 0.2, ease: "power3.out", immediateRender: false }, 2.6);
+        tl.to("#sr-toast", { opacity: 0, duration: 0.2 }, 3.6);
+        tl.to("#sr-cursor", { opacity: 0, duration: 0.2 }, 2.45);
+
+        // The chat: code pasted, friends in.
+        tl.fromTo("#sr-chat", { y: 90, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "power3.out" }, 2.6);
+        [["#sr-m1", 2.91], ["#sr-m2", 3.64], ["#sr-m3", 4.36]].forEach(([m, t]) => {
+          tl.fromTo(m, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.2, ease: "power3.out" }, t);
+        });
+        tl.set(["#sr-m2", "#sr-m3"], { opacity: 0 }, 0);
+        tl.set("#sr-m1", { opacity: 0 }, 0);
+
+        tl.to(["#sr-cam", "#sr-chat"], { x: -120, opacity: 0, duration: 0.25, ease: "power2.in" }, 5.57);
+        window.__timelines["step-room"] = tl;
+      })();
+    </script>
+  </div>
+</template>

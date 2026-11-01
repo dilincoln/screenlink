@@ -1,0 +1,165 @@
+<!-- Scene 6 (40.56 → 49.28 s): step 3, from Bia's side. The app's real "Lucas is sharing" popup
+     (assets/screens/popup.png) over her ScreenLink window, Watch, and the viewer window with the
+     boss fight live (assets/js/game.js). The viewer's bar and stats copy client/viewer. The boss
+     falls on the beat at 44.92 s; "…vai chorar a noite toda hoje" plays at 46.3 s (index.html). -->
+<template id="watch-template">
+  <div data-hf-id="hf-8kul" data-composition-id="watch" data-width="1920" data-height="1080" data-duration="8.72">
+    <div data-hf-id="hf-c9hb" class="wt-ground"></div>
+    <div data-hf-id="hf-kckh" class="appwin wt-bia" id="wt-bia">
+      <div data-hf-id="hf-635v" class="tbar"><i data-hf-id="hf-wt6k"></i><i data-hf-id="hf-zeb8"></i><i data-hf-id="hf-y7e5"></i><span data-hf-id="hf-h2yh">ScreenLink — Bia</span></div>
+      <img data-hf-id="hf-2xqy" class="shot" src="assets/screens/bia-room.png" alt="" />
+    </div>
+    <div data-hf-id="hf-mk4s" class="wt-text" id="wt-text">
+      <div data-hf-id="hf-373z" class="wt-num">3</div>
+      <div data-hf-id="hf-lp3o" class="wt-title">Todo mundo recebe o aviso.</div>
+    </div>
+    <img data-hf-id="hf-5ljc" data-layout-allow-occlusion class="wt-popup" id="wt-popup" src="assets/screens/popup.png" alt="" />
+
+    <!-- viewer window + chat column -->
+    <div data-hf-id="hf-9tg2" class="wt-stage" id="wt-stage">
+      <div data-hf-id="hf-am7m" class="wt-viewer" id="wt-viewer">
+        <div data-hf-id="hf-mznf" class="wt-vbar"><i data-hf-id="hf-ylp6"></i><i data-hf-id="hf-0l8b"></i><i data-hf-id="hf-0zjc"></i><span data-hf-id="hf-q4zo">Lucas — Boss final (1 HP)</span></div>
+        <div data-hf-id="hf-ls4i" class="wt-screen" id="wt-screen">
+          <div data-hf-id="hf-k4u2" class="wt-gamebox" id="wt-gamebox"></div>
+          <header data-hf-id="hf-rdse" class="wt-bar" id="wt-bar" data-layout-allow-occlusion data-layout-allow-overlap>
+            <div data-hf-id="hf-gdg2" class="wt-who"><span data-hf-id="hf-r9b8" class="wt-av">L</span><div data-hf-id="hf-yeow"><div data-hf-id="hf-7l41" class="wt-t">Lucas — Boss final (1 HP)</div><div data-hf-id="hf-hhbz" class="wt-r">direct from the sharer</div></div></div>
+            <div data-hf-id="hf-2byb" class="wt-actions"><b data-hf-id="hf-e2tl" class="on">Stats</b><b data-hf-id="hf-i9t8">Fit</b><b data-hf-id="hf-cjmg">Fullscreen</b></div>
+          </header>
+          <dl data-hf-id="hf-g2in" class="wt-stats" id="wt-stats">
+            <dt data-hf-id="hf-4szz">resolution</dt><dd data-hf-id="hf-cpf3">1920×1080</dd>
+            <dt data-hf-id="hf-cmw8">fps</dt><dd data-hf-id="hf-cjmb" id="wt-fps">60</dd>
+            <dt data-hf-id="hf-4xpu">bitrate</dt><dd data-hf-id="hf-8hzq" id="wt-br">11.8 Mbps</dd>
+            <dt data-hf-id="hf-sqdr">decode</dt><dd data-hf-id="hf-8vly" id="wt-dec">1.9 ms</dd>
+            <dt data-hf-id="hf-gpos">rtt (to relay)</dt><dd data-hf-id="hf-2koj" id="wt-rtt">9 ms</dd>
+            <dt data-hf-id="hf-ean2">route</dt><dd data-hf-id="hf-rxnt">direct · hop 1</dd>
+          </dl>
+        </div>
+      </div>
+      <div data-hf-id="hf-02fu" class="wt-chat" id="wt-chat">
+        <div data-hf-id="hf-yim6" class="wt-chead"><b data-hf-id="hf-yoxe">#</b> geral</div>
+        <div data-hf-id="hf-32j8" class="wt-msgs">
+          <div data-hf-id="hf-zqsi" class="wt-m" data-t="2.94"><span data-hf-id="hf-mv8i" class="av" style="background:hsl(2 55% 48%)">R</span><div data-hf-id="hf-y7yw"><b data-hf-id="hf-4q2o" style="color:hsl(2 80% 70%)">Rafa</b><p data-hf-id="hf-602q">QUE ISSO <img data-hf-id="hf-eyz5" class="em" src="assets/emoji/1f631.svg" alt="" /></p></div></div>
+          <div data-hf-id="hf-m2ok" class="wt-m" data-t="3.64"><span data-hf-id="hf-81l6" class="av" style="background:hsl(246 55% 48%)">D</span><div data-hf-id="hf-x11t"><b data-hf-id="hf-yt44" style="color:hsl(246 80% 76%)">Duda</b><p data-hf-id="hf-5nuj">60 fps liso, nem parece stream</p></div></div>
+          <div data-hf-id="hf-5p1m" class="wt-m" data-t="4.74"><span data-hf-id="hf-5jsc" class="av" style="background:hsl(42 55% 48%)">B</span><div data-hf-id="hf-xfcu"><b data-hf-id="hf-hkv1" style="color:hsl(42 80% 64%)">Bia</b><p data-hf-id="hf-87e8">CRÍTICO <img data-hf-id="hf-obvj" class="em" src="assets/emoji/1f62d.svg" alt="" /><img data-hf-id="hf-0qe7" class="em" src="assets/emoji/1f62d.svg" alt="" /></p></div></div>
+          <div data-hf-id="hf-hhcr" class="wt-m" data-t="5.25"><span data-hf-id="hf-e1hf" class="av" style="background:hsl(304 55% 48%)">J</span><div data-hf-id="hf-w8fr"><b data-hf-id="hf-0tny" style="color:hsl(304 70% 72%)">Japa</b><p data-hf-id="hf-rkxs">NÃO ACREDITO</p></div></div>
+          <div data-hf-id="hf-ww01" class="wt-m" data-t="6.04"><span data-hf-id="hf-jaik" class="av" style="background:hsl(84 55% 48%)">T</span><div data-hf-id="hf-wmqs"><b data-hf-id="hf-2p7y" style="color:hsl(84 70% 66%)">Thiago</b><p data-hf-id="hf-c0r1">GG <img data-hf-id="hf-nttp" class="em" src="assets/emoji/1f451.svg" alt="" /></p></div></div>
+          <div data-hf-id="hf-x9kl" class="wt-m" data-t="6.75"><span data-hf-id="hf-rz46" class="av" style="background:hsl(2 55% 48%)">R</span><div data-hf-id="hf-vftp"><b data-hf-id="hf-kc8o" style="color:hsl(2 80% 70%)">Rafa</b><p data-hf-id="hf-vc2l">chora, boss <img data-hf-id="hf-0c36" class="em" src="assets/emoji/1f62d.svg" alt="" /></p></div></div>
+        </div>
+      </div>
+    </div>
+    <div data-hf-id="hf-q695" class="wt-rain" id="wt-rain" data-layout-ignore></div>
+    <svg data-hf-id="hf-6k7u" class="cursor" id="wt-cursor" viewBox="0 0 24 24"><path data-hf-id="hf-ds6k" d="M4 2 L4 19 L8.5 15 L11.5 22 L14.5 20.7 L11.6 14 L18 14 Z" fill="#fff" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/></svg>
+    <i data-hf-id="hf-smqu" class="wt-flash" id="wt-flash"></i>
+
+    <style>
+      @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-Regular.ttf"); font-display: block; }
+      @font-face { font-family: "Press Start 2P"; src: url("assets/fonts/PressStart2P-Regular.ttf"); font-display: block; }
+      [data-composition-id="watch"] { position: absolute; inset: 0; overflow: hidden; }
+      .wt-ground { position: absolute; inset: 0; background: #1d2130; }
+      .wt-bia { left: 760px; top: 110px; width: 1000px; }
+      .wt-text { position: absolute; left: 110px; top: 150px; width: 600px; }
+      .wt-num { font-family: "Anton", sans-serif; font-size: 230px; line-height: 0.9; color: #8ea2ff; }
+      .wt-title { margin-top: 26px; font: 800 80px/1.02 Inter; letter-spacing: -0.03em; color: #fff; }
+      .wt-popup { position: absolute; left: 1100px; top: 790px; width: 760px; height: 236px; filter: drop-shadow(0 24px 40px rgba(0,0,0,.55)); }
+      .wt-stage { position: absolute; inset: 0; opacity: 0; }
+      .wt-viewer { position: absolute; left: 50px; top: 96px; width: 1400px; border-radius: 16px; overflow: hidden; background: #000; box-shadow: 0 34px 90px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.1); }
+      .wt-vbar { height: 40px; background: #0c0e12; display: flex; align-items: center; gap: 10px; padding: 0 16px; color: #9aa1b2; font: 600 18px Inter; }
+      .wt-vbar i { width: 14px; height: 14px; border-radius: 50%; background: #2a2f3a; }
+      .wt-vbar span { margin-left: 8px; }
+      .wt-screen { position: relative; width: 1400px; height: 787.5px; overflow: hidden; }
+      .wt-gamebox { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform: scale(0.729167); transform-origin: 0 0; }
+      /* client/viewer/viewer.css at 1.4× */
+      .wt-bar { position: absolute; top: 17px; left: 17px; right: 17px; display: flex; justify-content: space-between; align-items: center; gap: 17px; padding: 11px 14px; border: 1px solid rgba(255,255,255,.1); border-radius: 17px; background: rgba(16,18,24,.78); color: #eef0f6; font: 18px/1.4 Inter; }
+      .wt-who { display: flex; align-items: center; gap: 14px; }
+      .wt-av { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: hsl(164 55% 48%); font-weight: 700; }
+      .wt-t { font-weight: 600; }
+      .wt-r { color: #9aa1b2; font-size: 17px; }
+      .wt-actions { display: flex; gap: 8px; }
+      .wt-actions b { font-weight: 400; padding: 8px 14px; border-radius: 11px; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.06); }
+      .wt-actions b.on { border-color: #4f6bed; background: rgba(79,107,237,.25); }
+      .wt-stats { position: absolute; left: 17px; bottom: 17px; min-width: 330px; padding: 14px 17px; border: 1px solid rgba(255,255,255,.1); border-radius: 17px; background: rgba(16,18,24,.78); color: #eef0f6; font: 17px/1.6 "JetBrains Mono", monospace; display: grid; grid-template-columns: auto 1fr; column-gap: 20px; }
+      .wt-stats dt { color: #9aa1b2; }
+      .wt-stats dd { margin: 0; text-align: right; }
+      .wt-chat { position: absolute; left: 1480px; top: 96px; width: 400px; height: 827.5px; border-radius: 16px; background: #2b2d31; overflow: hidden; box-shadow: 0 34px 90px rgba(0,0,0,.45); }
+      .wt-chead { height: 64px; display: flex; align-items: center; padding: 0 22px; color: #f2f3f5; font: 800 24px Inter; border-bottom: 2px solid #232428; }
+      .wt-chead b { color: #80848e; font-weight: 600; margin-right: 6px; }
+      .wt-msgs { position: absolute; left: 0; right: 0; bottom: 18px; display: flex; flex-direction: column; gap: 16px; padding: 0 20px; }
+      .wt-m { display: flex; gap: 14px; align-items: flex-start; }
+      .wt-m .av { width: 46px; height: 46px; border-radius: 50%; flex: none; display: grid; place-items: center; color: #fff; font: 700 20px Inter; }
+      .wt-m b { font: 700 22px Inter; }
+      .wt-m p { font: 400 25px/1.3 Inter; color: #e3e5e8; }
+      .wt-rain { position: absolute; inset: 0; pointer-events: none; }
+      .wt-rain img { position: absolute; top: 0; }
+      .wt-flash { position: absolute; inset: 0; background: #fff; }
+    </style>
+
+    <script>
+      (function () {
+        const root = document.querySelector('[data-composition-id="watch"] .wt-ground').parentElement;
+        const $ = (s) => root.querySelector(s);
+        const build = () => {
+          const tl = gsap.timeline({ paused: true });
+          // Out of the white flash of step 2.
+          tl.fromTo("#wt-flash", { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power2.out" }, 0);
+          tl.fromTo("#wt-bia", { opacity: 0.0, y: 30 }, { opacity: 0.85, y: 0, duration: 0.4, ease: "power3.out" }, 0);
+          tl.fromTo("#wt-text", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 0.05);
+
+          // The popup (the app's own).
+          tl.fromTo("#wt-popup", { x: 140, opacity: 0 }, { x: 0, opacity: 1, duration: 0.32, ease: "back.out(1.8)" }, 0.14);
+          tl.fromTo("#wt-cursor", { x: 1300, y: 1120 }, { x: 1597, y: 972, duration: 0.6, ease: "power3.inOut" }, 0.6);
+          tl.to("#wt-cursor", { scale: 0.82, duration: 0.07, transformOrigin: "0 0" }, 1.24);
+          tl.to("#wt-cursor", { scale: 1, duration: 0.12 }, 1.31);
+          tl.to("#wt-cursor", { opacity: 0, duration: 0.15 }, 1.5);
+
+          // The viewer opens.
+          tl.to(["#wt-popup", "#wt-text", "#wt-bia"], { opacity: 0, duration: 0.2 }, 1.45);
+          tl.fromTo("#wt-stage", { opacity: 0 }, { opacity: 1, duration: 0.15, immediateRender: false }, 1.4);
+          tl.fromTo("#wt-viewer", { scale: 0.35, x: 600, y: 330, transformOrigin: "100% 100%" }, { scale: 1, x: 0, y: 0, duration: 0.42, ease: "power4.out", immediateRender: false }, 1.4);
+          tl.fromTo("#wt-chat", { x: 460 }, { x: 0, duration: 0.42, ease: "power4.out", immediateRender: false }, 1.55);
+          tl.to("#wt-bar", { opacity: 0, y: -10, duration: 0.25 }, 3.6);
+
+          // The fight: hit at 4.36 (on the beat), victory at 5.76.
+          const game = SLGame.mount($("#wt-gamebox"));
+          game.addTo(tl, 2.16);
+
+          // Live stats move like real ones.
+          const fps = [60, 60, 59, 60, 60, 61, 60, 60, 59, 60, 60, 60, 60, 60];
+          const br = ["11.8", "12.1", "11.6", "12.3", "11.9", "12.0", "12.2", "11.7", "12.4", "11.9", "12.0", "12.1", "11.8", "12.0"];
+          const dec = ["1.9", "2.1", "1.8", "2.0", "2.3", "1.9", "2.0", "1.8", "2.2", "1.9", "2.0", "1.9", "2.1", "1.9"];
+          const rtt = ["9", "10", "9", "11", "9", "10", "12", "9", "10", "9", "11", "10", "9", "10"];
+          for (let i = 0; i < fps.length; i++) {
+            const at = 1.6 + i * 0.5;
+            tl.set("#wt-fps", { textContent: fps[i] }, at);
+            tl.set("#wt-br", { textContent: `${br[i]} Mbps` }, at);
+            tl.set("#wt-dec", { textContent: `${dec[i]} ms` }, at);
+            tl.set("#wt-rtt", { textContent: `${rtt[i]} ms` }, at);
+          }
+
+          // Friends react in the chat column.
+          root.querySelectorAll(".wt-m").forEach((m) => {
+            const t = Number(m.dataset.t);
+            tl.set(m, { display: "none" }, 0);
+            tl.set(m, { display: "flex" }, t);
+            tl.fromTo(m, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.22, ease: "power3.out", immediateRender: false }, t);
+          });
+
+          // Crying-emoji rain after the boss falls (seeded positions).
+          let seed = 11;
+          const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+          const rain = $("#wt-rain");
+          for (let i = 0; i < 22; i++) {
+            const img = document.createElement("img");
+            img.src = "assets/emoji/1f62d.svg";
+            const size = 70 + Math.round(rnd() * 70);
+            img.style.cssText = `left:${Math.round(rnd() * 1820)}px;width:${size}px;height:${size}px;opacity:0`;
+            rain.appendChild(img);
+            const at = 5.9 + rnd() * 1.8;
+            tl.fromTo(img, { y: -180, rotation: -30 + rnd() * 60, opacity: 1 }, { y: 1200, rotation: -40 + rnd() * 80, duration: 1.3 + rnd() * 0.7, ease: "power1.in", immediateRender: false }, at);
+          }
+          window.__timelines["watch"] = tl;
+        };
+        document.fonts.load('30px "Press Start 2P"', "LAG").then(build);
+      })();
+    </script>
+  </div>
+</template>

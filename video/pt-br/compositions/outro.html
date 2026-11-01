@@ -1,0 +1,37 @@
+<!-- Scene 8 (55.10 → 61.5 s): where to get it. The laugh plays under it (index.html, 55.45 s). -->
+<template id="outro-template">
+  <div data-hf-id="hf-zo4a" data-composition-id="outro" data-width="1920" data-height="1080" data-duration="6.4">
+    <div data-hf-id="hf-wbmv" class="ot-ground"></div>
+    <div data-hf-id="hf-nagi" class="ot-lockup" id="ot-lockup">
+      <img data-hf-id="hf-jwao" class="ot-icon" id="ot-icon" src="assets/icon.svg" alt="" />
+      <div data-hf-id="hf-8bg4" class="ot-name" id="ot-name">ScreenLink</div>
+    </div>
+    <div data-hf-id="hf-ogej" class="ot-free" id="ot-free">Grátis pra Windows e Linux.</div>
+    <div data-hf-id="hf-gp0g" class="ot-url" id="ot-url">github.com/dilincoln/screenlink</div>
+    <div data-hf-id="hf-ji93" class="ot-last" id="ot-last">Agora sim: compartilha aí. <img data-hf-id="hf-kyj8" class="em" src="assets/emoji/1f60e.svg" alt="" /></div>
+    <i data-hf-id="hf-r6fq" class="ot-flash" id="ot-flash"></i>
+    <style>
+      [data-composition-id="outro"] { position: absolute; inset: 0; overflow: hidden; }
+      .ot-ground { position: absolute; inset: 0; background: #4f6bed; }
+      .ot-lockup { position: absolute; left: 0; right: 0; top: 220px; display: flex; align-items: center; justify-content: center; gap: 40px; }
+      .ot-icon { width: 190px; height: 190px; border-radius: 44px; background: #fff; padding: 10px; box-shadow: 0 20px 0 rgba(10, 20, 80, .25); }
+      .ot-name { font: 900 168px/1 Inter; letter-spacing: -0.045em; color: #fff; }
+      .ot-free { position: absolute; left: 0; right: 0; top: 500px; text-align: center; font: 700 68px/1.2 Inter; letter-spacing: -0.02em; color: #fff; }
+      .ot-url { position: absolute; left: 50%; top: 620px; padding: 18px 40px; border-radius: 18px; background: #111318; color: #fff; font: 700 52px "JetBrains Mono", monospace; white-space: nowrap; }
+      .ot-last { position: absolute; left: 0; right: 0; top: 840px; text-align: center; font: 800 60px Inter; color: #fff; }
+      .ot-flash { position: absolute; inset: 0; background: #fff; }
+    </style>
+    <script>
+      (function () {
+        const tl = gsap.timeline({ paused: true });
+        tl.fromTo("#ot-flash", { opacity: 0.9 }, { opacity: 0, duration: 0.4, ease: "power2.out" }, 0);
+        tl.fromTo("#ot-icon", { scale: 2.6, rotation: 14, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.4, ease: "back.out(1.8)" }, 0);
+        tl.fromTo("#ot-name", { x: -60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "power4.out" }, 0.15);
+        tl.fromTo("#ot-free", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "power3.out" }, 0.73);
+        tl.fromTo("#ot-url", { xPercent: -50, y: 40, opacity: 0 }, { xPercent: -50, y: 0, opacity: 1, duration: 0.35, ease: "power3.out" }, 1.45);
+        tl.fromTo("#ot-last", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(2.2)" }, 2.91);
+        window.__timelines["outro"] = tl;
+      })();
+    </script>
+  </div>
+</template>

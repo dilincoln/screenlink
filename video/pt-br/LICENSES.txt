@@ -1,0 +1,54 @@
+Créditos e licenças do vídeo de apresentação (pt-BR)
+=====================================================
+
+Música de fundo
+---------------
+"Powerup!" — Jeremy Blake
+Fonte: YouTube Audio Library ("Provided to YouTube by YouTube Audio Library",
+℗ YouTube Audio Library, lançada em 2018-11-27)
+https://www.youtube.com/watch?v=-tJ23mRbmps
+Usada a parte de 2:18 a 3:46 da faixa (assets/audio/music-powerup.mp3).
+Os termos de uso da faixa são os da YouTube Audio Library (YouTube Studio →
+Biblioteca de áudio); confira lá antes de publicar fora do YouTube.
+
+Áudios de meme
+--------------
+Trechos curtos de memes brasileiros de domínio popular, usados como referência
+de fundo (com reverb, filtro e volume baixo):
+  - assets/audio/meme-acorda-cara.mp3   "acorda, cara!" (Monark)
+  - assets/audio/meme-ja-comecou.mp3    "já começou!" (Monark)
+  - assets/audio/meme-petralhada.mp3    "…vai chorar a noite toda hoje"
+  - assets/audio/meme-risada.mp3        risada
+Os direitos pertencem aos respectivos autores.
+
+Efeitos sonoros
+---------------
+assets/audio/sfx-*.mp3: sintetizados com FFmpeg por mock/audio.sh (sem
+material de terceiros).
+assets/audio/app-stream-start.mp3: som do próprio ScreenLink
+(client/assets/stream-start.mp3).
+
+Fontes (SIL Open Font License 1.1 — textos completos em assets/fonts/OFL-*.txt)
+-----------------------------------------------------------------------------
+  - Inter — The Inter Project Authors
+  - Anton — The Anton Project Authors
+  - Press Start 2P — The Press Start 2P Project Authors (CodeMan38)
+  - JetBrains Mono — The JetBrains Mono Project Authors
+
+Emojis
+------
+Twemoji — Copyright Twitter, Inc. e outros colaboradores (jdecked/twemoji)
+Licença CC-BY 4.0: https://creativecommons.org/licenses/by/4.0/
+Arquivos em assets/emoji/.
+
+Bibliotecas
+-----------
+GSAP 3.14.2 (assets/js/gsap.min.js) — GreenSock, licença "Standard 'No Charge'"
+https://gsap.com/standard-license
+Renderizado com HyperFrames (https://hyperframes.heygen.com).
+
+Jogo e telas
+------------
+"O Lag Supremo" (assets/js/game.js) é um jogo fictício desenhado para o vídeo.
+As telas do app são o próprio ScreenLink (client/ui, client/popup) com os
+dados do banco de demonstração em mock/.
