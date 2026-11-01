@@ -18,9 +18,9 @@
   .sls .page { position:absolute; right:90px; bottom:70px; font-size:24px; color:#8a90a0; }
   `;
   const BARS = [
-    { label: "Ping 20 ms", value: 92, color: "#3dd68c" },
-    { label: "Ping 80 ms", value: 64, color: "#f5a524" },
-    { label: "Ping 200 ms", value: 21, color: "#e5484d" },
+    { label: "Antes", value: 38, color: "#e5484d" },
+    { label: "3 meses", value: 21, color: "#f5a524" },
+    { label: "6 meses", value: 9, color: "#3dd68c" },
   ];
 
   function mount(container) {
@@ -35,13 +35,13 @@
     root.innerHTML = `
       <i class="side"></i>
       <div class="kicker">TCC · Grupo 4 · Resultados</div>
-      <h1>Latência muda o jogo</h1>
+      <h1>A horta mudou o bandejão</h1>
       <ul>
-        <li>40 jogadores, 3 níveis de ping</li>
-        <li>Acertos caem 77% a 200 ms</li>
-        <li>Abaixo de 50 ms ninguém percebe</li>
+        <li>320 alunos entrevistados</li>
+        <li>Desperdício caiu de 38% para 9%</li>
+        <li>Metade do tempero vem da horta</li>
       </ul>
-      <div class="chart"><div class="ctitle">Taxa de acerto (%)</div><i class="axis"></i></div>
+      <div class="chart"><div class="ctitle">Comida que sobra no prato (%)</div><i class="axis"></i></div>
       <div class="foot">Gabi · Bia · Nanda · Lucas</div>
       <div class="page">7 / 12</div>`;
     const chart = root.querySelector(".chart");
@@ -49,10 +49,10 @@
       const left = 30 + i * 220;
       const bar = document.createElement("i");
       bar.className = "bar";
-      bar.style.cssText = `left:${left}px;height:${b.value * 4.8}px;background:${b.color}`;
+      bar.style.cssText = `left:${left}px;height:${b.value * 11}px;background:${b.color}`;
       const val = document.createElement("div");
       val.className = "val";
-      val.style.cssText = `left:${left}px;bottom:${84 + b.value * 4.8 + 14}px;color:${b.color}`;
+      val.style.cssText = `left:${left}px;bottom:${84 + b.value * 11 + 14}px;color:${b.color}`;
       val.textContent = `${b.value}%`;
       const lbl = document.createElement("div");
       lbl.className = "lbl";

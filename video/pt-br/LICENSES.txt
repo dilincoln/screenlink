@@ -7,8 +7,9 @@ Música de fundo
 Fonte: YouTube Audio Library ("Provided to YouTube by YouTube Audio Library",
 ℗ YouTube Audio Library, lançada em 2018-11-27)
 https://www.youtube.com/watch?v=-tJ23mRbmps
-A faixa inteira está em assets/audio/music-powerup.mp3; o vídeo usa três
-trechos dela (1:10,4–1:45,4; 3:35,9–4:05,0; 4:28,3–4:41,2).
+A faixa inteira está em assets/audio/music-powerup.mp3. O vídeo usa
+assets/audio/music-edit.mp3, uma edição dela com três trechos (0:00–1:09,5;
+1:32,9–1:54,4; 3:50,8–4:45).
 Os termos de uso da faixa são os da YouTube Audio Library (YouTube Studio →
 Biblioteca de áudio); confira lá antes de publicar fora do YouTube.
 
@@ -20,6 +21,8 @@ de fundo (com reverb, filtro e volume baixo):
   - assets/audio/meme-ja-comecou.mp3    "já começou!" (Monark)
   - assets/audio/meme-petralhada.mp3    "…vai chorar a noite toda hoje"
   - assets/audio/meme-risada.mp3        risada
+  - assets/audio/meme-ninguem-vai-pegar-meu-telefone.mp3  "ninguém vai pegar meu telefone"
+  - assets/audio/meme-pegaram-meu-telefone.mp3            "pegaram meu telefone"
 Os direitos pertencem aos respectivos autores.
 
 Efeitos sonoros

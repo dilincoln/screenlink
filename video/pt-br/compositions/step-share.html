@@ -1,7 +1,7 @@
-<!-- Scene 5 (34.74 → 40.56 s): step 2. The real share dialog (assets/screens/share-dialog.png): the
+<!-- Scene 5 (47.27 → 58.91 s, 16 beats): step 2. The real share dialog (assets/screens/share-dialog.png): the
      camera goes into the settings that matter for games, comes back, Start sharing on the beat. -->
 <template id="step-share-template">
-  <div data-hf-id="hf-d5vg" data-composition-id="step-share" data-width="1920" data-height="1080" data-duration="5.82">
+  <div data-hf-id="hf-d5vg" data-composition-id="step-share" data-width="1920" data-height="1080" data-duration="11.64">
     <div data-hf-id="hf-eu1i" class="ss-ground"></div>
     <div data-hf-id="hf-unhe" class="ss-cam" id="ss-cam">
       <div data-hf-id="hf-2yfu" class="ss-text" id="ss-text">
@@ -63,6 +63,8 @@
         tl.to("#ss-win", { scale: 0.97, duration: 0.08 }, 5.09);
         tl.to("#ss-win", { scale: 1, duration: 0.2, ease: "back.out(2)" }, 5.17);
         tl.fromTo("#ss-flash", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.in", immediateRender: false }, 5.47);
+        // Stretched to twice its beats for the longer cut: every start moves, every tween keeps its speed.
+        tl.getChildren(false, true, true).forEach((c) => c.startTime(c.startTime() * 2));
         window.__timelines["step-share"] = tl;
       })();
     </script>

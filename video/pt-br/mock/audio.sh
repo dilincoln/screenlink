@@ -5,7 +5,7 @@
 #
 # <music.mp3>  "Powerup!" by Jeremy Blake (YouTube Audio Library), downloaded from
 #              https://www.youtube.com/watch?v=-tJ23mRbmps — see LICENSES.txt.
-# <memes dir>  the four dry meme clips, named as below.
+# <memes dir>  the six dry meme clips, named as below.
 #
 # The memes are only loudness-matched and padded with silence here: the reverb, filters and
 # level that push them into the background are in index.html (data-fx-chain), so they can be
@@ -21,7 +21,7 @@ mkdir -p "$OUT"
 cp "$MUSIC" "$OUT/music-powerup.mp3"
 
 # Memes: mono, loudness-matched to -20 LUFS, 2.5 s of silence after for the reverb tail.
-for name in acorda-cara ja-comecou petralhada risada; do
+for name in acorda-cara ja-comecou petralhada risada ninguem-vai-pegar-meu-telefone pegaram-meu-telefone; do
   ffmpeg -v error -y -i "$MEMES/$name.mp3" \
     -af "aformat=channel_layouts=mono,loudnorm=I=-20:TP=-3:LRA=11,apad=pad_dur=2.5" \
     -ar 48000 -c:a libmp3lame -b:a 160k "$OUT/meme-$name.mp3"

@@ -1,0 +1,86 @@
+<!-- Scene 11 (105.27 → 128.54 s, 32 beats): the rest of chorus 3, one flat card per bar with what the
+     app does (all of it in client/: invite codes, the popup, 4K / 144 fps in the share dialog, system
+     audio minus Discord in system-audio.js, the device key instead of an account (no phone number), the Windows and
+     Linux builds). The last two bars call the friends in, one avatar a beat, into the outro. -->
+<template id="features-template">
+  <div data-hf-id="hf-rxn4" data-composition-id="features" data-width="1920" data-height="1080" data-duration="23.27">
+    <div data-hf-id="hf-m9wy" class="ft-stack" id="ft-stack"></div>
+    <div data-hf-id="hf-c319" class="ft-card ft-end" id="ft-end">
+      <div data-hf-id="hf-wh5p" class="ft-word" id="ft-endw">Chama a galera.</div>
+      <div data-hf-id="hf-2otu" class="ft-avs" id="ft-avs"></div>
+    </div>
+    <i data-hf-id="hf-3jlm" class="ft-flash" id="ft-flash"></i>
+    <style>
+      [data-composition-id="features"] { position: absolute; inset: 0; overflow: hidden; background: #0c0e12; }
+      .ft-card { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 34px; opacity: 0; }
+      .ft-word { font: 400 190px/1 "Anton", sans-serif; text-transform: uppercase; letter-spacing: 0.01em; white-space: nowrap; }
+      .ft-sub { font: 700 60px/1.15 Inter; letter-spacing: -0.02em; white-space: nowrap; }
+      .ft-em { width: 150px; height: 150px; }
+      .ft-avs { display: flex; gap: 26px; }
+      .ft-avs span { width: 130px; height: 130px; border-radius: 50%; display: grid; place-items: center; color: #fff; font: 700 56px Inter; box-shadow: 0 0 0 6px rgba(255,255,255,.25), 0 14px 30px rgba(0,0,0,.35); }
+      .ft-end { background: #4f6bed; color: #fff; }
+      .ft-flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+    </style>
+    <script>
+      (function () {
+        const root = document.querySelector('[data-composition-id="features"] .ft-stack').parentElement;
+        const tl = gsap.timeline({ paused: true });
+        const P = 0.727273;
+        const BAR = 4 * P;
+        const cards = [
+          ["Sala com código", "Manda o código, o amigo entra.", "1f44d", "#4f6bed", "#fff"],
+          ["Aviso pra sala toda", "Começou a live, todo mundo fica sabendo.", "1f440", "#eef0f6", "#111318"],
+          ["Até 4K e 144 fps", "Resolução, fps e bitrate na sua mão.", "1f525", "#e5484d", "#fff"],
+          ["Som do jogo junto", "Sem o eco do Discord.", "1f50a", "#111318", "#fff"],
+          ["Sem cadastro", "Nem pede o seu telefone.", "1f60e", "#3dd68c", "#0c0e12"],
+          ["Windows e Linux", "Instalador, portátil, AppImage, .deb.", "1f4bb", "#8ea2ff", "#0c0e12"],
+        ];
+        const stack = root.querySelector("#ft-stack");
+        cards.forEach(([word, sub, em, bg, ink], i) => {
+          const c = document.createElement("div");
+          c.className = "ft-card";
+          c.style.background = bg;
+          c.style.color = ink;
+          c.innerHTML = `<img class="ft-em" src="assets/emoji/${em}.svg" alt="" /><div class="ft-word">${word}</div><div class="ft-sub">${sub}</div>`;
+          stack.appendChild(c);
+          const at = i * BAR;
+          tl.set(c, { opacity: 1 }, at);
+          tl.set(c, { opacity: 0 }, at + BAR);
+          tl.fromTo(c.querySelector(".ft-word"), { scale: 1.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.18, ease: "power4.out", immediateRender: false }, at);
+          tl.fromTo(c.querySelector(".ft-em"), { scale: 0.2, rotation: -25 }, { scale: 1, rotation: 0, duration: 0.3, ease: "back.out(2.6)", immediateRender: false }, at + 0.06);
+          tl.fromTo(c.querySelector(".ft-sub"), { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.25, ease: "power3.out", immediateRender: false }, at + P);
+          tl.fromTo(c.querySelector(".ft-word"), { scale: 1.05 }, { scale: 1, duration: 0.25, ease: "power3.out", immediateRender: false }, at + 2 * P);
+          tl.fromTo(c.querySelector(".ft-em"), { y: 0 }, { y: -18, duration: P / 2, ease: "sine.out", yoyo: true, repeat: 1, immediateRender: false }, at + 3 * P);
+          // "Sem cadastro": "ninguém vai pegar meu telefone" plays on the card, then "pegaram meu
+          // telefone" (index.html) on its last beat, where the 😎 turns into a 💀.
+          if (em === "1f60e") {
+            const img = c.querySelector(".ft-em");
+            tl.set(img, { attr: { src: "assets/emoji/1f60e.svg" } }, 0);
+            tl.set(img, { attr: { src: "assets/emoji/1f480.svg" } }, at + 3 * P);
+            tl.fromTo(img, { scale: 1.6, rotation: 20 }, { scale: 1, rotation: 0, duration: 0.3, ease: "back.out(3)", immediateRender: false }, at + 3 * P);
+          }
+        });
+
+        // Last two bars: "Chama a galera." and the friends, one a beat.
+        const END = 6 * BAR;
+        const people = [["B", 42], ["R", 2], ["D", 246], ["J", 304], ["T", 84], ["N", 232], ["G", 12], ["M", 190]];
+        const avs = root.querySelector("#ft-avs");
+        const els = people.map(([l, h]) => {
+          const s = document.createElement("span");
+          s.textContent = l;
+          s.style.background = `hsl(${h} 55% 48%)`;
+          avs.appendChild(s);
+          return s;
+        });
+        tl.set("#ft-end", { opacity: 1 }, END);
+        tl.fromTo("#ft-endw", { scale: 1.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.18, ease: "power4.out", immediateRender: false }, END);
+        tl.set(els, { opacity: 0 }, 0);
+        els.forEach((s, i) => {
+          tl.fromTo(s, { scale: 0.2, opacity: 0, y: 40 }, { scale: 1, opacity: 1, y: 0, duration: 0.25, ease: "back.out(2.4)", immediateRender: false }, END + i * P);
+        });
+        tl.fromTo("#ft-flash", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.in", immediateRender: false }, 32 * P - 0.32);
+        window.__timelines["features"] = tl;
+      })();
+    </script>
+  </div>
+</template>

@@ -1,0 +1,70 @@
+<!-- Scene 6 (58.91 → 63.09 s, 5.75 beats): Lucas pressed "Começar a compartilhar", and the app's real
+     popup (assets/screens/popup.png) lands on six friends' screens, one per half beat. The camera
+     then dives into Bia's screen, where scene 7 (watch) picks up. -->
+<template id="notify-template">
+  <div data-hf-id="hf-36lt" data-composition-id="notify" data-width="1920" data-height="1080" data-duration="4.18">
+    <div data-hf-id="hf-21l6" class="nt-ground"></div>
+    <div data-hf-id="hf-dpbq" class="nt-cam" id="nt-cam">
+      <div data-hf-id="hf-xcz8" class="nt-head" id="nt-head"><b data-hf-id="hf-zfbk" class="nt-live">AO VIVO</b><span data-hf-id="hf-9dlz">Lucas começou a compartilhar</span></div>
+      <div data-hf-id="hf-thwo" class="nt-grid" id="nt-grid"></div>
+    </div>
+    <i data-hf-id="hf-43kq" class="nt-flash" id="nt-flash"></i>
+    <style>
+      [data-composition-id="notify"] { position: absolute; inset: 0; overflow: hidden; }
+      .nt-ground { position: absolute; inset: 0; background: #1d2130; }
+      .nt-cam { position: absolute; inset: 0; transform-origin: 0 0; }
+      .nt-head { position: absolute; left: 0; right: 0; top: 70px; display: flex; justify-content: center; align-items: center; gap: 28px; color: #fff; font: 800 72px/1 Inter; letter-spacing: -0.03em; }
+      .nt-live { padding: 12px 22px; border-radius: 14px; background: #e5484d; font: 800 40px/1 Inter; letter-spacing: 0.04em; }
+      .nt-grid { position: absolute; left: 100px; top: 220px; width: 1720px; height: 790px; }
+      .nt-scr { position: absolute; width: 540px; height: 370px; border-radius: 16px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.08); }
+      .nt-scr .bar { height: 34px; background: #0c0e12; display: flex; align-items: center; gap: 8px; padding: 0 14px; color: #9aa1b2; font: 600 16px Inter; }
+      .nt-scr .bar i { width: 11px; height: 11px; border-radius: 50%; background: #2a2f3a; }
+      .nt-scr .bar span { margin-left: 6px; }
+      .nt-scr .who { position: absolute; left: 30px; top: 70px; display: flex; align-items: center; gap: 18px; color: #fff; font: 800 44px Inter; letter-spacing: -0.02em; }
+      .nt-scr .who .av { width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center; font: 700 34px Inter; color: #fff; box-shadow: 0 0 0 4px rgba(255,255,255,.25); }
+      .nt-scr .pop { position: absolute; right: 16px; bottom: 16px; width: 380px; height: 118px; filter: drop-shadow(0 12px 22px rgba(0,0,0,.5)); }
+      .nt-flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+    </style>
+    <script>
+      (function () {
+        const root = document.querySelector('[data-composition-id="notify"] .nt-ground').parentElement;
+        const tl = gsap.timeline({ paused: true });
+        const P = 0.727273;
+        // Bia first (top left), so the dive at the end lands on her screen.
+        const friends = [
+          ["Bia", 42], ["Rafa", 2], ["Duda", 246],
+          ["Japa", 304], ["Thiago", 84], ["Nanda", 232],
+        ];
+        const grid = root.querySelector("#nt-grid");
+        const cards = friends.map(([name, hue], i) => {
+          const el = document.createElement("div");
+          el.className = "nt-scr";
+          el.style.left = `${(i % 3) * 590}px`;
+          el.style.top = `${Math.floor(i / 3) * 420}px`;
+          el.style.background = `linear-gradient(135deg, hsl(${hue} 45% 30%), hsl(${(hue + 40) % 360} 50% 16%))`;
+          el.innerHTML =
+            `<div class="bar"><i></i><i></i><i></i><span>ScreenLink — ${name}</span></div>` +
+            `<div class="who"><span class="av" style="background:hsl(${hue} 55% 48%)">${name[0]}</span>${name}</div>` +
+            `<img class="pop" src="assets/screens/popup.png" alt="" />`;
+          grid.appendChild(el);
+          return el;
+        });
+
+        tl.fromTo("#nt-head", { y: -40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power3.out" }, 0);
+        tl.fromTo("#nt-head .nt-live", { scale: 1 }, { scale: 1.12, duration: P / 2, ease: "sine.inOut", yoyo: true, repeat: 7, immediateRender: false }, 0.3);
+        cards.forEach((c, i) => {
+          tl.fromTo(c, { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power3.out" }, 0.05 + i * 0.06);
+          // One popup per half beat, from the second half beat on.
+          const at = P / 2 + i * (P / 2);
+          tl.fromTo(c.querySelector(".pop"), { x: 120, opacity: 0 }, { x: 0, opacity: 1, duration: 0.25, ease: "back.out(1.8)", immediateRender: false }, at);
+          tl.fromTo(c, { scale: 1.04 }, { scale: 1, duration: 0.25, ease: "power3.out", immediateRender: false }, at);
+        });
+        tl.set(cards.map((c) => c.querySelector(".pop")), { opacity: 0 }, 0);
+        // The dive into Bia's screen: her card fills the frame and flashes into the next scene.
+        tl.to("#nt-cam", { scale: 3.4, x: -100 * 3.4 + 40, y: -220 * 3.4 + 60, duration: 1.2, ease: "power3.in" }, 4.18 - 1.25);
+        tl.fromTo("#nt-flash", { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power2.in", immediateRender: false }, 4.18 - 0.28);
+        window.__timelines["notify"] = tl;
+      })();
+    </script>
+  </div>
+</template>

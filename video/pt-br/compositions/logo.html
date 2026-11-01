@@ -1,7 +1,7 @@
-<!-- Scene 3 (23.10 → 28.92 s): the drop. White flash, the app icon slams in, the name, then one
+<!-- Scene 3 (24.00 → 35.64 s, 16 beats): the drop. White flash, the app icon slams in, the name, then one
      line per bar that says what it is. -->
 <template id="logo-template">
-  <div data-hf-id="hf-gndh" data-composition-id="logo" data-width="1920" data-height="1080" data-duration="5.82">
+  <div data-hf-id="hf-gndh" data-composition-id="logo" data-width="1920" data-height="1080" data-duration="11.64">
     <div data-hf-id="hf-vdct" class="lg-ground"></div>
     <i data-hf-id="hf-fevi" class="lg-ring" id="lg-ring"></i>
     <div data-hf-id="hf-hwte" class="lg-lockup" id="lg-lockup">
@@ -43,6 +43,8 @@
           if (i < lines.length - 1) tl.to(l, { y: -50, opacity: 0, duration: 0.18, ease: "power2.in" }, at + 2 * P - 0.18);
         });
         tl.to(["#lg-lockup", "#lg-l3"], { y: -40, opacity: 0, duration: 0.25, ease: "power2.in" }, 8 * P - 0.25);
+        // Stretched to twice its beats for the longer cut: every start moves, every tween keeps its speed.
+        tl.getChildren(false, true, true).forEach((c) => c.startTime(c.startTime() * 2));
         window.__timelines["logo"] = tl;
       })();
     </script>

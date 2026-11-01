@@ -1,21 +1,22 @@
-<!-- Scene 7 (56.00 → 64.73 s, 12 beats): not only games. The study group's room (assets/screens/lucas-tcc.png),
-     "compartilha os slides aí", Gabi's slide in a viewer, then two lines of what it can do. -->
+<!-- Scene 10 (93.63 → 105.27 s, 16 beats): not only games. The study group's room (assets/screens/lucas-tcc.png),
+     "compartilha os slides aí", Gabi's slide in a viewer, then three lines of what it does for a presentation. -->
 <template id="slides-template">
-  <div data-hf-id="hf-25bu" data-composition-id="slides" data-width="1920" data-height="1080" data-duration="8.73">
+  <div data-hf-id="hf-25bu" data-composition-id="slides" data-width="1920" data-height="1080" data-duration="11.64">
     <div data-hf-id="hf-pfyj" class="sl-ground"></div>
     <div data-hf-id="hf-l869" class="appwin sl-app" id="sl-app">
       <div data-hf-id="hf-635v" class="tbar"><i data-hf-id="hf-wt6k"></i><i data-hf-id="hf-zeb8"></i><i data-hf-id="hf-y7e5"></i><span data-hf-id="hf-ag0p">ScreenLink</span></div>
       <img data-hf-id="hf-wnkp" class="shot" src="assets/screens/lucas-tcc.png" alt="" />
     </div>
     <div data-hf-id="hf-xn5u" class="sl-bubble" id="sl-bubble" data-layout-allow-occlusion>
-      <div data-hf-id="hf-ge9e" class="cmsg"><span data-hf-id="hf-tawx" class="av" style="background:hsl(232 55% 48%)">N</span><div data-hf-id="hf-yeow"><div data-hf-id="hf-y7yw"><span data-hf-id="hf-fvzx" class="nm" style="color:hsl(232 80% 76%)">Nanda</span><span data-hf-id="hf-pyx8" class="tm">agora</span></div><div data-hf-id="hf-f9q1" class="tx">Gabi, compartilha os slides aí <img data-hf-id="hf-qm1f" class="em" src="assets/emoji/1f64f.svg" alt="" /> tô no ônibus <img data-hf-id="hf-icwa" class="em" src="assets/emoji/1f68c.svg" alt="" /></div></div></div>
+      <div data-hf-id="hf-ge9e" class="cmsg"><span data-hf-id="hf-tawx" class="av" style="background:hsl(232 55% 48%)">N</span><div data-hf-id="hf-yeow"><div data-hf-id="hf-y7yw"><span data-hf-id="hf-fvzx" class="nm" style="color:hsl(232 80% 76%)">Nanda</span><span data-hf-id="hf-pyx8" class="tm">agora</span></div><div data-hf-id="hf-f9q1" class="tx">Gabi, compartilha os slides aí <img data-hf-id="hf-qm1f" class="em" src="assets/emoji/1f64f.svg" alt="" /> quero ver antes da banca <img class="em" src="assets/emoji/1f440.svg" alt="" /></div></div></div>
     </div>
     <div data-hf-id="hf-be8q" class="sl-viewer" id="sl-viewer">
       <div data-hf-id="hf-zjtz" class="sl-vbar"><i data-hf-id="hf-ylp6"></i><i data-hf-id="hf-0l8b"></i><i data-hf-id="hf-0zjc"></i><span data-hf-id="hf-i4vm">Gabi — Slides — apresentação final</span></div>
       <div data-hf-id="hf-uzse" class="sl-screen"><div data-hf-id="hf-85gy" class="sl-slidebox" id="sl-slidebox"></div></div>
     </div>
-    <div data-hf-id="hf-tpbr" class="sl-feat" id="sl-f1">60, 120, 144 fps. Até 4K.</div>
-    <div data-hf-id="hf-u7ke" class="sl-feat" id="sl-f2">Som do jogo junto, sem eco da call.</div>
+    <div data-hf-id="hf-tpbr" class="sl-feat" id="sl-f1">Slide, planilha, código.</div>
+    <div data-hf-id="hf-u7ke" class="sl-feat" id="sl-f2">Só a janela, ou a tela toda.</div>
+    <div data-hf-id="hf-1tvk" class="sl-feat" id="sl-f3">Nítido até na letra miúda.</div>
     <div data-hf-id="hf-7mjy" class="sl-card" id="sl-card"><div data-hf-id="hf-5mje">Não é só jogo.</div></div>
     <style>
       [data-composition-id="slides"] { position: absolute; inset: 0; overflow: hidden; }
@@ -51,6 +52,8 @@
         tl.fromTo("#sl-f1", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power3.out" }, 4 * P);
         tl.to("#sl-f1", { y: -30, opacity: 0, duration: 0.18, ease: "power2.in" }, 8 * P - 0.18);
         tl.fromTo("#sl-f2", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power3.out" }, 8 * P);
+        tl.to("#sl-f2", { y: -30, opacity: 0, duration: 0.18, ease: "power2.in" }, 12 * P - 0.18);
+        tl.fromTo("#sl-f3", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power3.out" }, 12 * P);
         window.__timelines["slides"] = tl;
       })();
     </script>

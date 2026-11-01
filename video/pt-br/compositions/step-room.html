@@ -1,8 +1,8 @@
-<!-- Scene 4 (28.92 → 34.74 s): step 1. Lucas's real ScreenLink window (assets/screens/lucas-room.png,
+<!-- Scene 4 (35.64 → 47.27 s, 16 beats): step 1. Lucas's real ScreenLink window (assets/screens/lucas-room.png,
      captured from client/ui with the demo database), the invite code copied, and the friends
      answering in the chat. Coordinates come from assets/screens/rects.json (CSS px × 0.875). -->
 <template id="step-room-template">
-  <div data-hf-id="hf-lwto" data-composition-id="step-room" data-width="1920" data-height="1080" data-duration="5.82">
+  <div data-hf-id="hf-lwto" data-composition-id="step-room" data-width="1920" data-height="1080" data-duration="11.64">
     <div data-hf-id="hf-fq4l" class="sr-ground"></div>
     <div data-hf-id="hf-8akm" class="sr-cam" id="sr-cam">
     <div data-hf-id="hf-y75o" class="sr-text" id="sr-text">
@@ -70,6 +70,8 @@
         tl.set("#sr-m1", { opacity: 0 }, 0);
 
         tl.to(["#sr-cam", "#sr-chat"], { x: -120, opacity: 0, duration: 0.25, ease: "power2.in" }, 5.57);
+        // Stretched to twice its beats for the longer cut: every start moves, every tween keeps its speed.
+        tl.getChildren(false, true, true).forEach((c) => c.startTime(c.startTime() * 2));
         window.__timelines["step-room"] = tl;
       })();
     </script>
