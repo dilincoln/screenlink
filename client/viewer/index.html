@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; media-src 'self' blob: mediastream:" />
@@ -13,7 +13,7 @@
 
     <div id="status" class="status">
       <div class="spinner"></div>
-      <p id="status-text">Connecting…</p>
+      <p id="status-text">Conectando…</p>
     </div>
 
     <header id="bar" class="bar">
@@ -25,9 +25,9 @@
         </div>
       </div>
       <div class="actions">
-        <button id="stats-btn" title="Stats (I)">Stats</button>
-        <button id="fit-btn" title="Fit or 1:1 pixels (O)">Fit</button>
-        <button id="fs-btn" title="Fullscreen (F11, double-click)">Fullscreen</button>
+        <button id="stats-btn" title="Estatísticas (I)">Estatísticas</button>
+        <button id="fit-btn" title="Ajustar ou pixels 1:1 (O)">Ajustar</button>
+        <button id="fs-btn" title="Tela cheia (F11, duplo clique)">Tela cheia</button>
       </div>
     </header>
 
@@ -36,15 +36,15 @@
     <!-- Right-click menu -->
     <div id="menu" class="menu" role="menu" hidden>
       <div class="menu-volume">
-        <button id="mute-toggle" class="icon" title="Mute (M)"></button>
+        <button id="mute-toggle" class="icon" title="Silenciar (M)"></button>
         <input id="volume" type="range" min="0" max="100" step="1" aria-label="Volume" />
         <span id="volume-out" class="volume-out"></span>
       </div>
-      <p id="no-audio" class="menu-note" hidden>This stream has no audio</p>
+      <p id="no-audio" class="menu-note" hidden>Esta transmissão não tem áudio</p>
       <div class="sep"></div>
-      <button data-action="fullscreen" role="menuitem">Fullscreen <kbd>F11</kbd></button>
-      <button data-action="stats" role="menuitem">Stats <kbd>I</kbd></button>
-      <button data-action="fit" role="menuitem">1:1 pixels <kbd>O</kbd></button>
+      <button data-action="fullscreen" role="menuitem">Tela cheia <kbd>F11</kbd></button>
+      <button data-action="stats" role="menuitem">Estatísticas <kbd>I</kbd></button>
+      <button data-action="fit" role="menuitem">Pixels 1:1 <kbd>O</kbd></button>
     </div>
 
     <script type="module" src="viewer.js"></script>

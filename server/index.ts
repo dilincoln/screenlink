@@ -106,10 +106,10 @@ function authenticate(req: Request): AuthResult {
   const header = req.headers.get("authorization") ?? "";
   const token = header.startsWith("Bearer ") ? header.slice(7) : new URL(req.url).searchParams.get("token");
   const user = token ? store.userByToken(token) : null;
-  if (!user) return { status: 401, code: "invalid_token", error: "invalid token" };
-  if (store.isBanned(user.fingerprint)) return { status: 403, code: "banned", error: "this device is banned from the server" };
+  if (!user) return { status: 401, code: "invalid_token", error: "token inválido" };
+  if (store.isBanned(user.fingerprint)) return { status: 403, code: "banned", error: "este dispositivo está banido do servidor" };
   if (passwordTag && user.pwTag !== passwordTag) {
-    return { status: 401, code: "password_required", error: "the server password changed; sign in again" };
+    return { status: 401, code: "password_required", error: "a senha do servidor mudou; entre de novo" };
   }
   return { user };
 }
@@ -121,7 +121,7 @@ function authed<R extends Request>(fn: (req: R, user: AuthUser) => Response | Pr
   return (req: R) => {
     const r = authenticate(req);
     if (!("user" in r)) return deny(r);
-    if (adminOnly && !isAdmin(r.user)) return fail(403, "admins only");
+    if (adminOnly && !isAdmin(r.user)) return fail(403, "apenas admins");
     return fn(req, r.user);
   };
 }
@@ -173,7 +173,7 @@ function kick(userId: string) {
   const ws = sockets.get(userId);
   if (ws) {
     sockets.delete(userId);
-    ws.close(4003, "banned");
+    ws.close(4003, "banido");
   }
   disconnect(userId);
 }
@@ -245,7 +245,7 @@ function endStream(stream: Stream) {
 }
 
 function startStream(user: User, msg: any) {
-  if (!store.role(msg.roomId, user.id)) throw new Error("not a member of this room");
+  if (!store.role(msg.roomId, user.id)) throw new Error("você não é membro desta sala");
   for (const s of streams.values()) if (s.sharerId === user.id) endStream(s);
   const s = msg.settings ?? {};
   const settings: StreamSettings = {
@@ -261,7 +261,7 @@ function startStream(user: User, msg: any) {
     id: crypto.randomUUID(),
     roomId: msg.roomId,
     sharerId: user.id,
-    title: cleanName(msg.title, 80) ?? "Screen",
+    title: cleanName(msg.title, 80) ?? "Tela",
     settings,
     startedAt: Date.now(),
     tree: new RelayTree(user.id, Math.min(Math.max(1, Number(msg.capacity) | 0), 16), MAX_DEPTH),
@@ -300,9 +300,9 @@ function handle(ws: Socket, msg: any): object | void {
 
     case "stream.join": {
       const s = streams.get(msg.streamId);
-      if (!s) throw new Error("this stream has ended");
-      if (!store.role(s.roomId, user.id)) throw new Error("not a member of this room");
-      if (s.sharerId === user.id) throw new Error("you are the one sharing");
+      if (!s) throw new Error("esta transmissão terminou");
+      if (!store.role(s.roomId, user.id)) throw new Error("você não é membro desta sala");
+      if (s.sharerId === user.id) throw new Error("você é quem está compartilhando");
       joinStream(s, user.id, Number(msg.capacity));
       return { stream: publicStream(s) };
     }
@@ -330,7 +330,7 @@ function handle(ws: Socket, msg: any): object | void {
       return {};
 
     default:
-      throw new Error(`unknown message: ${msg.type}`);
+      throw new Error(`mensagem desconhecida: ${msg.type}`);
   }
 }
 
@@ -350,9 +350,9 @@ const server = Bun.serve({
     "/api/auth": {
       POST: async (req, server) => {
         const ip = server.requestIP(req)?.address ?? "?";
-        if (tooManyFailures(ip)) return fail(429, "too many wrong passwords; try again in a few minutes");
+        if (tooManyFailures(ip)) return fail(429, "muitas senhas erradas; tente de novo em alguns minutos");
         const body = await req.json().catch(() => ({}));
-        if (!takeChallenge(body.nonce)) return fail(400, "expired challenge; try again");
+        if (!takeChallenge(body.nonce)) return fail(400, "desafio expirado; tente de novo");
 
         let spki: Buffer;
         try {
@@ -362,19 +362,19 @@ const server = Bun.serve({
           const signed = Buffer.from(`screenlink-auth:${body.nonce}`);
           if (!verify(null, signed, key, Buffer.from(String(body.signature), "base64"))) throw new Error();
         } catch {
-          return fail(400, "invalid device signature");
+          return fail(400, "assinatura do dispositivo inválida");
         }
 
         const fingerprint = fingerprintOf(spki);
-        if (store.isBanned(fingerprint)) return json({ error: "this device is banned from the server", code: "banned" }, 403);
+        if (store.isBanned(fingerprint)) return json({ error: "este dispositivo está banido do servidor", code: "banned" }, 403);
         if (!passwordMatches(body.password)) {
           recordFailure(ip);
-          return json({ error: "wrong server password", code: "wrong_password" }, 401);
+          return json({ error: "senha do servidor incorreta", code: "wrong_password" }, 401);
         }
         const name = body.name == null || body.name === "" ? null : cleanName(body.name);
-        if (body.name && !name) return fail(400, "name must be up to 40 characters");
+        if (body.name && !name) return fail(400, "o nome deve ter até 40 caracteres");
         const result = store.signIn(fingerprint, spki.toString("base64"), name, passwordTag);
-        if (!result) return json({ error: "choose a name for your new account", code: "name_required" }, 400);
+        if (!result) return json({ error: "escolha um nome para sua nova conta", code: "name_required" }, 400);
         notifyRoomsChanged(store.contactsOf(result.user.id));
         names.set(result.user.id, result.user.name);
         return json({ ...result, admin: isAdmin(result.user) });
@@ -385,7 +385,7 @@ const server = Bun.serve({
       GET: authed((_req, user) => json({ id: user.id, name: user.name, fingerprint: user.fingerprint, admin: isAdmin(user) })),
       PATCH: authed(async (req, user) => {
         const name = cleanName((await req.json().catch(() => ({}))).name);
-        if (!name) return fail(400, "name is required (up to 40 characters)");
+        if (!name) return fail(400, "o nome é obrigatório (até 40 caracteres)");
         store.renameUser(user.id, name);
         const ws = sockets.get(user.id);
         if (ws) ws.data.user = { ...user, name };
@@ -399,7 +399,7 @@ const server = Bun.serve({
       GET: authed((_req, user) => json(store.roomsOf(user.id))),
       POST: authed(async (req, user) => {
         const name = cleanName((await req.json().catch(() => ({}))).name, 60);
-        if (!name) return fail(400, "room name is required (up to 60 characters)");
+        if (!name) return fail(400, "o nome da sala é obrigatório (até 60 caracteres)");
         const id = store.createRoom(user.id, name);
         notifyRoomsChanged([user.id]);
         return json({ id });
@@ -410,7 +410,7 @@ const server = Bun.serve({
       POST: authed(async (req, user) => {
         const { code } = await req.json().catch(() => ({}));
         const room = typeof code === "string" ? store.roomByCode(code) : null;
-        if (!room) return fail(404, "no room with this invite code");
+        if (!room) return fail(404, "nenhuma sala com este código de convite");
         store.addMember(room.id, user.id);
         notifyRoomsChanged(store.memberIds(room.id));
         for (const id of store.memberIds(room.id)) {
@@ -427,7 +427,7 @@ const server = Bun.serve({
       POST: authed((req, user) => {
         const roomId = req.params.id;
         const role = store.role(roomId, user.id);
-        if (!role) return fail(404, "not a member of this room");
+        if (!role) return fail(404, "você não é membro desta sala");
         const members = store.memberIds(roomId);
         dropFromRoom(roomId, user.id);
         // The owner leaving would leave the room unmanageable, so it goes away with them.
@@ -443,7 +443,7 @@ const server = Bun.serve({
     "/api/rooms/:id": {
       DELETE: authed((req, user) => {
         const roomId = req.params.id;
-        if (store.role(roomId, user.id) !== "owner") return fail(403, "only the owner can delete the room");
+        if (store.role(roomId, user.id) !== "owner") return fail(403, "só o dono pode excluir a sala");
         const members = store.memberIds(roomId);
         for (const s of [...streams.values()]) if (s.roomId === roomId) endStream(s);
         store.deleteRoom(roomId);
@@ -455,7 +455,7 @@ const server = Bun.serve({
     "/api/rooms/:id/code": {
       POST: authed((req, user) => {
         const roomId = req.params.id;
-        if (store.role(roomId, user.id) !== "owner") return fail(403, "only the owner can change the invite code");
+        if (store.role(roomId, user.id) !== "owner") return fail(403, "só o dono pode trocar o código de convite");
         const inviteCode = store.regenerateCode(roomId);
         notifyRoomsChanged(store.memberIds(roomId));
         return json({ inviteCode });
@@ -465,8 +465,8 @@ const server = Bun.serve({
     "/api/rooms/:id/members/:userId": {
       DELETE: authed((req, user) => {
         const { id: roomId, userId } = req.params;
-        if (store.role(roomId, user.id) !== "owner") return fail(403, "only the owner can remove members");
-        if (userId === user.id) return fail(400, "the owner cannot remove themselves; delete the room instead");
+        if (store.role(roomId, user.id) !== "owner") return fail(403, "só o dono pode remover membros");
+        if (userId === user.id) return fail(400, "o dono não pode remover a si mesmo; exclua a sala");
         const members = store.memberIds(roomId);
         dropFromRoom(roomId, userId);
         store.removeMember(roomId, userId);
@@ -502,8 +502,8 @@ const server = Bun.serve({
       POST: authed(async (req, admin) => {
         const body = await req.json().catch(() => ({}));
         const fingerprint = normalizeFingerprint(String(body.fingerprint ?? ""));
-        if (!fingerprint) return fail(400, "invalid fingerprint (32 hex digits)");
-        if (ADMINS.has(fingerprint) || fingerprint === admin.fingerprint) return fail(400, "admins cannot be banned");
+        if (!fingerprint) return fail(400, "impressão digital inválida (32 dígitos hexadecimais)");
+        if (ADMINS.has(fingerprint) || fingerprint === admin.fingerprint) return fail(400, "admins não podem ser banidos");
         store.ban(fingerprint, cleanName(body.reason, 200) ?? "");
         const user = store.userByFingerprint(fingerprint);
         if (user) kick(user.id);
@@ -534,9 +534,9 @@ const server = Bun.serve({
     if (new URL(req.url).pathname === "/ws") {
       const r = authenticate(req);
       if (!("user" in r)) return deny(r);
-      return server.upgrade(req, { data: { user: r.user } }) ? undefined : fail(400, "websocket upgrade failed");
+      return server.upgrade(req, { data: { user: r.user } }) ? undefined : fail(400, "falha no upgrade do websocket");
     }
-    return fail(404, "not found");
+    return fail(404, "não encontrado");
   },
 
   websocket: {
@@ -553,7 +553,7 @@ const server = Bun.serve({
       // and everything it was doing.
       const previous = sockets.get(user.id);
       sockets.set(user.id, ws);
-      previous?.close(4000, "replaced by a new connection");
+      previous?.close(4000, "substituída por uma nova conexão");
       const mine = [...streams.values()];
       ws.send(
         JSON.stringify({
@@ -611,5 +611,5 @@ function disconnect(userId: string) {
   for (const id of store.contactsOf(userId)) if (id !== userId) send(id, { type: "presence", userId, online: false });
 }
 
-console.log(`ScreenLink server on http://localhost:${server.port} (db: ${DB_FILE})`);
-console.log(`  password: ${PASSWORD ? "required" : "none (anyone with the app can sign up)"} · admins: ${ADMINS.size}`);
+console.log(`Servidor ScreenLink em http://localhost:${server.port} (banco: ${DB_FILE})`);
+console.log(`  senha: ${PASSWORD ? "obrigatória" : "nenhuma (qualquer um com o app pode se cadastrar)"} · admins: ${ADMINS.size}`);

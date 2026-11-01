@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:" />
@@ -12,19 +12,19 @@
       <form id="register-form" class="panel narrow">
         <img src="../assets/icon.png" alt="" width="56" height="56" />
         <h1>ScreenLink</h1>
-        <p class="muted">Low-latency screen sharing with your friends. Video goes peer to peer; the server only introduces you.</p>
-        <label>Server
+        <p class="muted">Compartilhamento de tela com baixa latência entre amigos. O vídeo vai direto de um para o outro; o servidor só apresenta vocês.</p>
+        <label>Servidor
           <input name="serverUrl" type="url" required placeholder="http://localhost:3000" />
         </label>
-        <label id="password-field" hidden>Server password
-          <input name="password" type="password" autocomplete="current-password" placeholder="Ask whoever runs the server" />
+        <label id="password-field" hidden>Senha do servidor
+          <input name="password" type="password" autocomplete="current-password" placeholder="Peça para quem mantém o servidor" />
         </label>
-        <label>Your name
-          <input name="name" maxlength="40" placeholder="How friends will see you" />
-          <span class="muted small">Your account is tied to this device: signing in again here brings it back.</span>
+        <label>Seu nome
+          <input name="name" maxlength="40" placeholder="Como seus amigos vão te ver" />
+          <span class="muted small">Sua conta fica ligada a este dispositivo: entrar de novo aqui traz ela de volta.</span>
         </label>
         <p id="register-error" class="error" hidden></p>
-        <button class="primary wide" type="submit">Continue</button>
+        <button class="primary wide" type="submit">Continuar</button>
       </form>
     </main>
 
@@ -33,25 +33,25 @@
         <div class="brand">
           <img src="../assets/icon.png" alt="" width="26" height="26" />
           <span>ScreenLink</span>
-          <button id="mute-btn" class="bell" title="Notifications">
+          <button id="mute-btn" class="bell" title="Notificações">
             <svg class="on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
             <svg class="off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 3A6 6 0 0 1 18 8a21.3 21.3 0 0 0 .6 5"/><path d="M17 17H3s3-2 3-9a4.67 4.67 0 0 1 .3-1.7"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><path d="m2 2 20 20"/></svg>
           </button>
-          <button id="theme-btn" class="bell theme" title="Switch to light theme">
+          <button id="theme-btn" class="bell theme" title="Mudar para o tema claro">
             <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
             <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
           </button>
-          <span id="conn" class="conn" title="Server connection"></span>
+          <span id="conn" class="conn" title="Conexão com o servidor"></span>
         </div>
-        <div class="section-title">Rooms</div>
+        <div class="section-title">Salas</div>
         <nav id="room-list" class="room-list"></nav>
         <button id="admin-btn" class="admin-btn" hidden>Admin</button>
         <div class="side-actions">
-          <button id="new-room-btn">New room</button>
-          <button id="join-room-btn">Join with code</button>
+          <button id="new-room-btn">Nova sala</button>
+          <button id="join-room-btn">Entrar com código</button>
         </div>
-        <button id="update-btn" class="update-btn" title="Open the release page to download it" hidden></button>
-        <button id="me-btn" class="me" title="Settings">
+        <button id="update-btn" class="update-btn" title="Abrir a página da versão para baixar" hidden></button>
+        <button id="me-btn" class="me" title="Configurações">
           <span id="me-avatar" class="avatar small"></span>
           <span id="me-name" class="ellipsis"></span>
           <span class="gear">⚙</span>
@@ -64,49 +64,49 @@
     <!-- Dialogs -->
     <dialog id="new-room-dialog">
       <form method="dialog" id="new-room-form">
-        <h2>New room</h2>
-        <label>Name <input name="name" required maxlength="60" placeholder="Friday games" /></label>
+        <h2>Nova sala</h2>
+        <label>Nome <input name="name" required maxlength="60" placeholder="Jogatina de sexta" /></label>
         <p class="error" hidden></p>
         <div class="dialog-actions">
-          <button value="cancel" formnovalidate>Cancel</button>
-          <button class="primary" value="ok">Create</button>
+          <button value="cancel" formnovalidate>Cancelar</button>
+          <button class="primary" value="ok">Criar</button>
         </div>
       </form>
     </dialog>
 
     <dialog id="join-room-dialog">
       <form method="dialog" id="join-room-form">
-        <h2>Join a room</h2>
-        <label>Invite code <input name="code" required class="mono" placeholder="XXXX-XXXX-XXXX" autocomplete="off" /></label>
+        <h2>Entrar numa sala</h2>
+        <label>Código de convite <input name="code" required class="mono" placeholder="XXXX-XXXX-XXXX" autocomplete="off" /></label>
         <p class="error" hidden></p>
         <div class="dialog-actions">
-          <button value="cancel" formnovalidate>Cancel</button>
-          <button class="primary" value="ok">Join</button>
+          <button value="cancel" formnovalidate>Cancelar</button>
+          <button class="primary" value="ok">Entrar</button>
         </div>
       </form>
     </dialog>
 
     <dialog id="share-dialog" class="wide-dialog">
       <form method="dialog" id="share-form">
-        <h2>Share your screen <span id="share-room" class="muted"></span></h2>
+        <h2>Compartilhar sua tela <span id="share-room" class="muted"></span></h2>
 
         <div id="portal-note" class="note" hidden>
-          Your desktop will ask which screen or window to share after you press <b>Start</b>.
+          Seu desktop vai perguntar qual tela ou janela compartilhar depois que você clicar em <b>Começar</b>.
         </div>
         <div id="source-picker">
           <div class="tabs">
-            <button type="button" data-kind="screen" class="tab on">Screens</button>
-            <button type="button" data-kind="window" class="tab">Windows</button>
-            <button type="button" id="refresh-sources" class="ghost" title="Refresh">↻</button>
+            <button type="button" data-kind="screen" class="tab on">Telas</button>
+            <button type="button" data-kind="window" class="tab">Janelas</button>
+            <button type="button" id="refresh-sources" class="ghost" title="Atualizar">↻</button>
           </div>
           <div id="sources" class="sources"></div>
         </div>
 
         <div class="grid">
-          <label>Title <input name="title" maxlength="80" placeholder="What you are sharing" /></label>
-          <label>Resolution
+          <label>Título <input name="title" maxlength="80" placeholder="O que você está compartilhando" /></label>
+          <label>Resolução
             <select name="resolution">
-              <option value="native">Native</option>
+              <option value="native">Nativa</option>
               <option value="2160">2160p (4K)</option>
               <option value="1440">1440p</option>
               <option value="1080">1080p</option>
@@ -114,7 +114,7 @@
               <option value="480">480p</option>
             </select>
           </label>
-          <label>Frame rate
+          <label>Taxa de quadros
             <select name="fps">
               <option value="30">30 fps</option>
               <option value="60">60 fps</option>
@@ -124,28 +124,28 @@
           </label>
           <label>Codec
             <select name="codec">
-              <option value="h264">H.264 — hardware, lowest latency</option>
-              <option value="av1">AV1 — best quality per bit</option>
+              <option value="h264">H.264 — hardware, menor latência</option>
+              <option value="av1">AV1 — melhor qualidade por bit</option>
               <option value="vp9">VP9</option>
-              <option value="vp8">VP8 — most compatible</option>
+              <option value="vp8">VP8 — mais compatível</option>
             </select>
           </label>
-          <label>Optimize for
+          <label>Otimizar para
             <select name="hint">
-              <option value="motion">Motion — games, video (keeps fps)</option>
-              <option value="detail">Detail — text, code (keeps sharpness)</option>
+              <option value="motion">Movimento — jogos, vídeo (mantém o fps)</option>
+              <option value="detail">Detalhe — texto, código (mantém a nitidez)</option>
             </select>
           </label>
-          <label>Direct viewers
+          <label>Espectadores diretos
             <select name="capacity">
               <option value="1">1</option><option value="2">2</option><option value="3">3</option>
               <option value="4">4</option><option value="6">6</option><option value="8">8</option>
             </select>
           </label>
-          <label>Audio
+          <label>Áudio
             <select name="audio">
-              <option value="off">No audio</option>
-              <option value="system">System audio — everything you hear</option>
+              <option value="off">Sem áudio</option>
+              <option value="system">Áudio do sistema — tudo que você ouve</option>
             </select>
           </label>
           <label class="span2"><span>Bitrate <output id="bitrate-out"></output></span>
@@ -153,128 +153,128 @@
           </label>
         </div>
         <p class="muted small">
-          You upload one copy per <b>direct viewer</b>; everyone beyond that gets the video relayed by other viewers.
-          Upload needed: <b id="upload-need"></b>.
+          Você envia uma cópia por <b>espectador direto</b>; os demais recebem o vídeo repassado por outros espectadores.
+          Upload necessário: <b id="upload-need"></b>.
         </p>
         <p id="audio-note" class="note small" hidden>
-          System audio sends everything this computer plays, including calls and other streams you are watching.
+          O áudio do sistema envia tudo que este computador toca, incluindo chamadas e outras transmissões que você estiver assistindo.
         </p>
         <p class="error" hidden></p>
         <div class="dialog-actions">
-          <button value="cancel" formnovalidate>Cancel</button>
-          <button class="primary" value="ok" id="share-start">Start sharing</button>
+          <button value="cancel" formnovalidate>Cancelar</button>
+          <button class="primary" value="ok" id="share-start">Começar a compartilhar</button>
         </div>
       </form>
     </dialog>
 
     <dialog id="settings-dialog">
       <form method="dialog" id="settings-form">
-        <h2>Settings</h2>
-        <label>Your name <input name="name" required maxlength="40" /></label>
-        <label>Relay for others
+        <h2>Configurações</h2>
+        <label>Seu nome <input name="name" required maxlength="40" /></label>
+        <label>Repassar para outros
           <select name="relayCapacity">
-            <option value="0">Off — only watch</option>
-            <option value="1">Up to 1 viewer</option>
-            <option value="2">Up to 2 viewers</option>
-            <option value="3">Up to 3 viewers</option>
-            <option value="4">Up to 4 viewers</option>
+            <option value="0">Desligado — só assistir</option>
+            <option value="1">Até 1 espectador</option>
+            <option value="2">Até 2 espectadores</option>
+            <option value="3">Até 3 espectadores</option>
+            <option value="4">Até 4 espectadores</option>
           </select>
-          <span class="muted small">While watching, forward the video to this many other members. Each one costs one stream of upload and a hardware encode.</span>
+          <span class="muted small">Enquanto assiste, repassa o vídeo para essa quantidade de outros membros. Cada um custa uma transmissão de upload e uma codificação por hardware.</span>
         </label>
-        <label>When someone starts sharing
+        <label>Quando alguém começar a compartilhar
           <select name="notifications">
-            <option value="auto">Show a notification (automatic style)</option>
-            <option value="popup">Show a ScreenLink popup</option>
-            <option value="native">Show a system notification</option>
-            <option value="off">Do nothing</option>
+            <option value="auto">Mostrar uma notificação (estilo automático)</option>
+            <option value="popup">Mostrar um popup do ScreenLink</option>
+            <option value="native">Mostrar uma notificação do sistema</option>
+            <option value="off">Não fazer nada</option>
           </select>
         </label>
-        <label><span>Sound volume <output id="volume-out"></output></span>
+        <label><span>Volume dos sons <output id="volume-out"></output></span>
           <div class="volume">
             <input name="soundVolume" type="range" min="0" max="100" step="5" />
-            <button type="button" id="test-sound" class="ghost" title="Play the start sound">▶ Test</button>
+            <button type="button" id="test-sound" class="ghost" title="Tocar o som de início">▶ Testar</button>
           </div>
-          <span class="muted small">Stream started/stopped, and viewers joining/leaving your stream. 0 mutes.</span>
+          <span class="muted small">Transmissão iniciada/encerrada e espectadores entrando/saindo da sua transmissão. 0 silencia.</span>
         </label>
-        <label>Theme
+        <label>Tema
           <select name="theme">
-            <option value="system">Match the system</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
+            <option value="system">Seguir o sistema</option>
+            <option value="light">Claro</option>
+            <option value="dark">Escuro</option>
           </select>
         </label>
-        <label class="check"><input type="checkbox" name="autostart" /> Start with the system (in the tray)</label>
-        <label>Server
+        <label class="check"><input type="checkbox" name="autostart" /> Iniciar com o sistema (na bandeja)</label>
+        <label>Servidor
           <input name="serverUrl" type="url" required />
-          <span class="muted small">Changing the server signs you out: accounts and rooms live on the server.</span>
+          <span class="muted small">Trocar o servidor desconecta você: contas e salas ficam no servidor.</span>
         </label>
         <p class="error" hidden></p>
         <div class="dialog-actions">
-          <button type="button" id="logout-btn" class="danger ghost">Sign out</button>
+          <button type="button" id="logout-btn" class="danger ghost">Sair</button>
           <span class="spacer"></span>
-          <button value="cancel" formnovalidate>Cancel</button>
-          <button class="primary" value="ok">Save</button>
+          <button value="cancel" formnovalidate>Cancelar</button>
+          <button class="primary" value="ok">Salvar</button>
         </div>
       </form>
     </dialog>
 
     <dialog id="device-dialog">
       <form method="dialog">
-        <h2>This device</h2>
-        <p class="muted">The server knows this install by its fingerprint. To make it an admin, put it in <code>ADMIN_FINGERPRINT</code> on the server.</p>
+        <h2>Este dispositivo</h2>
+        <p class="muted">O servidor reconhece esta instalação pela impressão digital. Para torná-la admin, coloque-a em <code>ADMIN_FINGERPRINT</code> no servidor.</p>
         <div class="fingerprint">
           <span id="fingerprint" class="mono"></span>
-          <button type="button" id="copy-fingerprint">Copy</button>
+          <button type="button" id="copy-fingerprint">Copiar</button>
         </div>
         <p class="error" hidden></p>
         <div class="dialog-actions">
-          <button value="cancel">Close</button>
+          <button value="cancel">Fechar</button>
         </div>
       </form>
     </dialog>
 
     <dialog id="mute-dialog">
       <form method="dialog" id="mute-form">
-        <h2>Notifications</h2>
+        <h2>Notificações</h2>
         <p id="mute-status" class="note"></p>
 
         <section class="mute-now">
-          <h3>Mute now</h3>
+          <h3>Silenciar agora</h3>
           <div class="chips" id="mute-presets"></div>
           <div class="row-inline">
-            <span>For</span>
+            <span>Por</span>
             <input name="amount" type="number" min="1" max="168" value="3" />
             <select name="unit">
-              <option value="1">minutes</option>
-              <option value="60" selected>hours</option>
+              <option value="1">minutos</option>
+              <option value="60" selected>horas</option>
             </select>
-            <button type="button" id="mute-custom">Mute</button>
+            <button type="button" id="mute-custom">Silenciar</button>
           </div>
           <div class="row-inline">
-            <button type="button" id="mute-forever">Until I turn it back on</button>
-            <button type="button" id="mute-off" class="primary">Unmute</button>
+            <button type="button" id="mute-forever">Até eu reativar</button>
+            <button type="button" id="mute-off" class="primary">Reativar</button>
           </div>
         </section>
 
         <section>
-          <label class="check"><input type="checkbox" name="quietEnabled" /> Quiet hours: mute automatically every week</label>
+          <label class="check"><input type="checkbox" name="quietEnabled" /> Horário silencioso: silenciar automaticamente toda semana</label>
           <div id="quiet-fields" class="quiet">
             <div class="chips" id="quiet-days"></div>
             <div class="row-inline">
-              <span>From</span>
+              <span>Das</span>
               <input name="quietStart" type="time" required />
-              <span>to</span>
+              <span>às</span>
               <input name="quietEnd" type="time" required />
             </div>
-            <p class="muted small">A range that crosses midnight (e.g. 22:00 to 07:00) runs into the next morning.</p>
+            <p class="muted small">Um intervalo que passa da meia-noite (ex.: 22:00 às 07:00) vai até a manhã seguinte.</p>
           </div>
         </section>
 
-        <p class="muted small">Muting hides the “is sharing” notice and its sound. Sounds of your own stream still play.</p>
+        <p class="muted small">Silenciar esconde o aviso “está compartilhando” e o som dele. Os sons da sua própria transmissão continuam tocando.</p>
         <p class="error" hidden></p>
         <div class="dialog-actions">
-          <button value="cancel" formnovalidate>Close</button>
-          <button class="primary" value="ok">Save quiet hours</button>
+          <button value="cancel" formnovalidate>Fechar</button>
+          <button class="primary" value="ok">Salvar horário silencioso</button>
         </div>
       </form>
     </dialog>

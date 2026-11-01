@@ -194,9 +194,9 @@ async function api(method, route, body) {
 }
 
 const SIGNED_OUT_REASONS = {
-  invalid_token: "Your session expired. Sign in again.",
-  password_required: "The server password changed. Enter it to sign in again.",
-  banned: "This device is banned from this server.",
+  invalid_token: "Sua sessão expirou. Entre de novo.",
+  password_required: "A senha do servidor mudou. Digite-a para entrar de novo.",
+  banned: "Este dispositivo está banido deste servidor.",
 };
 
 /** Drops the session and everything that depended on it (shares, viewer windows). */
@@ -284,7 +284,7 @@ async function connect() {
     ws = null;
     clearInterval(pingTimer);
     connection = "offline";
-    for (const { reject } of replies.values()) reject(new Error("disconnected"));
+    for (const { reject } of replies.values()) reject(new Error("desconectado"));
     replies.clear();
     pushState();
     // Back off up to 15 s. The server keeps our place in streams for a while, so a short drop
@@ -307,7 +307,7 @@ function wsSend(msg) {
 }
 
 function request(type, payload = {}) {
-  if (ws?.readyState !== WebSocket.OPEN) return Promise.reject(new Error("not connected to the server"));
+  if (ws?.readyState !== WebSocket.OPEN) return Promise.reject(new Error("sem conexão com o servidor"));
   const reqId = ++reqSeq;
   const { promise, resolve, reject } = Promise.withResolvers();
   replies.set(reqId, { resolve, reject });
@@ -407,11 +407,11 @@ function streamEnded(streamId) {
 
 async function startShare({ roomId, title, sourceId, settings }) {
   if (share) await stopShare(true);
-  if (connection !== "online") throw new Error("not connected to the server");
+  if (connection !== "online") throw new Error("sem conexão com o servidor");
   if (IS_WAYLAND || !sourceId) {
     // Wayland: the desktop portal shows its own picker and returns the chosen source.
     const [source] = await desktopCapturer.getSources({ types: ["screen", "window"], thumbnailSize: { width: 0, height: 0 } });
-    if (!source) throw new Error("no screen or window was selected");
+    if (!source) throw new Error("nenhuma tela ou janela foi selecionada");
     sourceId = source.id;
     title ||= source.name;
   }
@@ -426,7 +426,7 @@ async function startShare({ roomId, title, sourceId, settings }) {
     height: 200,
     webPreferences: { preload: PRELOAD, backgroundThrottling: false },
   });
-  share = { streamId: null, roomId, title: title || "Screen", sourceId, settings: full, win, audience: [], encoder: null, ready: Promise.withResolvers() };
+  share = { streamId: null, roomId, title: title || "Tela", sourceId, settings: full, win, audience: [], encoder: null, ready: Promise.withResolvers() };
   const current = share;
   win.on("closed", () => {
     if (share === current) stopShare(true);
@@ -442,7 +442,7 @@ async function stopShare(tellServer) {
   stopSystemAudio();
   if (s.streamId && !quitting) playSound("stop");
   if (tellServer && s.streamId) await request("stream.stop", { streamId: s.streamId }).catch(() => {});
-  s.ready.reject(new Error("sharing stopped"));
+  s.ready.reject(new Error("compartilhamento encerrado"));
   s.ready.promise.catch(() => {});
   if (!s.win.isDestroyed()) s.win.destroy();
   pushState();
@@ -500,8 +500,8 @@ function announce(stream) {
   const room = rooms.find((r) => r.id === stream.roomId);
   if (style === "native") {
     const n = new Notification({
-      title: `${stream.sharerName} is sharing`,
-      body: `${stream.title} · ${room?.name ?? "room"} — click to watch`,
+      title: `${stream.sharerName} está compartilhando`,
+      body: `${stream.title} · ${room?.name ?? "sala"} — clique para assistir`,
       icon: asset("icon.png"),
     });
     n.on("click", () => watch(stream.id));
@@ -579,12 +579,12 @@ const MUTE_OPTIONS = [15, 30, 60, 120, 240, 480]; // minutes
 
 function clockTime(ts) {
   const date = new Date(ts);
-  const time = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  return date.toDateString() === new Date().toDateString() ? time : `${date.toLocaleDateString([], { weekday: "short" })} ${time}`;
+  const time = date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  return date.toDateString() === new Date().toDateString() ? time : `${date.toLocaleDateString("pt-BR", { weekday: "short" })} ${time}`;
 }
 
 function durationLabel(min) {
-  return min < 60 ? `For ${min} minutes` : `For ${min / 60} hour${min === 60 ? "" : "s"}`;
+  return min < 60 ? `Por ${min} minutos` : `Por ${min / 60} hora${min === 60 ? "" : "s"}`;
 }
 
 function setMute(until) {
@@ -609,13 +609,13 @@ setInterval(() => {
 handle("mute:set", (_e, until) => {
   if (until === null || until === "forever") return setMute(until);
   const min = Number(until);
-  if (!(min > 0 && min <= 7 * 24 * 60)) throw new Error("choose between 1 minute and 7 days");
+  if (!(min > 0 && min <= 7 * 24 * 60)) throw new Error("escolha entre 1 minuto e 7 dias");
   setMute(Date.now() + min * 60_000);
 });
 
 handle("quiet:set", (_e, quiet) => {
   const time = (v) => (/^\d{2}:\d{2}$/.test(v) ? v : null);
-  if (!time(quiet.start) || !time(quiet.end)) throw new Error("invalid time");
+  if (!time(quiet.start) || !time(quiet.end)) throw new Error("horário inválido");
   config.quietHours = {
     enabled: Boolean(quiet.enabled),
     days: [...new Set(quiet.days.map(Number).filter((d) => d >= 0 && d <= 6))].sort(),
@@ -630,19 +630,19 @@ function muteMenu() {
   const state = muteState(config.mutedUntil, config.quietHours);
   const items = [];
   if (state.manual) {
-    const label = state.manual === "forever" ? "Unmute notifications" : `Unmute notifications (muted until ${clockTime(state.manual)})`;
+    const label = state.manual === "forever" ? "Reativar notificações" : `Reativar notificações (silenciadas até ${clockTime(state.manual)})`;
     items.push({ label, click: () => setMute(null) });
   } else {
     items.push({
-      label: "Mute notifications",
+      label: "Silenciar notificações",
       submenu: [
         ...MUTE_OPTIONS.map((min) => ({ label: durationLabel(min), click: () => setMute(Date.now() + min * 60_000) })),
         { type: "separator" },
-        { label: "Until I turn it back on", click: () => setMute("forever") },
+        { label: "Até eu reativar", click: () => setMute("forever") },
       ],
     });
   }
-  if (state.quietUntil) items.push({ label: `Quiet hours until ${clockTime(state.quietUntil)}`, enabled: false });
+  if (state.quietUntil) items.push({ label: `Horário silencioso até ${clockTime(state.quietUntil)}`, enabled: false });
   return items;
 }
 
@@ -719,29 +719,29 @@ function updateTray() {
     trayLive = live;
   }
   const others = [...streams.values()].filter((s) => s.sharerId !== me?.id);
-  const status = connection === "online" ? `Connected as ${me?.name ?? "…"}` : connection === "connecting" ? "Connecting…" : "Offline";
-  const muted = muteState(config.mutedUntil, config.quietHours).muted ? " (notifications muted)" : "";
-  tray.setToolTip((live ? `ScreenLink — sharing to ${share.audience.length}` : `ScreenLink — ${status}`) + muted);
+  const status = connection === "online" ? `Conectado como ${me?.name ?? "…"}` : connection === "connecting" ? "Conectando…" : "Offline";
+  const muted = muteState(config.mutedUntil, config.quietHours).muted ? " (notificações silenciadas)" : "";
+  tray.setToolTip((live ? `ScreenLink — compartilhando com ${share.audience.length}` : `ScreenLink — ${status}`) + muted);
   tray.setContextMenu(
     Menu.buildFromTemplate([
       { label: status, enabled: false },
-      { label: "Open ScreenLink", click: showUi },
-      ...(update ? [{ label: `Update available: ${update.version}`, click: openUpdate }] : []),
+      { label: "Abrir o ScreenLink", click: showUi },
+      ...(update ? [{ label: `Atualização disponível: ${update.version}`, click: openUpdate }] : []),
       { type: "separator" },
       others.length
         ? {
-            label: "Live now",
+            label: "Ao vivo agora",
             submenu: others.map((s) => ({
-              label: `${s.sharerName} — ${s.title} (${rooms.find((r) => r.id === s.roomId)?.name ?? "room"})`,
+              label: `${s.sharerName} — ${s.title} (${rooms.find((r) => r.id === s.roomId)?.name ?? "sala"})`,
               click: () => watch(s.id),
             })),
           }
-        : { label: "No one is sharing", enabled: false },
-      ...(live ? [{ label: `Stop sharing (${share.audience.length} watching)`, click: () => stopShare(true) }] : []),
+        : { label: "Ninguém está compartilhando", enabled: false },
+      ...(live ? [{ label: `Parar de compartilhar (${share.audience.length} assistindo)`, click: () => stopShare(true) }] : []),
       { type: "separator" },
       ...muteMenu(),
       { type: "separator" },
-      { label: "Quit", click: () => app.quit() },
+      { label: "Sair", click: () => app.quit() },
     ]),
   );
 }
@@ -880,13 +880,13 @@ handle("clipboard:write", (_e, text) => clipboard.writeText(String(text)));
 
 // Broadcaster window
 handle("bc:init", async (event) => {
-  if (share?.win.webContents !== event.sender) throw new Error("no pending share");
+  if (share?.win.webContents !== event.sender) throw new Error("nenhum compartilhamento pendente");
   const audioPlan = share.settings.audio ? await startSystemAudio(event.sender) : null;
   return { sourceId: share.sourceId, settings: share.settings, iceServers, audioPlan };
 });
 handle("bc:started", async (event, { audio } = {}) => {
   const s = share;
-  if (s?.win.webContents !== event.sender) throw new Error("no pending share");
+  if (s?.win.webContents !== event.sender) throw new Error("nenhum compartilhamento pendente");
   s.settings.audio = Boolean(audio); // the capture may have come without audio
   try {
     const { stream } = await request("stream.start", {
@@ -897,7 +897,7 @@ handle("bc:started", async (event, { audio } = {}) => {
     });
     if (share !== s) {
       request("stream.stop", { streamId: stream.id }).catch(() => {});
-      throw new Error("sharing stopped");
+      throw new Error("compartilhamento encerrado");
     }
     s.streamId = stream.id;
     streams.set(stream.id, stream);
@@ -929,7 +929,7 @@ handle("bc:ended", (event) => {
 // Viewer windows
 function viewerStream(event) {
   for (const [streamId, win] of viewers) if (win.webContents === event.sender) return streamId;
-  throw new Error("unknown viewer");
+  throw new Error("espectador desconhecido");
 }
 handle("viewer:init", (event) => {
   const streamId = viewerStream(event);

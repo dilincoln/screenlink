@@ -13,7 +13,7 @@ function setStatus(text, ended = false) {
 }
 
 if (!stream) {
-  setStatus("This stream has ended.", true);
+  setStatus("Esta transmissão terminou.", true);
   throw new Error("stream not found");
 }
 
@@ -40,14 +40,14 @@ const upstream = new Upstream({
   },
   onState(state) {
     if (state === "connected") setStatus(null);
-    else if (state === "disconnected") setStatus("Connection unstable — reconnecting…");
+    else if (state === "disconnected") setStatus("Conexão instável — reconectando…");
     else if (state === "failed") rejoin("connection failed");
   },
 });
 
 function renderRoute() {
-  const via = route.depth <= 1 ? "direct from the sharer" : `relayed by ${route.parentName} · ${route.depth} hops`;
-  const relaying = fanout.size ? ` · forwarding to ${fanout.size}` : "";
+  const via = route.depth <= 1 ? "direto de quem compartilha" : `repassado por ${route.parentName} · ${route.depth} saltos`;
+  const relaying = fanout.size ? ` · repassando para ${fanout.size}` : "";
   $("route").textContent = `${via}${relaying}`;
 }
 
@@ -64,11 +64,11 @@ function armWatchdog() {
 async function rejoin(reason) {
   if (ended) return;
   console.warn("rejoining:", reason);
-  setStatus("Reconnecting…");
+  setStatus("Reconectando…");
   try {
     await sl.invoke("viewer:join");
   } catch (err) {
-    setStatus(`Could not reconnect: ${err.message}`, true);
+    setStatus(`Não foi possível reconectar: ${err.message}`, true);
   }
 }
 
@@ -105,14 +105,14 @@ sl.on("ended", () => {
   fanout.closeAll();
   video.srcObject = null;
   audio.srcObject = null;
-  setStatus(`${stream.sharerName} stopped sharing.`, true);
+  setStatus(`${stream.sharerName} parou de compartilhar.`, true);
   setTimeout(() => window.close(), 4000);
 });
 
 try {
   await sl.invoke("viewer:join");
 } catch (err) {
-  setStatus(`Could not join: ${err.message}`, true);
+  setStatus(`Não foi possível entrar: ${err.message}`, true);
 }
 
 // ---------- controls ----------
@@ -129,7 +129,7 @@ function toggleStats() {
 
 function toggleFit() {
   const native = document.body.classList.toggle("native");
-  $("fit-btn").textContent = native ? "1:1" : "Fit";
+  $("fit-btn").textContent = native ? "1:1" : "Ajustar";
   $("fit-btn").classList.toggle("on", native);
 }
 
@@ -159,7 +159,7 @@ function setVolume(patch) {
   audio.volume = sound.volume / 100;
   audio.muted = sound.muted || sound.volume === 0;
   $("volume").value = String(sound.volume);
-  $("volume-out").textContent = audio.muted ? "muted" : `${sound.volume}%`;
+  $("volume-out").textContent = audio.muted ? "mudo" : `${sound.volume}%`;
   $("mute-toggle").textContent = audio.muted ? "🔇" : sound.volume < 50 ? "🔉" : "🔊";
   try {
     localStorage.setItem(VOLUME_KEY, JSON.stringify(sound));
@@ -245,18 +245,18 @@ setInterval(async () => {
   last = s;
   if ($("stats").hidden) return;
   const rows = [
-    ["resolution", `${s.width}×${s.height}`],
+    ["resolução", `${s.width}×${s.height}`],
     ["fps", s.fps],
     ["bitrate", `${mbps.toFixed(mbps < 1 ? 2 : 1)} Mbps`],
     ["codec", s.codec ?? "—"],
-    ["audio", s.audioCodec ? `${s.audioCodec} ${s.audioChannels === 2 ? "stereo" : "mono"} · ${audioKbps == null ? "…" : audioKbps.toFixed(0)} kbps` : "none"],
+    ["áudio", s.audioCodec ? `${s.audioCodec} ${s.audioChannels === 2 ? "estéreo" : "mono"} · ${audioKbps == null ? "…" : audioKbps.toFixed(0)} kbps` : "nenhum"],
     ["decoder", s.decoder ?? "—"],
-    ["decode", `${s.decodeMs.toFixed(1)} ms`],
+    ["decodificação", `${s.decodeMs.toFixed(1)} ms`],
     ["jitter buffer", `${s.jitterBufferMs.toFixed(0)} ms`],
-    ["rtt (to relay)", s.rttMs == null ? "—" : `${s.rttMs.toFixed(0)} ms`],
-    ["route", `${s.route ?? "—"} · hop ${route.depth}`],
-    ["packets lost", s.lost],
-    ["frames dropped", s.dropped],
+    ["rtt (até o relay)", s.rttMs == null ? "—" : `${s.rttMs.toFixed(0)} ms`],
+    ["rota", `${s.route ?? "—"} · salto ${route.depth}`],
+    ["pacotes perdidos", s.lost],
+    ["quadros descartados", s.dropped],
   ];
   $("stats").replaceChildren(
     ...rows.flatMap(([k, v]) => {

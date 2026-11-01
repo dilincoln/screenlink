@@ -1,196 +1,213 @@
 # ScreenLink
 
-Low-latency screen sharing between friends. A tray app where you create rooms, hand out an invite
-code (ZeroTier style), and when someone in the room starts sharing, every member online gets a
-popup and can watch.
+> [English version](README.en.md)
 
-- **Server** — Bun + SQLite (`bun:sqlite`). Accounts, rooms, invite codes, and WebSocket
-  signaling. **Video never touches the server.**
-- **Client** — Electron tray app. Screen/window picker, resolution, frame rate, bitrate, codec.
+Compartilhamento de tela com baixa latência entre amigos. Um app de bandeja onde você cria salas,
+distribui um código de convite (estilo ZeroTier) e, quando alguém da sala começa a compartilhar,
+todo membro online recebe um popup e pode assistir.
+
+- **Servidor** — Bun + SQLite (`bun:sqlite`). Contas, salas, códigos de convite e sinalização via
+  WebSocket. **O vídeo nunca passa pelo servidor.**
+- **Cliente** — app de bandeja em Electron. Seletor de tela/janela, resolução, taxa de quadros,
+  bitrate, codec.
 
 ## Download
 
-Installers are on the [Releases](https://github.com/dilincoln/screenlink/releases) page:
+Os instaladores estão na página de [Releases](https://github.com/dilincoln/screenlink/releases):
 
-- **Windows**: `ScreenLink-x.y.z-win-setup.exe` (installer) or `-win-portable.exe` (no install).
-  The builds are not code-signed, so SmartScreen asks for confirmation on first run
-  (*More info → Run anyway*).
-- **Linux**: `.AppImage` (needs FUSE 2: `fuse2` on Arch, `libfuse2` on Debian/Ubuntu), `.deb`,
-  or `.pacman` (`sudo pacman -U ScreenLink-*.pacman`).
+- **Windows**: `ScreenLink-x.y.z-win-setup.exe` (instalador) ou `-win-portable.exe` (sem
+  instalação). Os builds não são assinados, então o SmartScreen pede confirmação na primeira
+  execução (*Mais informações → Executar assim mesmo*).
+- **Linux**: `.AppImage` (precisa do FUSE 2: `fuse2` no Arch, `libfuse2` no Debian/Ubuntu), `.deb`
+  ou `.pacman` (`sudo pacman -U ScreenLink-*.pacman`).
 
-To publish a new version, push a tag: `git tag v0.2.0 && git push origin v0.2.0`. The
-[Release workflow](.github/workflows/release.yml) runs the tests, builds Linux and Windows with
-that version and creates the release. `bun run dist` builds locally into `dist/`.
+Para publicar uma nova versão, envie uma tag: `git tag v0.2.0 && git push origin v0.2.0`. O
+[workflow de Release](.github/workflows/release.yml) roda os testes, gera os builds de Linux e
+Windows com essa versão e cria a release. `bun run dist` gera localmente em `dist/`.
 
-## Running
+## Rodando
 
 ```sh
 bun install
-bun run server          # http://localhost:3000, database in ./screenlink.sqlite
-bun run start           # the tray app (run on every machine)
-bun test                # relay tree + auth/admin tests
+bun run server          # http://localhost:3000, banco em ./screenlink.sqlite
+bun run start           # o app de bandeja (rode em cada máquina)
+bun test                # testes da árvore de relay + autenticação/admin
 ```
 
-### Deploying the server (Docker / Coolify)
+### Publicando o servidor (Docker / Coolify)
 
-`docker-compose.yml` works as-is on [Coolify](https://coolify.io): create a resource from this
-repository with the *Docker Compose* build pack, set `SERVER_PASSWORD` (required) and optionally
-`ADMIN_FINGERPRINT` in the Environment Variables tab, and deploy. Coolify assigns a domain with
-HTTPS (`SERVICE_FQDN_SCREENLINK_3000`) and proxies WebSockets; the database lives in the
-`screenlink-data` volume. In the app, use the `https://` URL as the server.
+O `docker-compose.yml` funciona sem alterações no [Coolify](https://coolify.io): crie um recurso a
+partir deste repositório com o build pack *Docker Compose*, defina `SERVER_PASSWORD` (obrigatória)
+e, opcionalmente, `ADMIN_FINGERPRINT` na aba Environment Variables, e faça o deploy. O Coolify
+atribui um domínio com HTTPS (`SERVICE_FQDN_SCREENLINK_3000`) e faz proxy dos WebSockets; o banco
+fica no volume `screenlink-data`. No app, use a URL `https://` como servidor.
 
-Without Coolify:
+Sem Coolify:
 
 ```sh
 docker build -t screenlink .
 docker run -d -p 3000:3000 -e SERVER_PASSWORD=change-me -v screenlink-data:/data screenlink
 ```
 
-Server environment variables:
+Variáveis de ambiente do servidor:
 
-| Variable              | Default                     | Meaning                                                   |
-| --------------------- | --------------------------- | --------------------------------------------------------- |
-| `PORT`                | `3000`                      | HTTP/WebSocket port                                        |
-| `DB_FILE`             | `screenlink.sqlite`         | SQLite file                                                |
-| `ICE_SERVERS`         | Google STUN                 | JSON array of `RTCIceServer`; add a TURN server here       |
-| `MAX_RELAY_DEPTH`     | `4`                         | Max hops between the sharer and the farthest viewer        |
-| `RECONNECT_GRACE_MS`  | `20000`                     | How long a dropped client keeps its place in streams       |
-| `SERVER_PASSWORD`     | none                        | Shared password needed to sign in; changing it signs everyone out |
-| `ADMIN_FINGERPRINT`   | none                        | Comma-separated device fingerprints with the admin view    |
+| Variável              | Padrão                      | Significado                                                |
+| --------------------- | --------------------------- | ---------------------------------------------------------- |
+| `PORT`                | `3000`                      | Porta HTTP/WebSocket                                       |
+| `DB_FILE`             | `screenlink.sqlite`         | Arquivo SQLite                                             |
+| `ICE_SERVERS`         | STUN do Google              | Array JSON de `RTCIceServer`; coloque um servidor TURN aqui |
+| `MAX_RELAY_DEPTH`     | `4`                         | Máximo de saltos entre quem compartilha e o espectador mais distante |
+| `RECONNECT_GRACE_MS`  | `20000`                     | Por quanto tempo um cliente que caiu mantém seu lugar nas transmissões |
+| `SERVER_PASSWORD`     | nenhuma                     | Senha compartilhada exigida para entrar; trocá-la desconecta todo mundo |
+| `ADMIN_FINGERPRINT`   | nenhuma                     | Impressões digitais de dispositivos, separadas por vírgula, com acesso à visão de admin |
 
-Start the client hidden in the tray with `--hidden` (the "Start with the system" setting does this).
+Inicie o cliente escondido na bandeja com `--hidden` (a opção "Iniciar com o sistema" faz isso).
 
-## Accounts, password and admin
+## Contas, senha e admin
 
-There are no usernames or passwords per person. Each install creates an **Ed25519 key pair** on
-first run (`identity.json` in the app's data folder); the account *is* the device. The
-**fingerprint** is the first 128 bits of SHA-256 of the public key, shown in the app with **F12**.
+Não existe usuário nem senha por pessoa. Cada instalação cria um **par de chaves Ed25519** na
+primeira execução (`identity.json` na pasta de dados do app); a conta *é* o dispositivo. A
+**impressão digital** (fingerprint) são os primeiros 128 bits do SHA-256 da chave pública, exibida
+no app com **F12**.
 
-- Signing in = signing a one-time challenge from the server with the device key. A fingerprint
-  seen in a screenshot or log is useless without that key, so it cannot be used to impersonate an
-  admin or to dodge a ban.
-- Signing out and back in on the same device returns the same account and rooms.
-- `SERVER_PASSWORD` gates signing in, so without it nobody can create or join rooms, share, or
-  watch. Each token remembers which password it was issued under, so changing the password signs
-  everyone out until they type the new one. Wrong passwords are limited to 10 per IP every 10 minutes.
-- Devices listed in `ADMIN_FINGERPRINT` get an **Admin** view: every user (fingerprint, rooms,
-  last seen, online), every room (owner, member count, who is live), and bans. Banning a
-  fingerprint disconnects that device immediately and stops it from signing in. Banning works
-  for fingerprints that never signed in, too.
-- The admin view **does not show invite codes or stream titles**: being admin manages who uses
-  the server, but gives no way into rooms you are not a member of.
-- Limitation: a banned person can delete `identity.json` and get a new fingerprint. The server
-  password is what stops them from simply signing in again — change it if that happens.
+- Entrar = assinar um desafio de uso único do servidor com a chave do dispositivo. Uma impressão
+  digital vista num print ou num log não serve para nada sem essa chave, então não dá para usá-la
+  para se passar por um admin nem para driblar um banimento.
+- Sair e entrar de novo no mesmo dispositivo devolve a mesma conta e as mesmas salas.
+- A `SERVER_PASSWORD` controla a entrada, então sem ela ninguém cria nem entra em salas,
+  compartilha ou assiste. Cada token lembra sob qual senha foi emitido, então trocar a senha
+  desconecta todo mundo até digitarem a nova. Senhas erradas são limitadas a 10 por IP a cada 10
+  minutos.
+- Dispositivos listados em `ADMIN_FINGERPRINT` ganham uma visão de **Admin**: todos os usuários
+  (impressão digital, salas, visto por último, online), todas as salas (dono, número de membros,
+  quem está ao vivo) e banimentos. Banir uma impressão digital desconecta aquele dispositivo na
+  hora e impede que ele entre. O banimento funciona até para impressões digitais que nunca
+  entraram.
+- A visão de admin **não mostra códigos de convite nem títulos de transmissões**: ser admin serve
+  para gerenciar quem usa o servidor, mas não dá acesso a salas das quais você não é membro.
+- Limitação: uma pessoa banida pode apagar o `identity.json` e ganhar uma nova impressão digital. É
+  a senha do servidor que a impede de simplesmente entrar de novo — troque-a se isso acontecer.
 
-## How the relay works
+## Como o relay funciona
 
-A server that forwards video (an SFU) pays for every viewer in upload bandwidth and CPU. Plain
-peer-to-peer makes the sharer pay instead: 10 viewers at 12 Mbps is 120 Mbps of upload. ScreenLink
-builds a **relay tree**:
+Um servidor que repassa vídeo (um SFU) paga por cada espectador em banda de upload e CPU. Um P2P
+puro faz quem compartilha pagar no lugar: 10 espectadores a 12 Mbps são 120 Mbps de upload. O
+ScreenLink monta uma **árvore de relay**:
 
 ```
-            sharer
-           /  |   \          sharer serves up to "Direct viewers" peers (default 3)
+        quem compartilha
+           /  |   \          quem compartilha atende até "Espectadores diretos" (padrão 3)
          v1   v2   v3
-        /  \   |             viewers forward to up to "Relay for others" peers (default 2)
+        /  \   |             espectadores repassam para até "Repassar para outros" (padrão 2)
       v4   v5  v6
 ```
 
-- The server only decides who connects to whom (`server/tree.ts`): each new viewer goes under the
-  shallowest node with a free slot, within `MAX_RELAY_DEPTH`.
-- When a relay leaves, its children are re-attached elsewhere **with their own subtrees**; only
-  the moved edges reconnect.
-- If no slot is free, the sharer takes the extra viewer rather than leaving them without video.
-- Each edge is a normal WebRTC connection (offer from parent, answer from child), so NAT traversal
-  is plain STUN/ICE. Peers behind symmetric NAT need a TURN server in `ICE_SERVERS`.
+- O servidor só decide quem se conecta a quem (`server/tree.ts`): cada novo espectador vai para
+  baixo do nó mais raso com vaga livre, dentro de `MAX_RELAY_DEPTH`.
+- Quando um relay sai, seus filhos são religados em outro lugar **junto com suas subárvores**;
+  só as arestas que mudaram reconectam.
+- Se não houver vaga, quem compartilha assume o espectador extra em vez de deixá-lo sem vídeo.
+- Cada aresta é uma conexão WebRTC normal (oferta do pai, resposta do filho), então a travessia
+  de NAT é STUN/ICE comum. Peers atrás de NAT simétrico precisam de um servidor TURN em
+  `ICE_SERVERS`.
 
-The cost: a relaying viewer **decodes and re-encodes** the video (browsers cannot forward encoded
-frames to another connection), which adds a few ms per hop and an encoder on that machine. That
-is why the depth is capped and relaying can be turned off per client.
+O custo: um espectador que repassa **decodifica e recodifica** o vídeo (navegadores não conseguem
+repassar quadros já codificados para outra conexão), o que soma alguns ms por salto e um encoder
+naquela máquina. Por isso a profundidade é limitada e o repasse pode ser desligado em cada
+cliente.
 
-## Latency (the Parsec-ish part)
+## Latência (a parte meio Parsec)
 
-Parsec uses its own UDP protocol and hardware encoders. Within WebRTC, the closest equivalents are:
+O Parsec usa um protocolo UDP próprio e encoders de hardware. Dentro do WebRTC, os equivalentes
+mais próximos são:
 
-- **Hardware encode/decode**: H.264 is preferred by default; VA-API is enabled on Linux. The
-  sharer's room card shows which encoder is actually in use (e.g. `OpenH264 (software)` vs a
-  hardware one) and whether quality is limited by CPU or bandwidth.
-- **No playout buffering**: `jitterBufferTarget = 0` on the receiver and Chrome's
-  `WebRTC-ZeroPlayoutDelay` field trial (the same trick Chrome Remote Desktop uses).
-- **Starts sharp**: SDP hints (`x-google-start-bitrate`) start near the target bitrate instead of
-  ramping up from ~300 kbps.
-- **Capture-side scaling** (keeps the aspect ratio) instead of capturing full-size and shrinking.
-- **"Optimize for"**: *Motion* keeps the frame rate (drops resolution under pressure); *Detail*
-  keeps text sharp (drops frames).
-- Viewer windows press `I` for live stats (fps, bitrate, audio, decode time, jitter buffer, RTT,
-  hop), `O` for 1:1 pixels, double-click/F11 for fullscreen. **Right-click** opens a menu with the
-  stream's volume (remembered per person sharing); `M` mutes.
-- **Audio**: Opus stereo at 128 kbps with voice processing off (no echo cancellation or noise
-  suppression, which ruin music and game audio). Audio and video are deliberately *not* lip-synced:
-  syncing makes the receiver hold video back to match the audio jitter buffer (tens of ms), and
-  video latency wins here. Relays forward the audio along with the video.
+- **Codificação/decodificação por hardware**: H.264 é o preferido por padrão; VA-API fica ativado
+  no Linux. O card da sala de quem compartilha mostra qual encoder está de fato em uso (ex.:
+  `OpenH264 (software)` vs. um de hardware) e se a qualidade está limitada por CPU ou por banda.
+- **Sem buffer de reprodução**: `jitterBufferTarget = 0` no receptor e o field trial
+  `WebRTC-ZeroPlayoutDelay` do Chrome (o mesmo truque do Chrome Remote Desktop).
+- **Começa nítido**: dicas no SDP (`x-google-start-bitrate`) começam perto do bitrate alvo em vez
+  de subir a partir de ~300 kbps.
+- **Redimensionamento na captura** (mantém a proporção) em vez de capturar em tamanho cheio e
+  reduzir depois.
+- **"Otimizar para"**: *Movimento* mantém a taxa de quadros (baixa a resolução sob pressão);
+  *Detalhe* mantém o texto nítido (descarta quadros).
+- Nas janelas de espectador, `I` mostra estatísticas ao vivo (fps, bitrate, áudio, tempo de
+  decodificação, jitter buffer, RTT, salto), `O` alterna pixels 1:1, duplo clique/F11 para tela
+  cheia. O **botão direito** abre um menu com o volume da transmissão (lembrado por pessoa que
+  compartilha); `M` silencia.
+- **Áudio**: Opus estéreo a 128 kbps com processamento de voz desligado (sem cancelamento de eco
+  nem supressão de ruído, que estragam música e áudio de jogo). Áudio e vídeo propositalmente *não*
+  são sincronizados: sincronizar faz o receptor segurar o vídeo para acompanhar o jitter buffer do
+  áudio (dezenas de ms), e aqui a latência do vídeo ganha. Os relays repassam o áudio junto com o
+  vídeo.
 
-## Muting notifications
+## Silenciando notificações
 
-The bell next to the app name (or **Mute notifications** in the tray menu) mutes the "X is
-sharing" notice and its sound:
+O sino ao lado do nome do app (ou **Silenciar notificações** no menu da bandeja) silencia o aviso
+"X está compartilhando" e o som dele:
 
-- **For a while**: 15 min to 8 hours, or any number of minutes/hours.
-- **Until you turn it back on**.
-- **Quiet hours**: weekly days and a time range, e.g. Mon–Fri 08:00–18:00. A range that crosses
-  midnight (22:00–07:00) belongs to the day it starts on and runs into the next morning.
+- **Por um tempo**: de 15 min a 8 horas, ou qualquer número de minutos/horas.
+- **Até você reativar**.
+- **Horário silencioso**: dias da semana e um intervalo de horário, ex.: seg–sex 08:00–18:00. Um
+  intervalo que passa da meia-noite (22:00–07:00) pertence ao dia em que começa e vai até a manhã
+  seguinte.
 
-Sounds of your own stream (viewers joining/leaving) and the stop sound of something you are
-watching still play: they answer something you are doing. The rules live in `client/mute.js`
-(tested in `client/mute.test.js`).
+Os sons da sua própria transmissão (espectadores entrando/saindo) e o som de fim de algo que você
+está assistindo continuam tocando: eles respondem a algo que você está fazendo. As regras ficam em
+`client/mute.js` (testadas em `client/mute.test.js`).
 
-## Sounds
+## Sons
 
-Played from a hidden window (`client/sound/`), since the main process cannot play audio and the
-UI window may not exist when the app starts hidden. Volume is in Settings (0 mutes).
+Tocados por uma janela escondida (`client/sound/`), já que o processo principal não toca áudio e a
+janela da interface pode não existir quando o app inicia escondido. O volume fica em
+Configurações (0 silencia).
 
-| Sound (`client/assets/`) | Who hears it                                            |
-| ------------------------ | ------------------------------------------------------- |
-| `stream-start.mp3`       | the sharer, and members who get the "is sharing" notice |
-| `stream-stop.mp3`        | the sharer, and everyone who was watching               |
-| `viewer-joined.mp3`      | the sharer, when a viewer joins                         |
-| `viewer-left.mp3`        | the sharer, when a viewer leaves                        |
+| Som (`client/assets/`)   | Quem ouve                                                        |
+| ------------------------ | ---------------------------------------------------------------- |
+| `stream-start.mp3`       | quem compartilha, e os membros que recebem o aviso "está compartilhando" |
+| `stream-stop.mp3`        | quem compartilha, e todo mundo que estava assistindo             |
+| `viewer-joined.mp3`      | quem compartilha, quando um espectador entra                     |
+| `viewer-left.mp3`        | quem compartilha, quando um espectador sai                       |
 
-A viewer that only moves inside the relay tree (or reconnects) makes no sound.
+Um espectador que só muda de lugar na árvore de relay (ou reconecta) não faz som.
 
-## Platform notes
+## Notas por plataforma
 
-- **Wayland**: the desktop portal shows its own screen/window picker after **Start sharing**, and
-  "someone is sharing" uses a system notification (Wayland apps cannot place a popup in a corner).
-- **X11 / Windows / macOS**: in-app picker with thumbnails, and a ScreenLink popup in the
-  bottom-right corner.
-- **System audio** is everything the computer plays **except Discord and ScreenLink itself**, so
-  friends in a Discord call with you do not hear their own voices back, and ScreenLink's sounds
-  (or a stream you are watching) stay out (`client/system-audio.js`):
-  - Linux: [venmic](https://github.com/Vencord/venmic) builds a virtual microphone in PipeWire
-    fed by every app on the default output except Discord (Discord, PTB, Canary, Vesktop,
-    Equibop) and ScreenLink, including apps that start playing later.
-  - Windows: WASAPI process loopback in *exclude* mode ([loopback-capture](https://github.com/WerdoxDev/application-loopback),
-    Windows 10 2004+). It can exclude one process tree: Discord's while it runs (checked every
-    10 s), ScreenLink's otherwise.
-  - If the native capture fails, it falls back to plain loopback (everything), and to no audio if
-    even that is unavailable, rather than failing to share.
+- **Wayland**: o portal do desktop mostra o próprio seletor de tela/janela depois de **Começar a
+  compartilhar**, e o "alguém está compartilhando" usa uma notificação do sistema (apps no Wayland
+  não conseguem posicionar um popup num canto).
+- **X11 / Windows / macOS**: seletor dentro do app com miniaturas, e um popup do ScreenLink no
+  canto inferior direito.
+- **Áudio do sistema** é tudo que o computador toca **exceto o Discord e o próprio ScreenLink**,
+  para que amigos numa chamada do Discord com você não ouçam a própria voz de volta, e os sons do
+  ScreenLink (ou uma transmissão que você está assistindo) fiquem de fora
+  (`client/system-audio.js`):
+  - Linux: o [venmic](https://github.com/Vencord/venmic) cria um microfone virtual no PipeWire
+    alimentado por todos os apps na saída padrão, exceto o Discord (Discord, PTB, Canary, Vesktop,
+    Equibop) e o ScreenLink, incluindo apps que começarem a tocar depois.
+  - Windows: loopback por processo do WASAPI no modo *exclude*
+    ([loopback-capture](https://github.com/WerdoxDev/application-loopback), Windows 10 2004+). Ele
+    consegue excluir uma árvore de processos: a do Discord enquanto estiver rodando (verificado a
+    cada 10 s), senão a do ScreenLink.
+  - Se a captura nativa falhar, cai para o loopback simples (tudo) e, se nem isso estiver
+    disponível, para sem áudio, em vez de falhar ao compartilhar.
 
-## Layout
+## Estrutura
 
 ```
 server/
-  index.ts       REST + WebSocket signaling, in-memory streams
-  db.ts          SQLite schema and queries
-  tree.ts        relay tree placement (tested in tree.test.ts)
-  auth.test.ts   device sign-in, password, admin and bans against a live server
+  index.ts       REST + sinalização WebSocket, transmissões em memória
+  db.ts          schema e queries do SQLite
+  tree.ts        posicionamento na árvore de relay (testado em tree.test.ts)
+  auth.test.ts   login do dispositivo, senha, admin e banimentos contra um servidor rodando
 client/
-  main.js        tray, windows, server connection, signaling routing
-  preload.cjs    IPC bridge shared by all windows
-  shared/rtc.js  Fanout (send to children) and Upstream (receive from parent)
-  ui/            rooms, invites, share picker, settings
-  broadcaster/   hidden window: capture + direct viewers
-  viewer/        one window per watched stream (also relays)
-  popup/         "X is sharing" toast
-  sound/         hidden window that plays the notification sounds
+  main.js        bandeja, janelas, conexão com o servidor, roteamento da sinalização
+  preload.cjs    ponte IPC compartilhada por todas as janelas
+  shared/rtc.js  Fanout (envia para os filhos) e Upstream (recebe do pai)
+  ui/            salas, convites, seletor de compartilhamento, configurações
+  broadcaster/   janela escondida: captura + espectadores diretos
+  viewer/        uma janela por transmissão assistida (também faz relay)
+  popup/         aviso "X está compartilhando"
+  sound/         janela escondida que toca os sons de notificação
 ```

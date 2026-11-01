@@ -15,7 +15,7 @@ function h(tag, props = {}, ...children) {
 }
 
 const CODEC_LABEL = { h264: "H.264", av1: "AV1", vp9: "VP9", vp8: "VP8" };
-const RES_LABEL = { native: "Native", 2160: "4K", 1440: "1440p", 1080: "1080p", 720: "720p", 480: "480p" };
+const RES_LABEL = { native: "Nativa", 2160: "4K", 1440: "1440p", 1080: "1080p", 720: "720p", 480: "480p" };
 
 function hue(id) {
   let n = 0;
@@ -33,8 +33,8 @@ function avatar(user, { presence, small } = {}) {
 }
 
 function spec(settings) {
-  const res = settings.height ? `${settings.height}p` : "native";
-  const audio = settings.audio ? " · 🔊 audio" : "";
+  const res = settings.height ? `${settings.height}p` : "nativa";
+  const audio = settings.audio ? " · 🔊 áudio" : "";
   return `${res} · ${settings.fps} fps · ${(settings.bitrate / 1e6).toFixed(0)} Mbps · ${CODEC_LABEL[settings.codec] ?? settings.codec}${audio}`;
 }
 
@@ -102,10 +102,10 @@ function render() {
   $("mute-btn").title = muteText(state.mute);
   if ($("mute-dialog").open) renderMuteStatus();
   $("theme-btn").classList.toggle("light", !state.dark);
-  $("theme-btn").title = state.dark ? "Switch to light theme" : "Switch to dark theme";
+  $("theme-btn").title = state.dark ? "Mudar para o tema claro" : "Mudar para o tema escuro";
   $("update-btn").hidden = !state.update;
-  if (state.update) $("update-btn").textContent = `Update available: ${state.update.version}`;
-  $("conn").title = { online: "Connected", connecting: "Connecting…", offline: "Offline — retrying" }[state.connection];
+  if (state.update) $("update-btn").textContent = `Atualização disponível: ${state.update.version}`;
+  $("conn").title = { online: "Conectado", connecting: "Conectando…", offline: "Offline — tentando de novo" }[state.connection];
   if (state.user) {
     $("me-avatar").replaceWith(Object.assign(avatar(state.user, { small: true }), { id: "me-avatar" }));
     $("me-name").textContent = state.user.name;
@@ -151,13 +151,13 @@ function renderContent() {
       h(
         "div",
         { class: "empty" },
-        h("h2", {}, "No rooms yet"),
-        h("p", {}, "Create a room and send the invite code to your friends, or join one with a code you got."),
+        h("h2", {}, "Nenhuma sala ainda"),
+        h("p", {}, "Crie uma sala e mande o código de convite para seus amigos, ou entre em uma com um código que você recebeu."),
         h(
           "div",
           { class: "row" },
-          h("button", { class: "primary", onclick: () => openDialog("new-room-dialog") }, "New room"),
-          h("button", { onclick: () => openDialog("join-room-dialog") }, "Join with code"),
+          h("button", { class: "primary", onclick: () => openDialog("new-room-dialog") }, "Nova sala"),
+          h("button", { onclick: () => openDialog("join-room-dialog") }, "Entrar com código"),
         ),
       ),
     );
@@ -174,23 +174,23 @@ function renderContent() {
   const head = h(
     "div",
     { class: "room-head" },
-    h("div", {}, h("h1", {}, room.name), h("div", { class: "meta" }, `${room.members.length} members · ${onlineCount} online`)),
+    h("div", {}, h("h1", {}, room.name), h("div", { class: "meta" }, `${room.members.length} ${room.members.length === 1 ? "membro" : "membros"} · ${onlineCount} online`)),
     h(
       "div",
       { class: "tools" },
       h(
         "div",
-        { class: "invite", title: "Anyone with this code can join the room" },
-        h("span", { class: "label" }, "Invite code"),
+        { class: "invite", title: "Qualquer pessoa com este código pode entrar na sala" },
+        h("span", { class: "label" }, "Código de convite"),
         h("span", { class: "mono" }, room.inviteCode),
-        h("button", { class: "ghost", onclick: () => act(() => sl.invoke("clipboard:write", room.inviteCode), "Invite code copied") }, "Copy"),
+        h("button", { class: "ghost", onclick: () => act(() => sl.invoke("clipboard:write", room.inviteCode), "Código de convite copiado") }, "Copiar"),
         isOwner
-          ? h("button", { class: "ghost", title: "The old code stops working", onclick: () => act(() => sl.invoke("rooms:code", room.id), "New invite code created") }, "New code")
+          ? h("button", { class: "ghost", title: "O código antigo para de funcionar", onclick: () => act(() => sl.invoke("rooms:code", room.id), "Novo código de convite criado") }, "Novo código")
           : null,
       ),
       isOwner
-        ? h("button", { class: "danger", onclick: () => confirmThen(`Delete “${room.name}” for everyone?`, () => sl.invoke("rooms:delete", room.id)) }, "Delete room")
-        : h("button", { class: "danger", onclick: () => confirmThen(`Leave “${room.name}”?`, () => sl.invoke("rooms:leave", room.id)) }, "Leave"),
+        ? h("button", { class: "danger", onclick: () => confirmThen(`Excluir “${room.name}” para todo mundo?`, () => sl.invoke("rooms:delete", room.id)) }, "Excluir sala")
+        : h("button", { class: "danger", onclick: () => confirmThen(`Sair de “${room.name}”?`, () => sl.invoke("rooms:leave", room.id)) }, "Sair"),
     ),
   );
 
@@ -203,25 +203,25 @@ function renderContent() {
           h(
             "div",
             {},
-            h("strong", {}, "Share your screen"),
-            h("p", {}, mine ? "You are sharing in another room — starting here stops that one." : `Everyone online in ${room.name} gets a popup and can watch.`),
+            h("strong", {}, "Compartilhar sua tela"),
+            h("p", {}, mine ? "Você está compartilhando em outra sala — começar aqui encerra aquela." : `Todo mundo online em ${room.name} recebe um popup e pode assistir.`),
           ),
-          h("button", { class: "primary", disabled: state.connection !== "online", onclick: () => openShare(room) }, "Share screen"),
+          h("button", { class: "primary", disabled: state.connection !== "online", onclick: () => openShare(room) }, "Compartilhar tela"),
         );
 
   const live = h(
     "section",
     {},
-    h("h3", {}, "Live now"),
+    h("h3", {}, "Ao vivo agora"),
     streams.length
       ? h("div", { class: "streams", style: "margin-top: 12px" }, streams.map((s) => streamCard(s, room)))
-      : h("p", { class: "muted" }, "Nobody is sharing right now."),
+      : h("p", { class: "muted" }, "Ninguém está compartilhando agora."),
   );
 
   const members = h(
     "section",
     {},
-    h("h3", {}, "Members"),
+    h("h3", {}, "Membros"),
     h(
       "div",
       { class: "members", style: "margin-top: 8px" },
@@ -235,12 +235,12 @@ function renderContent() {
           h(
             "div",
             {},
-            h("div", {}, m.name, m.id === state.user?.id ? h("span", { class: "muted" }, " (you)") : null),
-            h("div", { class: "status" }, sharing ? "sharing" : on ? "online" : "offline"),
+            h("div", {}, m.name, m.id === state.user?.id ? h("span", { class: "muted" }, " (você)") : null),
+            h("div", { class: "status" }, sharing ? "compartilhando" : on ? "online" : "offline"),
           ),
-          m.role === "owner" ? h("span", { class: "role" }, "owner") : null,
+          m.role === "owner" ? h("span", { class: "role" }, "dono") : null,
           isOwner && m.id !== state.user?.id
-            ? h("button", { class: "ghost danger", onclick: () => confirmThen(`Remove ${m.name} from the room?`, () => sl.invoke("rooms:kick", room.id, m.id)) }, "Remove")
+            ? h("button", { class: "ghost danger", onclick: () => confirmThen(`Remover ${m.name} da sala?`, () => sl.invoke("rooms:kick", room.id, m.id)) }, "Remover")
             : null,
         );
       }),
@@ -259,22 +259,22 @@ function streamCard(s, room) {
     return h(
       "div",
       { class: "stream-card mine" },
-      h("div", { class: "top" }, avatar(member), h("div", { class: "who" }, h("div", { class: "name ellipsis" }, `You — ${s.title}`), h("div", { class: "spec" }, spec(s.settings)))),
+      h("div", { class: "top" }, avatar(member), h("div", { class: "who" }, h("div", { class: "name ellipsis" }, `Você — ${s.title}`), h("div", { class: "spec" }, spec(s.settings)))),
       h("div", { class: "encoder", id: "encoder" }, encoderInfo(state.sharing.encoder)),
       audience.length
         ? h(
             "div",
             { class: "tree" },
             audience.map((v) =>
-              h("div", {}, "• ", v.name, h("span", { class: "via" }, v.depth <= 1 ? "direct" : `via ${names.get(v.parentId) ?? "relay"} (hop ${v.depth})`)),
+              h("div", {}, "• ", v.name, h("span", { class: "via" }, v.depth <= 1 ? "direto" : `via ${names.get(v.parentId) ?? "relay"} (salto ${v.depth})`)),
             ),
           )
         : null,
       h(
         "div",
         { class: "bottom" },
-        h("span", { class: "viewers" }, audience.length === 1 ? "1 watching" : `${audience.length} watching`),
-        h("button", { class: "danger", onclick: () => act(() => sl.invoke("share:stop")) }, "Stop sharing"),
+        h("span", { class: "viewers" }, `${audience.length} assistindo`),
+        h("button", { class: "danger", onclick: () => act(() => sl.invoke("share:stop")) }, "Parar de compartilhar"),
       ),
     );
   }
@@ -286,21 +286,23 @@ function streamCard(s, room) {
     h(
       "div",
       { class: "bottom" },
-      h("span", { class: "viewers" }, s.viewers === 1 ? "1 watching" : `${s.viewers} watching`),
+      h("span", { class: "viewers" }, `${s.viewers} assistindo`),
       isMine
-        ? h("span", { class: "muted" }, "you")
-        : h("button", { class: watching ? "" : "primary", onclick: () => sl.invoke("stream:watch", s.id) }, watching ? "Open" : "Watch"),
+        ? h("span", { class: "muted" }, "você")
+        : h("button", { class: watching ? "" : "primary", onclick: () => sl.invoke("stream:watch", s.id) }, watching ? "Abrir" : "Assistir"),
     ),
   );
 }
 
+const LIMIT_LABEL = { cpu: "CPU", bandwidth: "banda", other: "outro motivo" };
+
 function encoderInfo(e) {
-  if (!e) return h("span", {}, "Waiting for the first viewer…");
+  if (!e) return h("span", {}, "Aguardando o primeiro espectador…");
   const hw = e.powerEfficient === true || /vaapi|nvenc|mediafoundation|videotoolbox|external|hardware/i.test(e.encoder ?? "");
   return [
     h("span", {}, "Encoder ", h("b", {}, e.encoder ?? "?"), " ", hw ? "(hardware)" : h("span", { class: "warn" }, "(software)")),
-    h("span", {}, `${e.codec ?? "?"} · ${e.width}×${e.height} · ${e.fps} fps · ${e.encodeMs.toFixed(1)} ms/frame · ${e.direct} direct`),
-    e.limitedBy !== "none" ? h("span", { class: "warn" }, `Quality limited by ${e.limitedBy}`) : null,
+    h("span", {}, `${e.codec ?? "?"} · ${e.width}×${e.height} · ${e.fps} fps · ${e.encodeMs.toFixed(1)} ms/quadro · ${e.direct} ${e.direct === 1 ? "direto" : "diretos"}`),
+    e.limitedBy !== "none" ? h("span", { class: "warn" }, `Qualidade limitada por ${LIMIT_LABEL[e.limitedBy] ?? e.limitedBy}`) : null,
   ];
 }
 
@@ -366,7 +368,7 @@ dialogForm("new-room-dialog", async (form) => {
 dialogForm("join-room-dialog", async (form) => {
   const { id } = await sl.invoke("rooms:join", form.code.value);
   selectedRoomId = id;
-  toast("Joined the room");
+  toast("Você entrou na sala");
 });
 
 // Shows the password field only when the server asks for one.
@@ -390,9 +392,9 @@ $("register-form").addEventListener("submit", async (event) => {
     await sl.invoke("auth:signin", { serverUrl: form.serverUrl.value, name: form.name.value.trim(), password: form.password.value });
     form.password.value = "";
   } catch (err) {
-    error.textContent = err.message === "fetch failed" ? "Could not reach the server." : err.message;
+    error.textContent = err.message === "fetch failed" ? "Não foi possível contactar o servidor." : err.message;
     error.hidden = false;
-    if (/password/.test(err.message)) $("password-field").hidden = false;
+    if (/senha/.test(err.message)) $("password-field").hidden = false;
   }
 });
 
@@ -405,7 +407,7 @@ document.addEventListener("keydown", (event) => {
   $("fingerprint").textContent = state?.fingerprint ?? "…";
   dialog.showModal();
 });
-$("copy-fingerprint").onclick = () => act(() => sl.invoke("clipboard:write", state.fingerprint), "Fingerprint copied");
+$("copy-fingerprint").onclick = () => act(() => sl.invoke("clipboard:write", state.fingerprint), "Impressão digital copiada");
 
 // Settings
 $("me-btn").onclick = () => {
@@ -415,7 +417,7 @@ $("me-btn").onclick = () => {
   form.relayCapacity.value = String(state.settings.relayCapacity);
   const popupOption = form.notifications.querySelector('option[value="popup"]');
   popupOption.disabled = !state.popupPlaceable;
-  popupOption.textContent = state.popupPlaceable ? "Show a ScreenLink popup" : "Show a ScreenLink popup (not on Wayland)";
+  popupOption.textContent = state.popupPlaceable ? "Mostrar um popup do ScreenLink" : "Mostrar um popup do ScreenLink (não no Wayland)";
   form.notifications.value = state.popupPlaceable || state.settings.notifications !== "popup" ? state.settings.notifications : "native";
   form.soundVolume.value = String(state.settings.soundVolume);
   updateVolume();
@@ -425,8 +427,8 @@ $("me-btn").onclick = () => {
 };
 
 dialogForm("settings-dialog", async (form) => {
-  if (form.serverUrl.value.replace(/\/+$/, "") !== state.serverUrl && !confirm("Changing the server signs you out. Continue?")) {
-    throw new Error("Server not changed.");
+  if (form.serverUrl.value.replace(/\/+$/, "") !== state.serverUrl && !confirm("Trocar o servidor desconecta você. Continuar?")) {
+    throw new Error("Servidor não alterado.");
   }
   if (state.user && form.name.value.trim() !== state.user.name) await sl.invoke("me:rename", form.name.value);
   await sl.invoke("settings:set", {
@@ -441,33 +443,33 @@ dialogForm("settings-dialog", async (form) => {
 
 function updateVolume() {
   const v = Number($("settings-form").soundVolume.value);
-  $("volume-out").textContent = v ? `${v}%` : "muted";
+  $("volume-out").textContent = v ? `${v}%` : "mudo";
 }
 $("settings-form").soundVolume.addEventListener("input", updateVolume);
 $("test-sound").onclick = () => sl.invoke("sound:test", $("settings-form").soundVolume.value);
 
 $("logout-btn").onclick = async () => {
-  if (!confirm("Sign out? Signing in again from this device brings the same account back.")) return;
+  if (!confirm("Sair? Entrar de novo por este dispositivo traz a mesma conta de volta.")) return;
   await act(() => sl.invoke("auth:logout"));
   $("settings-dialog").close();
 };
 
 // ---------- mute ----------
 
-const DAYS = [["Mon", 1], ["Tue", 2], ["Wed", 3], ["Thu", 4], ["Fri", 5], ["Sat", 6], ["Sun", 0]];
-const PRESETS = [[15, "15 min"], [30, "30 min"], [60, "1 hour"], [120, "2 hours"], [240, "4 hours"], [480, "8 hours"]];
+const DAYS = [["Seg", 1], ["Ter", 2], ["Qua", 3], ["Qui", 4], ["Sex", 5], ["Sáb", 6], ["Dom", 0]];
+const PRESETS = [[15, "15 min"], [30, "30 min"], [60, "1 hora"], [120, "2 horas"], [240, "4 horas"], [480, "8 horas"]];
 
 function clock(ts) {
   const date = new Date(ts);
-  const time = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  return date.toDateString() === new Date().toDateString() ? time : `${date.toLocaleDateString([], { weekday: "short" })} ${time}`;
+  const time = date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  return date.toDateString() === new Date().toDateString() ? time : `${date.toLocaleDateString("pt-BR", { weekday: "short" })} ${time}`;
 }
 
 function muteText(mute) {
-  if (mute.manual === "forever") return "Notifications muted until you turn them back on";
-  if (mute.manual) return `Notifications muted until ${clock(mute.manual)}`;
-  if (mute.quietUntil) return `Quiet hours — notifications muted until ${clock(mute.quietUntil)}`;
-  return "Notifications are on";
+  if (mute.manual === "forever") return "Notificações silenciadas até você reativar";
+  if (mute.manual) return `Notificações silenciadas até ${clock(mute.manual)}`;
+  if (mute.quietUntil) return `Horário silencioso — notificações silenciadas até ${clock(mute.quietUntil)}`;
+  return "Notificações ativadas";
 }
 
 function renderMuteStatus() {
@@ -531,14 +533,14 @@ $("mute-forever").onclick = () => act(() => sl.invoke("mute:set", "forever"));
 $("mute-off").onclick = () => act(() => sl.invoke("mute:set", null));
 
 dialogForm("mute-dialog", async (form) => {
-  if (form.quietEnabled.checked && !quietDays.size) throw new Error("Pick at least one day.");
+  if (form.quietEnabled.checked && !quietDays.size) throw new Error("Escolha pelo menos um dia.");
   await sl.invoke("quiet:set", {
     enabled: form.quietEnabled.checked,
     days: [...quietDays],
     start: form.quietStart.value,
     end: form.quietEnd.value,
   });
-  toast("Quiet hours saved");
+  toast("Horário silencioso salvo");
 });
 
 // ---------- admin ----------
@@ -578,12 +580,12 @@ async function refreshAdmin() {
 }
 
 function ago(ts) {
-  if (!ts) return "never";
+  if (!ts) return "nunca";
   const s = Math.round((Date.now() - ts) / 1000);
-  if (s < 60) return "just now";
-  if (s < 3600) return `${Math.round(s / 60)} min ago`;
-  if (s < 86400) return `${Math.round(s / 3600)} h ago`;
-  return `${Math.round(s / 86400)} d ago`;
+  if (s < 60) return "agora mesmo";
+  if (s < 3600) return `há ${Math.round(s / 60)} min`;
+  if (s < 86400) return `há ${Math.round(s / 3600)} h`;
+  return `há ${Math.round(s / 86400)} d`;
 }
 
 /** Fills the ban form below so the admin can add a reason and confirm there. */
@@ -598,7 +600,7 @@ function renderAdmin() {
   // Keep what is being typed in the ban form across the 5 s refresh.
   const typed = { fp: $("ban-fp")?.value ?? "", reason: $("ban-reason")?.value ?? "", focus: document.activeElement?.id };
   if (!adminData) {
-    content.replaceChildren(h("p", { class: "muted" }, "Loading…"));
+    content.replaceChildren(h("p", { class: "muted" }, "Carregando…"));
     return;
   }
   const { users, rooms, bans, stats } = adminData;
@@ -607,7 +609,7 @@ function renderAdmin() {
   const usersTable = h(
     "table",
     { class: "table" },
-    h("thead", {}, h("tr", {}, ["User", "Fingerprint", "Rooms", "Last seen", "Status", ""].map((t) => h("th", {}, t)))),
+    h("thead", {}, h("tr", {}, ["Usuário", "Impressão digital", "Salas", "Visto por último", "Status", ""].map((t) => h("th", {}, t)))),
     h(
       "tbody",
       {},
@@ -615,19 +617,19 @@ function renderAdmin() {
         h(
           "tr",
           {},
-          h("td", {}, h("div", { class: "who" }, avatar(u, { small: true, presence: u.online }), u.name, u.id === state.user?.id ? h("span", { class: "muted" }, "(you)") : null)),
+          h("td", {}, h("div", { class: "who" }, avatar(u, { small: true, presence: u.online }), u.name, u.id === state.user?.id ? h("span", { class: "muted" }, "(você)") : null)),
           h("td", { class: "mono", title: u.fingerprint }, u.fingerprint),
           h("td", {}, String(u.rooms)),
-          h("td", {}, u.online ? "online now" : ago(u.lastSeen)),
-          h("td", {}, u.admin ? h("span", { class: "pill admin" }, "admin") : u.banned ? h("span", { class: "pill bad" }, "banned") : h("span", { class: `pill${u.online ? " ok" : ""}` }, u.online ? "online" : "offline")),
+          h("td", {}, u.online ? "online agora" : ago(u.lastSeen)),
+          h("td", {}, u.admin ? h("span", { class: "pill admin" }, "admin") : u.banned ? h("span", { class: "pill bad" }, "banido") : h("span", { class: `pill${u.online ? " ok" : ""}` }, u.online ? "online" : "offline")),
           h(
             "td",
             { class: "actions" },
             u.admin
               ? null
               : u.banned
-                ? h("button", { class: "ghost", onclick: () => act(() => sl.invoke("admin:unban", u.fingerprint).then(refreshAdmin), `${u.name} unbanned`) }, "Unban")
-                : h("button", { class: "ghost danger", onclick: () => banUser(u.fingerprint) }, "Ban"),
+                ? h("button", { class: "ghost", onclick: () => act(() => sl.invoke("admin:unban", u.fingerprint).then(refreshAdmin), `${u.name} foi desbanido`) }, "Desbanir")
+                : h("button", { class: "ghost danger", onclick: () => banUser(u.fingerprint) }, "Banir"),
           ),
         ),
       ),
@@ -638,7 +640,7 @@ function renderAdmin() {
     ? h(
         "table",
         { class: "table" },
-        h("thead", {}, h("tr", {}, ["Room", "Owner", "Members", "Live", "Created", ""].map((t) => h("th", {}, t)))),
+        h("thead", {}, h("tr", {}, ["Sala", "Dono", "Membros", "Ao vivo", "Criada", ""].map((t) => h("th", {}, t)))),
         h(
           "tbody",
           {},
@@ -654,13 +656,13 @@ function renderAdmin() {
               h(
                 "td",
                 { class: "actions" },
-                h("button", { class: "ghost danger", onclick: () => confirmThen(`Delete “${r.name}” for all ${r.members} members?`, () => sl.invoke("admin:deleteRoom", r.id).then(refreshAdmin)) }, "Delete"),
+                h("button", { class: "ghost danger", onclick: () => confirmThen(`Excluir “${r.name}” para todos os ${r.members} membros?`, () => sl.invoke("admin:deleteRoom", r.id).then(refreshAdmin)) }, "Excluir"),
               ),
             ),
           ),
         ),
       )
-    : h("p", { class: "muted" }, "No rooms.");
+    : h("p", { class: "muted" }, "Nenhuma sala.");
 
   const banForm = h(
     "form",
@@ -669,24 +671,24 @@ function renderAdmin() {
       onsubmit: (event) => {
         event.preventDefault();
         const target = adminData.users.find((u) => u.fingerprint === $("ban-fp").value.trim().toUpperCase());
-        if (!confirm(`Ban ${target ? target.name : "this fingerprint"}? ${target?.online ? "They are disconnected now and " : ""}this device can no longer sign in.`)) return;
+        if (!confirm(`Banir ${target ? target.name : "esta impressão digital"}? ${target?.online ? "A pessoa é desconectada agora e este" : "Este"} dispositivo não poderá mais entrar.`)) return;
         act(() => sl.invoke("admin:ban", $("ban-fp").value, $("ban-reason").value).then(() => {
           $("ban-fp").value = "";
           $("ban-reason").value = "";
           return refreshAdmin();
-        }), "Fingerprint banned");
+        }), "Impressão digital banida");
       },
     },
-    h("input", { id: "ban-fp", class: "mono", required: true, placeholder: "Fingerprint to ban (XXXX-XXXX-…)" }),
-    h("input", { id: "ban-reason", placeholder: "Reason (optional)" }),
-    h("button", { class: "danger" }, "Ban"),
+    h("input", { id: "ban-fp", class: "mono", required: true, placeholder: "Impressão digital para banir (XXXX-XXXX-…)" }),
+    h("input", { id: "ban-reason", placeholder: "Motivo (opcional)" }),
+    h("button", { class: "danger" }, "Banir"),
   );
 
   const bansTable = bans.length
     ? h(
         "table",
         { class: "table" },
-        h("thead", {}, h("tr", {}, ["Fingerprint", "User", "Reason", "Banned", ""].map((t) => h("th", {}, t)))),
+        h("thead", {}, h("tr", {}, ["Impressão digital", "Usuário", "Motivo", "Banido", ""].map((t) => h("th", {}, t)))),
         h(
           "tbody",
           {},
@@ -695,22 +697,22 @@ function renderAdmin() {
               "tr",
               {},
               h("td", { class: "mono" }, b.fingerprint),
-              h("td", {}, b.userName ?? h("span", { class: "muted" }, "never signed in")),
+              h("td", {}, b.userName ?? h("span", { class: "muted" }, "nunca entrou")),
               h("td", {}, b.reason || h("span", { class: "muted" }, "—")),
               h("td", {}, ago(b.createdAt)),
-              h("td", { class: "actions" }, h("button", { class: "ghost", onclick: () => act(() => sl.invoke("admin:unban", b.fingerprint).then(refreshAdmin), "Unbanned") }, "Unban")),
+              h("td", { class: "actions" }, h("button", { class: "ghost", onclick: () => act(() => sl.invoke("admin:unban", b.fingerprint).then(refreshAdmin), "Desbanido") }, "Desbanir")),
             ),
           ),
         ),
       )
-    : h("p", { class: "muted", style: "margin-top: 10px" }, "Nobody is banned.");
+    : h("p", { class: "muted", style: "margin-top: 10px" }, "Ninguém está banido.");
 
   content.replaceChildren(
-    h("div", { class: "room-head" }, h("div", {}, h("h1", {}, "Admin"), h("div", { class: "meta" }, "Everyone on this server. Stream content and invite codes stay private to each room."))),
-    h("div", { class: "tiles" }, tile(stats.users, "users"), tile(stats.online, "online now"), tile(stats.rooms, "rooms"), tile(stats.streams, "live streams"), tile(bans.length, "banned")),
-    h("section", {}, h("h3", {}, "Users"), usersTable),
-    h("section", {}, h("h3", {}, "Rooms"), roomsTable),
-    h("section", {}, h("h3", {}, "Bans"), banForm, bansTable),
+    h("div", { class: "room-head" }, h("div", {}, h("h1", {}, "Admin"), h("div", { class: "meta" }, "Todo mundo neste servidor. O conteúdo das transmissões e os códigos de convite ficam privados a cada sala."))),
+    h("div", { class: "tiles" }, tile(stats.users, "usuários"), tile(stats.online, "online agora"), tile(stats.rooms, "salas"), tile(stats.streams, "transmissões ao vivo"), tile(bans.length, "banidos")),
+    h("section", {}, h("h3", {}, "Usuários"), usersTable),
+    h("section", {}, h("h3", {}, "Salas"), roomsTable),
+    h("section", {}, h("h3", {}, "Banimentos"), banForm, bansTable),
   );
   $("ban-fp").value = typed.fp;
   $("ban-reason").value = typed.reason;
@@ -737,7 +739,7 @@ async function openShare(room) {
   form.audio.value = d.audio ? "system" : "off";
   form.bitrate.value = String(Math.round(d.bitrate / 1e6));
   delete form.title.dataset.touched;
-  $("share-room").textContent = `in ${room.name}`;
+  $("share-room").textContent = `em ${room.name}`;
   updateBitrate();
   $("portal-note").hidden = !state.portalPicker;
   $("source-picker").hidden = state.portalPicker;
@@ -746,7 +748,7 @@ async function openShare(room) {
 }
 
 async function loadSources() {
-  $("sources").replaceChildren(h("p", { class: "muted" }, "Loading…"));
+  $("sources").replaceChildren(h("p", { class: "muted" }, "Carregando…"));
   sources = (await act(() => sl.invoke("sources:list"))) ?? [];
   if (!sources.some((s) => s.id === sourceId)) sourceId = sources.find((s) => s.kind === sourceKind)?.id ?? null;
   renderSources();
@@ -774,7 +776,7 @@ function renderSources() {
             h("div", { class: "label" }, s.icon ? h("img", { src: s.icon, alt: "" }) : null, h("span", { class: "ellipsis" }, s.name)),
           ),
         )
-      : [h("p", { class: "muted" }, sourceKind === "screen" ? "No screens found." : "No windows found.")]),
+      : [h("p", { class: "muted" }, sourceKind === "screen" ? "Nenhuma tela encontrada." : "Nenhuma janela encontrada.")]),
   );
 }
 
@@ -791,7 +793,7 @@ function updateBitrate() {
   const form = $("share-form");
   const mbps = Number(form.bitrate.value);
   $("bitrate-out").textContent = `${mbps} Mbps`;
-  $("upload-need").textContent = `up to ${mbps * Number(form.capacity.value)} Mbps (${mbps} × ${form.capacity.value})`;
+  $("upload-need").textContent = `até ${mbps * Number(form.capacity.value)} Mbps (${mbps} × ${form.capacity.value})`;
   $("audio-note").hidden = form.audio.value !== "system";
 }
 $("share-form").bitrate.addEventListener("input", updateBitrate);
@@ -799,10 +801,10 @@ $("share-form").capacity.addEventListener("change", updateBitrate);
 $("share-form").audio.addEventListener("change", updateBitrate);
 
 dialogForm("share-dialog", async (form) => {
-  if (!state.portalPicker && !sourceId) throw new Error("Pick a screen or a window.");
+  if (!state.portalPicker && !sourceId) throw new Error("Escolha uma tela ou uma janela.");
   await sl.invoke("share:start", {
     roomId: shareRoom.id,
-    title: form.title.value.trim() || (sources.find((s) => s.id === sourceId)?.kind === "screen" ? "Screen" : ""),
+    title: form.title.value.trim() || (sources.find((s) => s.id === sourceId)?.kind === "screen" ? "Tela" : ""),
     sourceId,
     settings: {
       resolution: form.resolution.value,
@@ -815,7 +817,7 @@ dialogForm("share-dialog", async (form) => {
     },
   });
   delete form.title.dataset.touched;
-  toast(`Sharing in ${shareRoom.name}`);
+  toast(`Compartilhando em ${shareRoom.name}`);
 });
 
 // ---------- boot ----------

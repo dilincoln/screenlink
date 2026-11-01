@@ -100,7 +100,7 @@ let media;
 try {
   media = await capture(sourceId, settings, audioPlan);
 } catch (err) {
-  await sl.invoke("bc:failed", `could not capture: ${err.message}`);
+  await sl.invoke("bc:failed", `não foi possível capturar: ${err.message}`);
   throw err;
 }
 
