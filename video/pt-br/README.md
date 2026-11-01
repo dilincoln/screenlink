@@ -14,9 +14,9 @@ renderizado quadro a quadro). O render final fica em `renders/screenlink-pt-br.m
 | 47,3–58,9 s | `step-share.html` | 2. Escolhe o jogo (diálogo real de compartilhamento) |
 | 58,9–63,1 s | `notify.html` | O popup "Lucas está compartilhando" chega na tela de seis amigos |
 | 63,1–77,6 s | `watch.html` | 3. Bia clica em Assistir → a luta ao vivo: "DEMOCRACIA… RELATIVAAAAAA!!" × "DEFESAAA…. IMBROCHÁVEEEELLL!!!" → a explosão no refrão 2 (70,36 s) → DOUBLE K.O., todo mundo perdeu |
-| 77,6–93,6 s | `relay.html` | Sala lotada: quem assiste repassa pro próximo, o vídeo nunca passa pelo servidor; o refrão 3 entra em 91,07 s |
+| 77,6–93,6 s | `relay.html` | Sem afetar sua internet: mesma lógica do torrent, quem assiste repassa pra poucos, até um limite; o refrão 3 entra em 91,07 s |
 | 93,6–105,3 s | `slides.html` | Não é só jogo: os slides do TCC |
-| 105,3–128,5 s | `features.html` | Um cartão por compasso com o que o app faz ("Sem cadastro" com "ninguém vai pegar meu telefone" / "pegaram meu telefone"), depois "Chama a galera." |
+| 105,3–128,5 s | `features.html` | Um cartão por compasso com o que o app faz ("Sem cadastro" com "ninguém vai pegar meu telefone" / "pegaram meu telefone"), depois "Código aberto e auditável." com "…vai chorar a noite toda hoje" logo antes da risada |
 | 128,5–141,5 s | `outro.html` | Onde baixar; a batida final da faixa em 138,72 s |
 
 O jogo (`assets/js/game.js`, "Treta em Brasília") é uma paródia em pixel art: os dois soltam o
