@@ -1,0 +1,73 @@
+<!-- Scene 5 (47.27 → 58.91 s, 16 beats): step 2. The real share dialog (assets/screens/share-dialog.png): the
+     camera goes into the settings that matter for games, comes back, Start sharing on the beat. -->
+<template id="step-share-template">
+  <div data-hf-id="hf-d5vg" data-composition-id="step-share" data-width="1920" data-height="1080" data-duration="4.18">
+    <div data-hf-id="hf-eu1i" class="ss-ground"></div>
+    <div data-hf-id="hf-unhe" class="ss-cam" id="ss-cam">
+      <div data-hf-id="hf-2yfu" class="ss-text" id="ss-text">
+        <div data-hf-id="hf-nvrw" class="ss-num" id="ss-num">2</div>
+        <div data-hf-id="hf-r9r7" class="ss-title" id="ss-title">Escolhe o jogo.</div>
+        <div data-hf-id="hf-3xhd" class="ss-sub" id="ss-sub">E aperta pra compartilhar.</div>
+      </div>
+      <div data-hf-id="hf-huf1" class="appwin ss-win" id="ss-win">
+        <div data-hf-id="hf-635v" class="tbar"><i data-hf-id="hf-wt6k"></i><i data-hf-id="hf-zeb8"></i><i data-hf-id="hf-y7e5"></i><span data-hf-id="hf-ag0p">ScreenLink</span></div>
+        <img data-hf-id="hf-433k" class="shot" src="assets/screens/share-dialog.png" alt="" />
+        <i data-hf-id="hf-oi0z" class="ss-hl" id="ss-h1" style="left:681px;top:343.5px;width:217.9px;height:33.25px"></i>
+        <i data-hf-id="hf-bclk" class="ss-hl" id="ss-h2" style="left:451.2px;top:409.1px;width:217.9px;height:33.25px"></i>
+        <i data-hf-id="hf-vapg" class="ss-hl" id="ss-h3" style="left:221.4px;top:474.5px;width:217.9px;height:33.25px"></i>
+        <div data-hf-id="hf-0po2" class="ss-tag" id="ss-t1" style="left:790px;top:314px">60 fps, liso</div>
+        <div data-hf-id="hf-9x1g" class="ss-tag" id="ss-t2" style="left:561px;top:379.6px">modo jogo</div>
+        <div data-hf-id="hf-5hwa" class="ss-tag" id="ss-t3" style="left:331px;top:445px">com o som do jogo</div>
+        <i data-hf-id="hf-yjrl" class="ss-press" id="ss-press" style="left:724.9px;top:634.2px;width:173.8px;height:31.8px"></i>
+      </div>
+    </div>
+    <svg data-hf-id="hf-w6kz" class="cursor" id="ss-cursor" viewBox="0 0 24 24"><path data-hf-id="hf-ds6k" d="M4 2 L4 19 L8.5 15 L11.5 22 L14.5 20.7 L11.6 14 L18 14 Z" fill="#fff" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/></svg>
+    <i data-hf-id="hf-0jeu" class="ss-flash" id="ss-flash"></i>
+    <style>
+      @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-Regular.ttf"); font-display: block; }
+      [data-composition-id="step-share"] { position: absolute; inset: 0; overflow: hidden; }
+      .ss-ground { position: absolute; inset: 0; background: #e9ebf2; }
+      .ss-cam { position: absolute; inset: 0; transform-origin: 1260px 584px; }
+      .ss-text { position: absolute; left: 110px; top: 150px; width: 560px; }
+      .ss-num { font-family: "Anton", sans-serif; font-size: 230px; line-height: 0.9; color: #4f6bed; }
+      .ss-title { margin-top: 26px; font: 800 80px/1.02 Inter; letter-spacing: -0.03em; color: #111318; }
+      .ss-sub { margin-top: 20px; font: 500 40px/1.25 Inter; color: #4a5163; }
+      .ss-win { left: 700px; top: 150px; width: 1120px; }
+      .ss-hl { position: absolute; border-radius: 8px; box-shadow: 0 0 0 3px #f5c518; opacity: 0; }
+      .ss-tag { position: absolute; padding: 4px 10px; border-radius: 6px; background: #f5c518; color: #111318; font: 800 17px Inter; white-space: nowrap; opacity: 0; }
+      .ss-press { position: absolute; border-radius: 7px; background: rgba(0,0,0,.28); opacity: 0; }
+      .ss-flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+    </style>
+    <script>
+      (function () {
+        const tl = gsap.timeline({ paused: true });
+        tl.fromTo("#ss-win", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 0);
+        tl.fromTo("#ss-num", { scale: 0.4, opacity: 0, transformOrigin: "0% 80%" }, { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(2)" }, 0.05);
+        tl.fromTo("#ss-title", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "power3.out" }, 0.18);
+        tl.fromTo("#ss-sub", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "power3.out" }, 0.3);
+
+        // Into the settings.
+        tl.fromTo("#ss-cam", { scale: 1, x: 0, y: 0 }, { scale: 1.9, x: -300, y: -44, duration: 0.5, ease: "power3.inOut" }, 1.15);
+        [["#ss-h1", "#ss-t1", 1.7], ["#ss-h2", "#ss-t2", 2.4], ["#ss-h3", "#ss-t3", 3.1]].forEach(([h, t, at]) => {
+          tl.fromTo(h, { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.2, ease: "back.out(2)" }, at);
+          tl.fromTo(t, { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: 0.2, ease: "power3.out" }, at + 0.05);
+        });
+        tl.to("#ss-cam", { scale: 1, x: 0, y: 0, duration: 0.45, ease: "power3.inOut" }, 3.9);
+        tl.to([".ss-hl", ".ss-tag"], { opacity: 0, duration: 0.2 }, 3.9);
+
+        // Start sharing, on the beat.
+        tl.fromTo("#ss-cursor", { x: 1720, y: 1100 }, { x: 1503, y: 795, duration: 0.65, ease: "power3.inOut" }, 4.35);
+        tl.to("#ss-cursor", { scale: 0.82, duration: 0.07, transformOrigin: "0 0" }, 5.06);
+        tl.to("#ss-cursor", { scale: 1, duration: 0.12 }, 5.13);
+        tl.fromTo("#ss-press", { opacity: 0 }, { opacity: 1, duration: 0.06, immediateRender: false }, 5.07);
+        tl.to("#ss-win", { scale: 0.97, duration: 0.08 }, 5.09);
+        tl.to("#ss-win", { scale: 1, duration: 0.2, ease: "back.out(2)" }, 5.17);
+        tl.fromTo("#ss-flash", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.in", immediateRender: false }, 5.47);
+        // Squeezed to 5.75 beats so the popup lands where chorus 2 needs it: every start moves, every
+        // tween keeps its speed.
+        tl.getChildren(false, true, true).forEach((c) => c.startTime(c.startTime() * 0.7176));
+        window.__timelines["step-share"] = tl;
+      })();
+    </script>
+  </div>
+</template>

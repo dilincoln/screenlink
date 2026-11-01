@@ -1,0 +1,115 @@
+<!-- Scene 8 (77.63 → 93.63 s, 22 beats): without hurting anyone's connection. Like a torrent, viewers
+     relay the stream to each other
+     (Fanout in client/shared/rtc.js, "repassando para N" in client/viewer), up to MAX_RELAY_DEPTH = 4
+     hops from the sharer, each one forwarding to a few (capacity capped at 8 in server/index.ts),
+     so nobody's upload or ping takes the whole room. The tree grows a level every two beats; the fourth level bursts in at 13.44 s, where the
+     music cuts into chorus 3 (91.07 s). -->
+<template id="relay-template">
+  <div data-hf-id="hf-tdj1" data-composition-id="relay" data-width="1920" data-height="1080" data-duration="16.0">
+    <div data-hf-id="hf-mtfi" class="rl-ground"></div>
+    <svg data-hf-id="hf-gtbr" class="rl-lines" id="rl-lines" viewBox="0 0 1920 1080" width="1920" height="1080"></svg>
+    <div data-hf-id="hf-i5fm" class="rl-nodes" id="rl-nodes"></div>
+        <div data-hf-id="hf-y7uy" class="rl-cap big" id="rl-c1">Mesma lógica do torrent.</div>
+    <div data-hf-id="hf-xxi4" class="rl-cap" id="rl-c2">Quem assiste repassa pra poucos, até um limite.</div>
+    <div data-hf-id="hf-mc6s" class="rl-cap big" id="rl-c3">Ninguém sofre com ping nem upload alto.</div>
+    <div data-hf-id="hf-92qc" class="rl-card" id="rl-card"><div data-hf-id="hf-0hb6" class="rl-q" id="rl-q1">Sem afetar</div><div data-hf-id="hf-27yf" class="rl-q sm" id="rl-q2">sua internet.</div></div>
+    <i data-hf-id="hf-t0gy" class="rl-flash" id="rl-flash"></i>
+    <style>
+      [data-composition-id="relay"] { position: absolute; inset: 0; overflow: hidden; }
+      .rl-ground { position: absolute; inset: 0; background: #1d2130; }
+      .rl-lines { position: absolute; left: 0; top: 0; }
+      .rl-lines line { stroke: #8ea2ff; stroke-width: 5; stroke-linecap: round; }
+      .rl-nodes { position: absolute; inset: 0; }
+      .rl-n { position: absolute; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 700; font-family: Inter; box-shadow: 0 0 0 4px #1d2130, 0 10px 24px rgba(0,0,0,.4); }
+      .rl-n.src { box-shadow: 0 0 0 6px #e5484d, 0 0 0 12px rgba(229,72,77,.3), 0 10px 24px rgba(0,0,0,.4); }
+      .rl-cap { position: absolute; left: 0; right: 0; top: 930px; text-align: center; color: #fff; font: 800 64px/1.1 Inter; letter-spacing: -0.03em; opacity: 0; }
+      .rl-cap.big { font: 400 88px/1 "Anton", sans-serif; text-transform: uppercase; letter-spacing: 0.01em; top: 915px; }
+      .rl-card { position: absolute; inset: 0; background: #0c0e12; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 30px; }
+      .rl-q { font: 400 260px/1 "Anton", sans-serif; text-transform: uppercase; color: #fff; letter-spacing: 0.01em; }
+      .rl-q.sm { font-size: 170px; color: #8ea2ff; }
+      .rl-flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+    </style>
+    <script>
+      (function () {
+        const root = document.querySelector('[data-composition-id="relay"] .rl-ground').parentElement;
+        const tl = gsap.timeline({ paused: true });
+        const P = 0.727273;
+        const CUT = 13.44; // the music's cut into chorus 3, between beats on purpose (index.html)
+        const NS = "http://www.w3.org/2000/svg";
+
+        // Tree: the sharer on top, then 2, 4, 8 and 16 viewers (4 hops).
+        const LEVEL_Y = [170, 340, 500, 655, 800];
+        const SIZE = [116, 92, 78, 66, 52];
+        const letters = "BRDJTNGMCAPVFEKSOHILUXYZWQBRDJT";
+        let seed = 11;
+        const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+        const levels = [];
+        let li = 0;
+        for (let k = 0; k < 5; k++) {
+          const n = 2 ** k;
+          const row = [];
+          for (let i = 0; i < n; i++) {
+            const x = 110 + ((i + 0.5) * 1700) / n;
+            const y = LEVEL_Y[k];
+            const el = document.createElement("div");
+            el.className = k === 0 ? "rl-n src" : "rl-n";
+            const s = SIZE[k];
+            const hue = k === 0 ? 164 : Math.round(rnd() * 360);
+            Object.assign(el.style, { left: `${x - s / 2}px`, top: `${y - s / 2}px`, width: `${s}px`, height: `${s}px`, background: `hsl(${hue} 55% 48%)`, fontSize: `${Math.round(s * 0.42)}px` });
+            el.textContent = k === 0 ? "L" : letters[li++ % letters.length];
+            root.querySelector("#rl-nodes").appendChild(el);
+            row.push({ x, y, el });
+          }
+          levels.push(row);
+        }
+        // One line per parent → child, drawn with a dash.
+        const lineRows = [];
+        for (let k = 1; k < 5; k++) {
+          const row = levels[k].map((c, i) => {
+            const p = levels[k - 1][Math.floor(i / 2)];
+            const ln = document.createElementNS(NS, "line");
+            ln.setAttribute("x1", p.x); ln.setAttribute("y1", p.y);
+            ln.setAttribute("x2", c.x); ln.setAttribute("y2", c.y);
+            ln.setAttribute("pathLength", "1");
+            ln.setAttribute("stroke-dasharray", "1");
+            ln.setAttribute("stroke-dashoffset", "1");
+            root.querySelector("#rl-lines").appendChild(ln);
+            return ln;
+          });
+          lineRows.push(row);
+        }
+
+        // Title card: two beats each line, then it lifts off.
+        tl.fromTo("#rl-q1", { scale: 1.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.2, ease: "power4.out" }, 0);
+        tl.fromTo("#rl-q2", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.25, ease: "back.out(2)" }, 2 * P);
+        tl.to("#rl-card", { yPercent: -100, duration: 0.3, ease: "power3.in" }, 4 * P - 0.3);
+
+        const all = levels.flat().map((n) => n.el);
+        tl.set(all, { opacity: 0 }, 0);
+        const grow = (k, at, dur) => {
+          if (k > 0) tl.to(lineRows[k - 1], { attr: { "stroke-dashoffset": 0 }, duration: dur, ease: "power2.out", stagger: 0.02 }, at);
+          tl.fromTo(levels[k].map((n) => n.el), { scale: 0.2, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(2.2)", stagger: 0.025, immediateRender: false }, at + (k > 0 ? dur * 0.6 : 0));
+        };
+        grow(0, 4 * P, 0);
+        grow(1, 6 * P, 0.3);
+        grow(2, 8 * P, 0.3);
+        grow(3, 10 * P, 0.3);
+
+        tl.fromTo("#rl-c1", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power3.out" }, 6 * P);
+        tl.to("#rl-c1", { y: -20, opacity: 0, duration: 0.18, ease: "power2.in" }, 12 * P - 0.18);
+        tl.fromTo("#rl-c2", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power3.out" }, 12 * P);
+        tl.to("#rl-c2", { y: -20, opacity: 0, duration: 0.15, ease: "power2.in" }, CUT - 0.15);
+
+        // The cut into chorus 3: flash, the fourth level bursts in, everyone bounces on the beat.
+        tl.fromTo("#rl-flash", { opacity: 0.85 }, { opacity: 0, duration: 0.4, ease: "power2.out", immediateRender: false }, CUT);
+        grow(4, CUT, 0.25);
+        tl.fromTo("#rl-c3", { scale: 1.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.22, ease: "power4.out", immediateRender: false }, CUT + 0.05);
+        for (let b = 19; b < 22; b++) {
+          tl.fromTo(all, { y: 0 }, { y: -14, duration: P / 2, ease: "sine.out", yoyo: true, repeat: 1, immediateRender: false }, b * P);
+        }
+        tl.to([...all, "#rl-lines", "#rl-c3"], { y: -60, opacity: 0, duration: 0.25, ease: "power2.in" }, 22 * P - 0.27);
+        window.__timelines["relay"] = tl;
+      })();
+    </script>
+  </div>
+</template>

@@ -1,0 +1,49 @@
+<!-- Scene 2 (18.18 → 24.00 s): the build into chorus 1 of the track ("calma e conta até 9"). One word per two beats, flat colour
+     cards that flip, then a 3-2-1 on half beats. The drop at 23.10 s belongs to the logo. -->
+<template id="build-template">
+  <div data-hf-id="hf-jqwt" data-composition-id="build" data-width="1920" data-height="1080" data-duration="5.83">
+    <div data-hf-id="hf-2lvo" class="bd-card" id="bd-c1" style="background:#0c0e12"><div data-hf-id="hf-gl9m" class="bd-word mid" id="bd-w1" style="color:#fff">Calma e conta<br />até 9.</div></div>
+    <div data-hf-id="hf-wt3y" class="bd-card" id="bd-c2" style="background:#eef0f6"><div data-hf-id="hf-vfxi" class="bd-word" id="bd-w2" style="color:#0c0e12">Respira.</div></div>
+    <div data-hf-id="hf-4m78" class="bd-card" id="bd-c3" style="background:#4f6bed"><div data-hf-id="hf-ngg4" class="bd-word sm" id="bd-w3" style="color:#fff">Tem outro jeito.</div></div>
+    <div data-hf-id="hf-m6r7" class="bd-card" id="bd-c4" style="background:#0c0e12">
+      <div data-hf-id="hf-wul0" class="bd-num" id="bd-n3">3</div>
+      <div data-hf-id="hf-00tg" class="bd-num" id="bd-n2">2</div>
+      <div data-hf-id="hf-obuc" class="bd-num" id="bd-n1">1</div>
+    </div>
+    <style>
+      @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-Regular.ttf"); font-display: block; }
+      [data-composition-id="build"] { position: absolute; inset: 0; overflow: hidden; background: #0c0e12; }
+      .bd-card { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; }
+      .bd-word { font-family: "Anton", sans-serif; font-size: 300px; line-height: 1; text-transform: uppercase; letter-spacing: 0.01em; }
+      .bd-word.sm { font-size: 210px; }
+      .bd-word.mid { font-size: 190px; line-height: 1.02; text-align: center; }
+      .bd-num { position: absolute; font-family: "Anton", sans-serif; font-size: 560px; line-height: 1; color: #fff; opacity: 0; }
+    </style>
+    <script>
+      (function () {
+        const tl = gsap.timeline({ paused: true });
+        const P = 0.7273; // one beat
+        const card = (c, w, at) => {
+          tl.set(c, { opacity: 1 }, at);
+          tl.fromTo(w, { scale: 1.35, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.18, ease: "power4.out", immediateRender: false }, at);
+          tl.to(w, { scale: 0.96, duration: 2 * P - 0.18, ease: "none" }, at + 0.18);
+        };
+        card("#bd-c1", "#bd-w1", 0);
+        tl.set("#bd-c1", { opacity: 0 }, 2 * P);
+        card("#bd-c2", "#bd-w2", 2 * P);
+        tl.set("#bd-c2", { opacity: 0 }, 4 * P);
+        card("#bd-c3", "#bd-w3", 4 * P);
+        tl.set("#bd-c3", { opacity: 0 }, 6 * P);
+        tl.set("#bd-c4", { opacity: 1 }, 6 * P);
+        ["#bd-n3", "#bd-n2", "#bd-n1"].forEach((n, i) => {
+          const at = 6 * P + i * (P / 2);
+          tl.fromTo(n, { opacity: 0, scale: 1.6 }, { opacity: 1, scale: 1, duration: 0.12, ease: "power4.out", immediateRender: false }, at);
+          tl.to(n, { opacity: 0, scale: 0.85, duration: 0.1 }, at + P / 2 - 0.1);
+        });
+        // The last half beat: the frame collapses to white for the drop.
+        tl.fromTo("#bd-c4", { backgroundColor: "#0c0e12" }, { backgroundColor: "#ffffff", duration: P / 2, ease: "power2.in", immediateRender: false }, 7.5 * P);
+        window.__timelines["build"] = tl;
+      })();
+    </script>
+  </div>
+</template>

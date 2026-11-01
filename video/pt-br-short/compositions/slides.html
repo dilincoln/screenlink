@@ -1,0 +1,61 @@
+<!-- Scene 10 (93.63 → 105.27 s, 16 beats): not only games. The study group's room (assets/screens/lucas-tcc.png),
+     "compartilha os slides aí", Gabi's slide in a viewer, then three lines of what it does for a presentation. -->
+<template id="slides-template">
+  <div data-hf-id="hf-25bu" data-composition-id="slides" data-width="1920" data-height="1080" data-duration="5.82">
+    <div data-hf-id="hf-pfyj" class="sl-ground"></div>
+    <div data-hf-id="hf-l869" class="appwin sl-app" id="sl-app">
+      <div data-hf-id="hf-635v" class="tbar"><i data-hf-id="hf-wt6k"></i><i data-hf-id="hf-zeb8"></i><i data-hf-id="hf-y7e5"></i><span data-hf-id="hf-ag0p">ScreenLink</span></div>
+      <img data-hf-id="hf-wnkp" class="shot" src="assets/screens/lucas-tcc.png" alt="" />
+    </div>
+    <div data-hf-id="hf-xn5u" class="sl-bubble" id="sl-bubble" data-layout-allow-occlusion>
+      <div data-hf-id="hf-ge9e" class="cmsg"><span data-hf-id="hf-tawx" class="av" style="background:hsl(232 55% 48%)">N</span><div data-hf-id="hf-yeow"><div data-hf-id="hf-y7yw"><span data-hf-id="hf-fvzx" class="nm" style="color:hsl(232 80% 76%)">Nanda</span><span data-hf-id="hf-pyx8" class="tm">agora</span></div><div data-hf-id="hf-f9q1" class="tx">Gabi, compartilha os slides aí <img data-hf-id="hf-qm1f" class="em" src="assets/emoji/1f64f.svg" alt="" /> quero ver antes da banca <img class="em" src="assets/emoji/1f440.svg" alt="" /></div></div></div>
+    </div>
+    <div data-hf-id="hf-be8q" class="sl-viewer" id="sl-viewer">
+      <div data-hf-id="hf-zjtz" class="sl-vbar"><i data-hf-id="hf-ylp6"></i><i data-hf-id="hf-0l8b"></i><i data-hf-id="hf-0zjc"></i><span data-hf-id="hf-i4vm">Gabi — Slides — apresentação final</span></div>
+      <div data-hf-id="hf-uzse" class="sl-screen"><div data-hf-id="hf-85gy" class="sl-slidebox" id="sl-slidebox"></div></div>
+    </div>
+    <div data-hf-id="hf-tpbr" class="sl-feat" id="sl-f1">Slide, planilha, código.</div>
+    <div data-hf-id="hf-u7ke" class="sl-feat" id="sl-f2">Só a janela, ou a tela toda.</div>
+    <div data-hf-id="hf-1tvk" class="sl-feat" id="sl-f3">Nítido até na letra miúda.</div>
+    <div data-hf-id="hf-7mjy" class="sl-card" id="sl-card"><div data-hf-id="hf-5mje">Não é só jogo.</div></div>
+    <style>
+      [data-composition-id="slides"] { position: absolute; inset: 0; overflow: hidden; }
+      .sl-ground { position: absolute; inset: 0; background: #e9ebf2; }
+      .sl-app { left: 60px; top: 90px; width: 900px; }
+      .sl-bubble { position: absolute; left: 90px; top: 540px; width: 650px; padding: 14px 30px; border-radius: 22px; background: #2b2d31; box-shadow: 0 30px 80px rgba(5,8,20,.45); opacity: 0; }
+      .sl-viewer { position: absolute; left: 760px; top: 130px; width: 1100px; border-radius: 16px; overflow: hidden; background: #000; box-shadow: 0 34px 90px rgba(5,8,20,.5), 0 0 0 1px rgba(255,255,255,.1); opacity: 0; }
+      .sl-vbar { height: 40px; background: #0c0e12; display: flex; align-items: center; gap: 10px; padding: 0 16px; color: #9aa1b2; font: 600 18px Inter; }
+      .sl-vbar i { width: 14px; height: 14px; border-radius: 50%; background: #2a2f3a; }
+      .sl-vbar span { margin-left: 8px; }
+      .sl-screen { position: relative; width: 1100px; height: 618.75px; overflow: hidden; }
+      .sl-slidebox { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform: scale(0.572917); transform-origin: 0 0; }
+      .sl-feat { position: absolute; left: 110px; top: 880px; font: 800 72px/1.1 Inter; letter-spacing: -0.03em; color: #111318; opacity: 0; white-space: nowrap; }
+      .sl-card { position: absolute; inset: 0; background: #4f6bed; display: grid; place-items: center; }
+      .sl-card div { font: 900 170px/1 Inter; letter-spacing: -0.045em; color: #fff; }
+    </style>
+    <script>
+      (function () {
+        const root = document.querySelector('[data-composition-id="slides"] .sl-ground').parentElement;
+        const tl = gsap.timeline({ paused: true });
+        const P = 0.7273;
+        // Title card, two beats.
+        tl.fromTo("#sl-card div", { scale: 1.3, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.2, ease: "power4.out" }, 0);
+        tl.to("#sl-card", { yPercent: -100, duration: 0.3, ease: "power3.in" }, 2 * P - 0.3);
+
+        tl.fromTo("#sl-app", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 2 * P - 0.15);
+        tl.fromTo("#sl-bubble", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "back.out(1.6)" }, 1.52);
+
+        const { bars } = SLSlide.mount(root.querySelector("#sl-slidebox"));
+        tl.fromTo("#sl-viewer", { scale: 0.6, opacity: 0, transformOrigin: "30% 60%" }, { scale: 1, opacity: 1, duration: 0.35, ease: "power4.out" }, 3 * P);
+        tl.fromTo(bars, { scaleY: 0 }, { scaleY: 1, duration: 0.45, ease: "power3.out", stagger: 0.1 }, 3 * P + 0.25);
+
+        tl.fromTo("#sl-f1", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power3.out" }, 4 * P);
+        tl.to("#sl-f1", { y: -30, opacity: 0, duration: 0.18, ease: "power2.in" }, 8 * P - 0.18);
+        tl.fromTo("#sl-f2", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power3.out" }, 8 * P);
+        tl.to("#sl-f2", { y: -30, opacity: 0, duration: 0.18, ease: "power2.in" }, 12 * P - 0.18);
+        tl.fromTo("#sl-f3", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power3.out" }, 12 * P);
+        window.__timelines["slides"] = tl;
+      })();
+    </script>
+  </div>
+</template>

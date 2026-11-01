@@ -1,0 +1,13 @@
+{
+  "name": "screenlink-video-pt-br-short",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes hyperframes@0.8.226 preview",
+    "check": "npx --yes hyperframes@0.8.226 check",
+    "render": "npx --yes hyperframes@0.8.226 render --output renders/screenlink-pt-br-short.mp4"
+  },
+  "devDependencies": {
+    "gsap": "3.14.2"
+  }
+}

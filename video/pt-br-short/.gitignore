@@ -1,0 +1,5 @@
+# HyperFrames caches and artifacts
+.hyperframes/
+.thumbnails/
+.waveform-cache/
+node_modules/

@@ -1,0 +1,68 @@
+<!-- Short cut (76.18 → 81.99 s, 8 beats): "Sem cadastro" (the device key instead of an account, so no
+     phone number), with "ninguém vai pegar meu telefone" and "pegaram meu telefone", then open source
+     and auditable, with "…vai chorar a noite toda hoje" into the outro (index.html). -->
+<template id="features-template">
+  <div data-hf-id="hf-rxn4" data-composition-id="features" data-width="1920" data-height="1080" data-duration="5.82">
+    <div data-hf-id="hf-m9wy" class="ft-stack" id="ft-stack"></div>
+    <div data-hf-id="hf-c319" class="ft-card ft-end" id="ft-end">
+      <div data-hf-id="hf-wh5p" class="ft-word" id="ft-endw">Código aberto<br />e auditável.</div>
+      <div data-hf-id="hf-2otu" class="ft-sub ft-endsub" id="ft-endsub">A mais pura liberdade e respeito ao direito privado.</div>
+    </div>
+    <i data-hf-id="hf-3jlm" class="ft-flash" id="ft-flash"></i>
+    <style>
+      [data-composition-id="features"] { position: absolute; inset: 0; overflow: hidden; background: #0c0e12; }
+      .ft-card { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 34px; opacity: 0; }
+      .ft-word { font: 400 190px/1 "Anton", sans-serif; text-transform: uppercase; letter-spacing: 0.01em; white-space: nowrap; }
+      .ft-sub { font: 700 60px/1.15 Inter; letter-spacing: -0.02em; white-space: nowrap; }
+      .ft-em { width: 150px; height: 150px; }
+      .ft-end { background: #4f6bed; color: #fff; }
+      .ft-end .ft-word { text-align: center; line-height: 1.14; }
+      .ft-endsub { font-size: 54px; opacity: 0; }
+      .ft-flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+    </style>
+    <script>
+      (function () {
+        const root = document.querySelector('[data-composition-id="features"] .ft-stack').parentElement;
+        const tl = gsap.timeline({ paused: true });
+        const P = 0.727273;
+        const BAR = 4 * P;
+        const cards = [
+          ["Sem cadastro", "Nem pede o seu telefone.", "1f60e", "#3dd68c", "#0c0e12"],
+        ];
+        const stack = root.querySelector("#ft-stack");
+        cards.forEach(([word, sub, em, bg, ink], i) => {
+          const c = document.createElement("div");
+          c.className = "ft-card";
+          c.style.background = bg;
+          c.style.color = ink;
+          c.innerHTML = `<img class="ft-em" src="assets/emoji/${em}.svg" alt="" /><div class="ft-word">${word}</div><div class="ft-sub">${sub}</div>`;
+          stack.appendChild(c);
+          const at = i * BAR;
+          tl.set(c, { opacity: 1 }, at);
+          tl.set(c, { opacity: 0 }, at + BAR);
+          tl.fromTo(c.querySelector(".ft-word"), { scale: 1.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.18, ease: "power4.out", immediateRender: false }, at);
+          tl.fromTo(c.querySelector(".ft-em"), { scale: 0.2, rotation: -25 }, { scale: 1, rotation: 0, duration: 0.3, ease: "back.out(2.6)", immediateRender: false }, at + 0.06);
+          tl.fromTo(c.querySelector(".ft-sub"), { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.25, ease: "power3.out", immediateRender: false }, at + P);
+          tl.fromTo(c.querySelector(".ft-word"), { scale: 1.05 }, { scale: 1, duration: 0.25, ease: "power3.out", immediateRender: false }, at + 2 * P);
+          tl.fromTo(c.querySelector(".ft-em"), { y: 0 }, { y: -18, duration: P / 2, ease: "sine.out", yoyo: true, repeat: 1, immediateRender: false }, at + 3 * P);
+          // "Sem cadastro": "ninguém vai pegar meu telefone" plays on the card, then "pegaram meu
+          // telefone" (index.html) at 2.75 beats, where the 😎 turns into a 💀.
+          if (em === "1f60e") {
+            const img = c.querySelector(".ft-em");
+            tl.set(img, { attr: { src: "assets/emoji/1f60e.svg" } }, 0);
+            tl.set(img, { attr: { src: "assets/emoji/1f480.svg" } }, at + 2.75 * P);
+            tl.fromTo(img, { scale: 1.6, rotation: 20 }, { scale: 1, rotation: 0, duration: 0.3, ease: "back.out(3)", immediateRender: false }, at + 2.75 * P);
+          }
+        });
+
+        // Second bar: open source and auditable, then the line under it.
+        const END = BAR;
+        tl.set("#ft-end", { opacity: 1 }, END);
+        tl.fromTo("#ft-endw", { scale: 1.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.18, ease: "power4.out", immediateRender: false }, END);
+        tl.fromTo("#ft-endsub", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, END + 2 * P);
+        tl.fromTo("#ft-flash", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.in", immediateRender: false }, 8 * P - 0.32);
+        window.__timelines["features"] = tl;
+      })();
+    </script>
+  </div>
+</template>
