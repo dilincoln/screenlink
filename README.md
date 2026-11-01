@@ -6,10 +6,10 @@ Compartilhamento de tela com baixa latência entre amigos. Um app de bandeja ond
 distribui um código de convite (estilo ZeroTier) e, quando alguém da sala começa a compartilhar,
 todo membro online recebe um popup e pode assistir.
 
-[![Vídeo de apresentação do ScreenLink](video/pt-br/renders/poster.jpg)](video/pt-br/renders/screenlink-pt-br.mp4)
+https://github.com/user-attachments/assets/c6d7ed3d-a1d3-40d0-a1c4-f4961c6ea639
 
-▶️ [Assista ao vídeo de apresentação](video/pt-br/renders/screenlink-pt-br.mp4) (2 min 21 s, pt-BR). Como ele foi
-feito está em [`video/pt-br`](video/pt-br/README.md).
+Vídeo de apresentação (2 min 21 s, pt-BR). Como ele foi feito está em
+[`video/pt-br`](video/pt-br/README.md).
 
 - **Servidor** — Bun + SQLite (`bun:sqlite`). Contas, salas, códigos de convite e sinalização via
   WebSocket. **O vídeo nunca passa pelo servidor.**
