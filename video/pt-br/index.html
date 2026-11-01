@@ -54,7 +54,7 @@
       data-fps="30"
       data-fx-chain="{&quot;version&quot;:1,&quot;nodes&quot;:[{&quot;type&quot;:&quot;truepeak&quot;,&quot;id&quot;:&quot;m1&quot;,&quot;label&quot;:&quot;Teto de entrega&quot;,&quot;params&quot;:{&quot;ceiling&quot;:-2,&quot;lookahead&quot;:3,&quot;release&quot;:80}}]}"
     >
-      <!-- ============ scenes: on the music's beat grid, beat n at n × 0.727273 s (82.5 BPM); chorus 2 at 24.00 s (beat 33), chorus 3 from 41.45 s (beat 57) ============ -->
+      <!-- ============ scenes: on the music's beat grid, beat n at n × 0.727273 s (82.5 BPM); chorus 2 at 24.00 s (beat 33), chorus 3 at 41.45 s (beat 57) ============ -->
       <div data-hf-id="hf-fgxw" id="chat" data-composition-id="chat" data-composition-src="compositions/chat.html" data-start="0" data-duration="18.1818" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080"></div>
       <div data-hf-id="hf-hi3k" id="build" data-composition-id="build" data-composition-src="compositions/build.html" data-start="18.1818" data-duration="5.8182" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080"></div>
       <div data-hf-id="hf-3c6d" id="logo" data-composition-id="logo" data-composition-src="compositions/logo.html" data-start="24.0" data-duration="5.8182" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080"></div>
@@ -66,34 +66,23 @@
 
       <!-- ============ music: "Powerup!" — Jeremy Blake (LICENSES.txt) ============ -->
       <!-- assets/audio/music-powerup.mp3 is the whole track, so data-media-start is the time in the
-           original; track beat b sits at 0.625 + b × 0.727273 s. Every cut is on a downbeat and
-           joins two places the track itself treats as the same:
-             A   0.30 → 21.09  the intro from the very start (beat 0 at 0.73 s here); its last bar is
-                               the bar before chorus 1
-             C  21.09 → 41.45  the fill before chorus 2 (1:30.8), the same bar of the form;
-                               chorus 2 at 24.00 (1:33.7), bars 1–6
-             D  41.45 → 70.55  chorus 3 (3:41.7) from its bar 7, same chords, bigger arrangement;
-                               its repeat starts at 47.27 (on "IMBROCHÁVEL"), to the end of it
-             E  70.55 → 77.70  the track's ending (4:34.1), entered at its third bar, which repeats
-                               its first; the final hit at 74.91
+           original; track beat b sits at 0.625 + b × 0.727273 s and its attack about 8 ms earlier, so
+           every switch happens 10 ms before the downbeat and both attacks stay whole. Only two cuts,
+           both where a section of the song ends:
+             1   0.72 → 35.63  one unbroken stretch from the build after chorus 1 (1:10.4), through the
+                               fill (1:30.8) into chorus 2 at 24.00 (1:33.7), to the end of its first
+                               half; quieter under the chat
+             2  35.63 → 64.72  the last bar of the build before chorus 3 (3:35.9), its fill, and
+                               chorus 3 from its first bar (3:41.7) at 41.45, to the end of its first half
+             3  64.72 → 77.70  the ending (4:28.3), entered from the end of chorus 3's first half, which
+                               sounds like the end of its second half; the final hit at 74.91
            Ducked a little under each meme; lane times are relative to each clip. -->
-      <audio id="music-a" src="assets/audio/music-powerup.mp3" data-timeline-role="music" data-start="0.3" data-duration="20.7909" data-media-start="0.1977" data-volume="0.6" data-fade-in="0.01" data-fade-out="0.02" data-track-index="10"
-        data-automation="{&quot;version&quot;:1,&quot;lanes&quot;:[{&quot;target&quot;:&quot;volume&quot;,&quot;points&quot;:[
-          {&quot;t&quot;:0,&quot;v&quot;:1},
-          {&quot;t&quot;:11.067,&quot;v&quot;:1},{&quot;t&quot;:11.217,&quot;v&quot;:0.62},{&quot;t&quot;:12.567,&quot;v&quot;:0.62},{&quot;t&quot;:12.867,&quot;v&quot;:1},
-          {&quot;t&quot;:16.267,&quot;v&quot;:1},{&quot;t&quot;:16.417,&quot;v&quot;:0.62},{&quot;t&quot;:17.667,&quot;v&quot;:0.62},{&quot;t&quot;:17.967,&quot;v&quot;:1}
-        ]}]}"></audio>
-      <audio id="music-c" src="assets/audio/music-powerup.mp3" data-timeline-role="music" data-start="21.0909" data-duration="20.3637" data-media-start="90.8069" data-volume="0.6" data-fade-in="0.01" data-fade-out="0.02" data-track-index="12"></audio>
-      <audio id="music-d" src="assets/audio/music-powerup.mp3" data-timeline-role="music" data-start="41.4546" data-duration="29.0909" data-media-start="239.1705" data-volume="0.6" data-fade-in="0.01" data-fade-out="0.02" data-track-index="13"
-        data-automation="{&quot;version&quot;:1,&quot;lanes&quot;:[{&quot;target&quot;:&quot;volume&quot;,&quot;points&quot;:[
-          {&quot;t&quot;:0,&quot;v&quot;:1},
-          {&quot;t&quot;:7.475,&quot;v&quot;:1},{&quot;t&quot;:7.675,&quot;v&quot;:0.55},{&quot;t&quot;:12.775,&quot;v&quot;:0.55},{&quot;t&quot;:13.175,&quot;v&quot;:1},
-          {&quot;t&quot;:23.465,&quot;v&quot;:1},{&quot;t&quot;:23.665,&quot;v&quot;:0.5},{&quot;t&quot;:29.0909,&quot;v&quot;:0.5}
-        ]}]}"></audio>
-      <audio id="music-e" src="assets/audio/music-powerup.mp3" data-timeline-role="music" data-start="70.5455" data-duration="7.1545" data-media-start="274.0796" data-volume="0.6" data-fade-in="0.01" data-fade-out="1.5" data-track-index="14"
-        data-automation="{&quot;version&quot;:1,&quot;lanes&quot;:[{&quot;target&quot;:&quot;volume&quot;,&quot;points&quot;:[
-          {&quot;t&quot;:0,&quot;v&quot;:0.5},{&quot;t&quot;:0.6,&quot;v&quot;:0.5},{&quot;t&quot;:1.0,&quot;v&quot;:1}
-        ]}]}"></audio>
+      <audio id="music-1" src="assets/audio/music-powerup.mp3" data-timeline-role="music" data-start="0.7173" data-duration="34.9091" data-media-start="70.4332" data-volume="0.6" data-fade-in="0.003" data-fade-out="0.005" data-track-index="10"
+        data-automation="{&quot;version&quot;:1,&quot;lanes&quot;:[{&quot;target&quot;:&quot;volume&quot;,&quot;points&quot;:[{&quot;t&quot;:0.0,&quot;v&quot;:0.72},{&quot;t&quot;:10.6497,&quot;v&quot;:0.72},{&quot;t&quot;:10.7997,&quot;v&quot;:0.6},{&quot;t&quot;:12.1497,&quot;v&quot;:0.6},{&quot;t&quot;:12.4497,&quot;v&quot;:0.72},{&quot;t&quot;:15.8497,&quot;v&quot;:0.72},{&quot;t&quot;:15.9997,&quot;v&quot;:0.5},{&quot;t&quot;:17.2497,&quot;v&quot;:0.5},{&quot;t&quot;:17.5497,&quot;v&quot;:1}]}]}"></audio>
+      <audio id="music-2" src="assets/audio/music-powerup.mp3" data-timeline-role="music" data-start="35.6264" data-duration="29.0909" data-media-start="215.8878" data-volume="0.6" data-fade-in="0.003" data-fade-out="0.005" data-track-index="12"
+        data-automation="{&quot;version&quot;:1,&quot;lanes&quot;:[{&quot;target&quot;:&quot;volume&quot;,&quot;points&quot;:[{&quot;t&quot;:0.0,&quot;v&quot;:1},{&quot;t&quot;:13.3036,&quot;v&quot;:1},{&quot;t&quot;:13.5036,&quot;v&quot;:0.6},{&quot;t&quot;:18.6036,&quot;v&quot;:0.6},{&quot;t&quot;:19.0036,&quot;v&quot;:1}]}]}"></audio>
+      <audio id="music-3" src="assets/audio/music-powerup.mp3" data-timeline-role="music" data-start="64.7173" data-duration="12.9827" data-media-start="268.2515" data-volume="0.6" data-fade-in="0.003" data-fade-out="1.5" data-track-index="14"
+        data-automation="{&quot;version&quot;:1,&quot;lanes&quot;:[{&quot;target&quot;:&quot;volume&quot;,&quot;points&quot;:[{&quot;t&quot;:0.0,&quot;v&quot;:1},{&quot;t&quot;:0.4027,&quot;v&quot;:1},{&quot;t&quot;:0.6027,&quot;v&quot;:0.62},{&quot;t&quot;:6.4327,&quot;v&quot;:0.62},{&quot;t&quot;:6.8327,&quot;v&quot;:1}]}]}"></audio>
       <!-- ============ memes: dry clips pushed back with filters, a room and a low level ============ -->
       <hf-audio-group data-hf-id="hf-0f51" id="memes" data-label="Memes (ao fundo)" data-volume="0.66"></hf-audio-group>
       <!-- "acorda, cara!" — right after the share is blocked. -->

@@ -23,15 +23,16 @@ especial e ninguém ganha.
 
 `assets/audio/music-powerup.mp3` é a faixa inteira, então o `data-media-start` de cada pedaço em
 `index.html` é o tempo na faixa original. A faixa tem andamento fixo (82,5 BPM, compasso de
-2,909 s), e cada corte liga dois compassos que tocam a mesma coisa em lugares diferentes da faixa,
-então o tempo forte e o acorde continuam iguais dos dois lados:
+2,909 s). Os refrões 2 e 3 têm a mesma melodia e os mesmos acordes, mas o 3 tem um arranjo maior:
+passar de um para o outro no meio do refrão soa como um salto, então a música só tem dois cortes,
+os dois onde uma parte da faixa termina, e cada troca acontece 10 ms antes do tempo forte para o
+ataque da bateria chegar inteiro:
 
-| Vídeo | Faixa | Trecho | Corte |
-| --- | --- | --- | --- |
-| 0–21,09 s | 0:00,2–0:21,0 | introdução, sob o chat e a contagem | o compasso antes do refrão 1 vira o compasso antes do refrão 2 |
-| 21,09–41,45 s | 1:30,8–1:51,2 | a virada e o refrão 2 (em 24,0 s) | o 7º compasso do refrão 2 vira o 7º compasso do refrão 3 (mesmos acordes, arranjo maior) |
-| 41,45–70,55 s | 3:59,2–4:28,3 | refrão 3 até o início do final | o 1º compasso do final vira o 3º, que é igual |
-| 70,55–77,7 s | 4:34,1–4:41,2 | a batida final da faixa (74,91 s) | — |
+| Vídeo | Faixa | Trecho |
+| --- | --- | --- |
+| 0,72–35,63 s | 1:10,4–1:45,4 | um trecho só, sem corte: a subida depois do refrão 1 (sob o chat, mais baixa), a virada e a 1ª metade do refrão 2 (em 24,0 s) |
+| 35,63–64,72 s | 3:35,9–4:05,0 | o último compasso da subida antes do refrão 3, a virada dele e a 1ª metade do refrão 3 (em 41,45 s, no aviso do Lucas) |
+| 64,72–77,7 s | 4:28,3–4:41,2 | o final da faixa, entrando pelo fim de uma metade do refrão 3 (que soa igual ao fim da outra); a batida final em 74,91 s |
 
 Os memes ficam em `index.html` com high-pass, low-pass, reverb e volume baixo (`data-fx-chain`) e
 a música abaixa um pouco sob cada um (`data-automation`): dá pra mexer em tudo isso no editor do
