@@ -7,9 +7,8 @@ Música de fundo
 Fonte: YouTube Audio Library ("Provided to YouTube by YouTube Audio Library",
 ℗ YouTube Audio Library, lançada em 2018-11-27)
 https://www.youtube.com/watch?v=-tJ23mRbmps
-A faixa inteira está em assets/audio/music-powerup.mp3; o vídeo usa cinco
-trechos dela (1:30,8–1:45,4; 2:20,1–2:28,6; 2:51,7–3:03,4; 3:35,9–4:05,0;
-4:38,3–4:41,1).
+A faixa inteira está em assets/audio/music-powerup.mp3; o vídeo usa quatro
+trechos dela (0:00,2–0:21,0; 1:30,8–1:51,2; 3:59,2–4:28,3; 4:34,1–4:41,2).
 Os termos de uso da faixa são os da YouTube Audio Library (YouTube Studio →
 Biblioteca de áudio); confira lá antes de publicar fora do YouTube.
 

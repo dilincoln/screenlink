@@ -14,7 +14,7 @@
       <div data-hf-id="hf-635v" class="tbar"><i data-hf-id="hf-wt6k"></i><i data-hf-id="hf-zeb8"></i><i data-hf-id="hf-y7e5"></i><span data-hf-id="hf-ag0p">ScreenLink</span></div>
       <img data-hf-id="hf-b47q" class="shot" src="assets/screens/lucas-room.png" alt="" />
       <i data-hf-id="hf-ulty" class="sr-hl" id="sr-hl"></i>
-      <div data-hf-id="hf-sra9" class="toast-app sr-toast" id="sr-toast">Invite code copied</div>
+      <div data-hf-id="hf-sra9" class="toast-app sr-toast" id="sr-toast">Código de convite copiado</div>
     </div>
     <svg data-hf-id="hf-jxpo" class="cursor" id="sr-cursor" viewBox="0 0 24 24"><path data-hf-id="hf-ds6k" d="M4 2 L4 19 L8.5 15 L11.5 22 L14.5 20.7 L11.6 14 L18 14 Z" fill="#fff" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/></svg>
     </div>
@@ -34,7 +34,7 @@
       .sr-sub { margin-top: 20px; font: 500 40px/1.25 Inter; color: #4a5163; }
       .sr-cam { position: absolute; inset: 0; transform-origin: 1450px 236px; }
       .sr-win { left: 700px; top: 150px; width: 1120px; }
-      .sr-hl { position: absolute; left: 841.8px; top: 68.9px; width: 55px; height: 31.5px; border-radius: 7px; background: rgba(79,107,237,.45); opacity: 0; }
+      .sr-hl { position: absolute; left: 824.5px; top: 68.9px; width: 64px; height: 31.8px; border-radius: 7px; background: rgba(79,107,237,.45); opacity: 0; }
       .sr-toast { left: 560px; top: 640px; opacity: 0; }
       .sr-chat { position: absolute; left: 70px; top: 610px; width: 860px; padding: 18px 34px 22px; border-radius: 22px; background: #2b2d31; box-shadow: 0 30px 80px rgba(5,8,20,.45); opacity: 0; }
       .sr-chead { color: #f2f3f5; font: 800 26px Inter; padding-bottom: 10px; margin-bottom: 6px; border-bottom: 2px solid #232428; }
@@ -52,7 +52,7 @@
         // Copy the invite code: the camera goes to it so the code reads on a phone.
         tl.fromTo("#sr-cam", { scale: 1, x: 0, y: 0 }, { scale: 1.75, x: -490, y: 170, duration: 0.6, ease: "power3.inOut" }, 1.0);
         tl.to("#sr-cam", { scale: 1, x: 0, y: 0, duration: 0.45, ease: "power3.inOut" }, 2.5);
-        tl.fromTo("#sr-cursor", { x: 1700, y: 760 }, { x: 1560, y: 230, duration: 1.0, ease: "power3.inOut" }, 1.0);
+        tl.fromTo("#sr-cursor", { x: 1700, y: 760 }, { x: 1547, y: 230, duration: 1.0, ease: "power3.inOut" }, 1.0);
         tl.to("#sr-cursor", { scale: 0.82, duration: 0.07, transformOrigin: "0 0" }, 2.15);
         tl.to("#sr-cursor", { scale: 1, duration: 0.12 }, 2.22);
         tl.fromTo("#sr-hl", { opacity: 0 }, { opacity: 1, duration: 0.08, immediateRender: false }, 2.16);

@@ -1,7 +1,8 @@
-<!-- Scene 8 (58.01 → 66.60 s): where to get it. The laugh plays under it (index.html, 58.36 s); the
-     track's final hit lands at 5.82 s here (63.83 s) with the last line, then rings out. -->
+<!-- Scene 8 (64.73 → 77.70 s): where to get it. The laugh plays under it (index.html, 65.08 s); the
+     track's ending section starts at 5.82 s here with the last line, its final hit lands at 10.18 s
+     (74.91 s) with a burst of emoji, then it rings out. -->
 <template id="outro-template">
-  <div data-hf-id="hf-zo4a" data-composition-id="outro" data-width="1920" data-height="1080" data-duration="8.59">
+  <div data-hf-id="hf-zo4a" data-composition-id="outro" data-width="1920" data-height="1080" data-duration="12.97">
     <div data-hf-id="hf-wbmv" class="ot-ground"></div>
     <div class="ot-cam" id="ot-cam">
     <div data-hf-id="hf-nagi" class="ot-lockup" id="ot-lockup">
@@ -12,6 +13,7 @@
     <div data-hf-id="hf-gp0g" class="ot-url" id="ot-url">github.com/dilincoln/screenlink</div>
     <div data-hf-id="hf-ji93" class="ot-last" id="ot-last">Agora sim: compartilha aí. <img data-hf-id="hf-kyj8" class="em" src="assets/emoji/1f60e.svg" alt="" /></div>
     </div>
+    <div class="ot-burst" id="ot-burst" data-layout-ignore></div>
     <i data-hf-id="hf-r6fq" class="ot-flash" id="ot-flash"></i>
     <style>
       [data-composition-id="outro"] { position: absolute; inset: 0; overflow: hidden; }
@@ -24,6 +26,8 @@
       .ot-url { position: absolute; left: 50%; top: 620px; padding: 18px 40px; border-radius: 18px; background: #111318; color: #fff; font: 700 52px "JetBrains Mono", monospace; white-space: nowrap; }
       .ot-last { position: absolute; left: 0; right: 0; top: 840px; text-align: center; font: 800 60px Inter; color: #fff; }
       .ot-flash { position: absolute; inset: 0; background: #fff; }
+      .ot-burst { position: absolute; inset: 0; pointer-events: none; }
+      .ot-burst img { position: absolute; }
     </style>
     <script>
       (function () {
@@ -33,16 +37,35 @@
         tl.fromTo("#ot-name", { x: -60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "power4.out" }, 0.15);
         tl.fromTo("#ot-free", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "power3.out" }, 0.73);
         tl.fromTo("#ot-url", { xPercent: -50, y: 40, opacity: 0 }, { xPercent: -50, y: 0, opacity: 1, duration: 0.35, ease: "power3.out" }, 1.45);
-        // While the URL reads: a slow push and a bump on the next bar, so the card never sits still.
-        tl.fromTo("#ot-cam", { scale: 1 }, { scale: 1.025, duration: 5.82 - 1.8, ease: "none", immediateRender: false }, 1.8);
-        tl.fromTo("#ot-url", { scale: 1.08 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, 2.91);
-        tl.fromTo("#ot-free", { scale: 1.05 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, 4.36);
-        // The track's final hit: the last line slams in, the card punches, then rings out.
-        const HIT = 5.82;
-        tl.fromTo("#ot-last", { scale: 2.2, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.25, ease: "back.out(2.2)" }, HIT);
+        const P = 0.727273;
+        const CALM = 8 * P; // the track's ending section starts here
+        const HIT = 14 * P; // and its final hit
+        // While the URL reads: a slow push and a bump on each bar, so the card never sits still.
+        tl.fromTo("#ot-cam", { scale: 1 }, { scale: 1.03, duration: HIT - 1.8, ease: "none", immediateRender: false }, 1.8);
+        tl.fromTo("#ot-url", { scale: 1.08 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, 4 * P);
+        tl.fromTo("#ot-free", { scale: 1.05 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, 6 * P);
+        // The last line as the music calms down.
+        tl.fromTo("#ot-last", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "back.out(2)" }, CALM);
+        tl.fromTo("#ot-last .em", { scale: 1.6, rotation: -20 }, { scale: 1, rotation: 0, duration: 0.3, ease: "back.out(3)", immediateRender: false }, 10 * P);
+        tl.fromTo("#ot-url", { scale: 1.08 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, 12 * P);
+        // The track's final hit: flash, punch, a burst of emoji, then it rings out.
         tl.fromTo("#ot-flash", { opacity: 0.7 }, { opacity: 0, duration: 0.5, ease: "power2.out", immediateRender: false }, HIT);
-        tl.fromTo("#ot-cam", { scale: 1.06 }, { scale: 1, duration: 0.5, ease: "power3.out", immediateRender: false }, HIT);
-        tl.to("#ot-cam", { scale: 1.03, duration: 8.59 - HIT - 0.5, ease: "none" }, HIT + 0.5);
+        tl.fromTo("#ot-cam", { scale: 1.09 }, { scale: 1, duration: 0.6, ease: "power3.out", immediateRender: false }, HIT);
+        let seed = 5;
+        const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+        const burst = document.getElementById("ot-burst");
+        const icons = ["1f60e", "1f3ae", "1f525", "1f3c6", "1f389", "1f602"];
+        for (let i = 0; i < 26; i++) {
+          const img = document.createElement("img");
+          img.src = `assets/emoji/${icons[i % icons.length]}.svg`;
+          const size = 70 + Math.round(rnd() * 60);
+          img.style.cssText = `left:${960 - size / 2}px;top:${540 - size / 2}px;width:${size}px;height:${size}px;opacity:0`;
+          burst.appendChild(img);
+          const a = rnd() * Math.PI * 2;
+          const v = 520 + rnd() * 520;
+          tl.fromTo(img, { opacity: 1, x: 0, y: 0, scale: 0.3, rotation: 0 }, { x: Math.cos(a) * v, y: Math.sin(a) * v * 0.62 + 260, scale: 1, rotation: -90 + rnd() * 180, duration: 1.6, ease: "power2.out", immediateRender: false }, HIT);
+          tl.to(img, { opacity: 0, duration: 0.5 }, HIT + 1.3 + rnd() * 0.4);
+        }
         window.__timelines["outro"] = tl;
       })();
     </script>

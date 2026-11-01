@@ -65,7 +65,7 @@ const thumbs = {
 };
 
 const SOURCES = [
-  { id: "screen:0:0", name: "Entire screen", kind: "screen", thumbnail: thumbs.game, icon: null },
+  { id: "screen:0:0", name: "Tela inteira", kind: "screen", thumbnail: thumbs.game, icon: null },
   { id: "window:101:0", name: "Treta em Brasília", kind: "window", thumbnail: thumbs.game, icon: null },
   { id: "window:102:0", name: "Slides — apresentação final", kind: "window", thumbnail: thumbs.slides, icon: null },
   { id: "window:103:0", name: "Navegador", kind: "window", thumbnail: thumbs.browser, icon: null },
