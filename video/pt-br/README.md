@@ -31,7 +31,7 @@ as cenas foram montadas em cima dela: a explosão da luta cai no refrão 2, o fi
 `outro.html` e a batida final em 138,72 s. A faixa original inteira continua em
 `assets/audio/music-powerup.mp3` (copiada por `mock/audio.sh`), para quem quiser refazer a edição.
 
-Os memes ficam em `index.html` com high-pass, low-pass, reverb e volume baixo (`data-fx-chain`) e
+Os memes ficam em `index.html` com high-pass, low-pass e volume baixo (`data-fx-chain`) e
 a música abaixa um pouco sob cada um (`data-automation`): dá pra mexer em tudo isso no editor do
 HyperFrames.
 

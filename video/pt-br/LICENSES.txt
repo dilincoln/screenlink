@@ -16,7 +16,7 @@ Biblioteca de áudio); confira lá antes de publicar fora do YouTube.
 Áudios de meme
 --------------
 Trechos curtos de memes brasileiros de domínio popular, usados como referência
-de fundo (com reverb, filtro e volume baixo):
+de fundo (com filtro e volume baixo):
   - assets/audio/meme-acorda-cara.mp3   "acorda, cara!" (Monark)
   - assets/audio/meme-ja-comecou.mp3    "já começou!" (Monark)
   - assets/audio/meme-petralhada.mp3    "…vai chorar a noite toda hoje"

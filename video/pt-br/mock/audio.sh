@@ -7,7 +7,7 @@
 #              https://www.youtube.com/watch?v=-tJ23mRbmps — see LICENSES.txt.
 # <memes dir>  the six dry meme clips, named as below.
 #
-# The memes are only loudness-matched and padded with silence here: the reverb, filters and
+# The memes are only loudness-matched and padded with silence here: the filters and
 # level that push them into the background are in index.html (data-fx-chain), so they can be
 # changed in the HyperFrames editor. The SFX are synthesized, so they carry no license.
 set -euo pipefail
