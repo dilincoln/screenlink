@@ -26,9 +26,11 @@ Os instaladores estão na página de [Releases](https://github.com/dilincoln/scr
 - **Linux**: `.AppImage` (precisa do FUSE 2: `fuse2` no Arch, `libfuse2` no Debian/Ubuntu), `.deb`
   ou `.pacman` (`sudo pacman -U ScreenLink-*.pacman`).
 
-Para publicar uma nova versão, envie uma tag: `git tag v0.2.0 && git push origin v0.2.0`. O
-[workflow de Release](.github/workflows/release.yml) roda os testes, gera os builds de Linux e
-Windows com essa versão e cria a release. `bun run dist` gera localmente em `dist/`.
+Todo push na `main` vira uma nova versão: o [workflow de Release](.github/workflows/release.yml)
+roda os testes, gera os builds de Linux e Windows com o próximo patch depois da última tag, cria a
+release e commita essa versão no `package.json` ("chore: release vX.Y.Z"), então dê `git pull`
+antes do próximo push. Para começar uma nova minor ou major, suba o `version` do `package.json`
+(0.5.0 lá faz a próxima release ser 0.5.0). `bun run dist` gera localmente em `dist/`.
 
 ## Rodando
 

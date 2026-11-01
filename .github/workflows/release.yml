@@ -1,5 +1,6 @@
 # Builds the desktop app for Linux and Windows. Every push to main is a new version: it runs the
-# tests, builds both platforms and publishes a GitHub release (and its tag) with the installers.
+# tests, builds both platforms, publishes a GitHub release (and its tag) with the installers and
+# commits that version into package.json on main ("chore: release vX.Y.Z").
 # Running it by hand (Actions → Release → Run workflow) only builds and keeps the files as workflow
 # artifacts.
 name: Release
@@ -146,3 +147,29 @@ jobs:
             --target "$GITHUB_SHA" \
             --title "ScreenLink $TAG" \
             --generate-notes
+
+      # Writes the released version back into package.json on main, so the repository and the
+      # Releases tab agree. A push made with this token starts no new run. If someone pushed in the
+      # meantime, rebase onto it and try again.
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          path: repo
+      - env:
+          VERSION: ${{ needs.version.outputs.version }}
+        working-directory: repo
+        run: |
+          jq --arg v "$VERSION" '.version = $v' package.json > package.json.new
+          mv package.json.new package.json
+          if git diff --quiet; then
+            echo "package.json already at $VERSION"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore: release v$VERSION [skip ci]"
+          for attempt in 1 2 3; do
+            git push origin HEAD:main && exit 0
+            git pull --rebase origin main
+          done
+          exit 1

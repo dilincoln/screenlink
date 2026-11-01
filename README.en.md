@@ -18,9 +18,11 @@ Installers are on the [Releases](https://github.com/dilincoln/screenlink/release
 - **Linux**: `.AppImage` (needs FUSE 2: `fuse2` on Arch, `libfuse2` on Debian/Ubuntu), `.deb`,
   or `.pacman` (`sudo pacman -U ScreenLink-*.pacman`).
 
-To publish a new version, push a tag: `git tag v0.2.0 && git push origin v0.2.0`. The
-[Release workflow](.github/workflows/release.yml) runs the tests, builds Linux and Windows with
-that version and creates the release. `bun run dist` builds locally into `dist/`.
+Every push to `main` is a new version: the [Release workflow](.github/workflows/release.yml) runs
+the tests, builds Linux and Windows with the next patch after the latest tag, creates the release
+and commits that version into `package.json` ("chore: release vX.Y.Z"), so `git pull` before your
+next push. To start a new minor or major, raise `version` in `package.json` (0.5.0 there makes the
+next release 0.5.0). `bun run dist` builds locally into `dist/`.
 
 ## Running
 
