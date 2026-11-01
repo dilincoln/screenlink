@@ -59,14 +59,14 @@ async function still(name: string, query: string) {
 }
 
 const thumbs = {
-  game: await still("game", "scene=game&t=1.0"),
+  game: await still("game", "scene=game&t=1.9"),
   slides: await still("slides", "scene=slides"),
   browser: await still("browser", "scene=browser"),
 };
 
 const SOURCES = [
   { id: "screen:0:0", name: "Entire screen", kind: "screen", thumbnail: thumbs.game, icon: null },
-  { id: "window:101:0", name: "O Lag Supremo", kind: "window", thumbnail: thumbs.game, icon: null },
+  { id: "window:101:0", name: "Treta em Brasília", kind: "window", thumbnail: thumbs.game, icon: null },
   { id: "window:102:0", name: "Slides — apresentação final", kind: "window", thumbnail: thumbs.slides, icon: null },
   { id: "window:103:0", name: "Navegador", kind: "window", thumbnail: thumbs.browser, icon: null },
 ];
@@ -130,14 +130,14 @@ async function record(page: Page, shot: string, selectors: Record<string, string
   });
   await page.screenshot({ path: join(OUT, "lucas-room.png") });
 
-  // The share dialog, set up for the boss fight.
+  // The share dialog, set up for the fight.
   await page.click(".share-cta button.primary");
   await page.waitForSelector("#share-dialog[open] .source");
   await page.click('.tab[data-kind="window"]');
   await page.click(".source:first-child");
   await page.evaluate(() => {
     const form = document.getElementById("share-form") as HTMLFormElement & Record<string, any>;
-    form.title.value = "Boss final (1 HP)";
+    form.title.value = "Treta em Brasília";
     form.title.dataset.touched = "1";
     (document.activeElement as HTMLElement | null)?.blur();
   });
@@ -182,7 +182,7 @@ async function record(page: Page, shot: string, selectors: Record<string, string
   const page = await browser.newPage();
   await page.setBypassCSP(true);
   await page.setViewport({ width: 380, height: 118, deviceScaleFactor: 3 });
-  const data = { sharerName: "Lucas", title: "Boss final (1 HP)", room: "Jogatina de Sexta", streamId: "s-boss" };
+  const data = { sharerName: "Lucas", title: "Treta em Brasília", room: "Jogatina de Sexta", streamId: "s-fight" };
   await page.goto(`${BASE}/client/popup/index.html?data=${encodeURIComponent(JSON.stringify(data))}`);
   await page.waitForSelector("#headline");
   // Freeze the entry and countdown animations at their resting frame.

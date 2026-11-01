@@ -1,7 +1,7 @@
 <!doctype html>
 <!-- Still frames of the made-up windows (the game, the TCC slides, a browser), 1920×1080.
      capture.ts screenshots them for the share picker's thumbnails and the "photo of the
-     screen" meme. ?scene=game&t=1.0 | ?scene=slides | ?scene=browser -->
+     screen" meme. ?scene=game&t=1.9 | ?scene=slides | ?scene=browser -->
 <html lang="pt-BR">
   <head>
     <meta charset="utf-8" />
@@ -28,7 +28,7 @@
       const params = new URLSearchParams(location.search);
       const scene = params.get("scene") ?? "game";
       const stage = document.getElementById("stage");
-      document.fonts.load('30px "Press Start 2P"', "LAG").then(() => {
+      document.fonts.load('30px "Press Start 2P"', "TRETA").then(() => {
         if (scene === "game") {
           const fight = gsap.timeline({ paused: true });
           SLGame.mount(stage).addTo(fight, 0);

@@ -7,7 +7,9 @@ Música de fundo
 Fonte: YouTube Audio Library ("Provided to YouTube by YouTube Audio Library",
 ℗ YouTube Audio Library, lançada em 2018-11-27)
 https://www.youtube.com/watch?v=-tJ23mRbmps
-Usada a parte de 2:18 a 3:46 da faixa (assets/audio/music-powerup.mp3).
+A faixa inteira está em assets/audio/music-powerup.mp3; o vídeo usa cinco
+trechos dela (1:30,8–1:45,4; 2:20,1–2:28,6; 2:51,7–3:03,4; 3:35,9–4:05,0;
+4:38,3–4:41,1).
 Os termos de uso da faixa são os da YouTube Audio Library (YouTube Studio →
 Biblioteca de áudio); confira lá antes de publicar fora do YouTube.
 
@@ -49,6 +51,8 @@ Renderizado com HyperFrames (https://hyperframes.heygen.com).
 
 Jogo e telas
 ------------
-"O Lag Supremo" (assets/js/game.js) é um jogo fictício desenhado para o vídeo.
+"Treta em Brasília" (assets/js/game.js) é um jogo fictício desenhado para o
+vídeo: uma paródia/sátira em pixel art com caricaturas de figuras públicas,
+que termina em empate.
 As telas do app são o próprio ScreenLink (client/ui, client/popup) com os
 dados do banco de demonstração em mock/.

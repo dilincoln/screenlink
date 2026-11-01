@@ -16,8 +16,9 @@ MEMES="$2"
 OUT="assets/audio"
 mkdir -p "$OUT"
 
-# Only the part of the track the edit uses: 138 s → 226 s of the original (breakdown, build, drop).
-ffmpeg -v error -y -ss 138 -t 88 -i "$MUSIC" -c:a libmp3lame -b:a 192k "$OUT/music-powerup.mp3"
+# The whole track, untouched: index.html cuts five pieces out of it with data-media-start, so the
+# times there are the times in the original (chorus 2 at 1:33.7, chorus 3 at 3:41.7).
+cp "$MUSIC" "$OUT/music-powerup.mp3"
 
 # Memes: mono, loudness-matched to -20 LUFS, 2.5 s of silence after for the reverb tail.
 for name in acorda-cara ja-comecou petralhada risada; do

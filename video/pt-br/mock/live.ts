@@ -15,12 +15,12 @@ export const SHARE_DEFAULTS = {
 
 const GAME = { width: 1920, height: 1080, fps: 60, bitrate: 12e6, codec: "h264", audio: true, resolution: "1080", hint: "motion", capacity: 3 };
 
-export const BOSS_STREAM = {
-  id: "s-boss",
+export const FIGHT_STREAM = {
+  id: "s-fight",
   roomId: "r-jogatina",
   sharerId: "u-lucas",
   sharerName: "Lucas",
-  title: "Boss final (1 HP)",
+  title: "Treta em Brasília",
   settings: GAME,
   startedAt: Date.UTC(2026, 9, 2, 23, 40),
   viewers: 5,
@@ -68,11 +68,11 @@ export const SHOTS: Record<string, Shot> = {
     me: "u-lucas",
     room: "r-jogatina",
     online: FRIENDS_ONLINE,
-    streams: [BOSS_STREAM, MINECRAFT_STREAM],
+    streams: [FIGHT_STREAM, MINECRAFT_STREAM],
     sharing: {
-      streamId: BOSS_STREAM.id,
-      roomId: BOSS_STREAM.roomId,
-      title: BOSS_STREAM.title,
+      streamId: FIGHT_STREAM.id,
+      roomId: FIGHT_STREAM.roomId,
+      title: FIGHT_STREAM.title,
       settings: GAME,
       audience: [
         { id: "u-bia", name: "Bia", depth: 1, parentId: "u-lucas" },
@@ -96,7 +96,7 @@ export const SHOTS: Record<string, Shot> = {
   },
 
   // Bia's app the moment Lucas goes live.
-  "bia-room": { me: "u-bia", room: "r-jogatina", online: ["u-lucas", ...FRIENDS_ONLINE.filter((u) => u !== "u-bia")], streams: [BOSS_STREAM] },
+  "bia-room": { me: "u-bia", room: "r-jogatina", online: ["u-lucas", ...FRIENDS_ONLINE.filter((u) => u !== "u-bia")], streams: [FIGHT_STREAM] },
 
   // The study group: Gabi presents the slides.
   "lucas-tcc": { me: "u-lucas", room: "r-tcc", online: FRIENDS_ONLINE, streams: [SLIDES_STREAM, MINECRAFT_STREAM], watching: [SLIDES_STREAM.id] },
