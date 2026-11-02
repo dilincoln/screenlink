@@ -6,7 +6,7 @@ Compartilhamento de tela com baixa latência entre amigos. Um app de bandeja ond
 distribui um código de convite (estilo ZeroTier) e, quando alguém da sala começa a compartilhar,
 todo membro online recebe um popup e pode assistir.
 
-https://github.com/user-attachments/assets/a1f36c94-ab3a-4189-8f2f-4762701f721d
+https://github.com/user-attachments/assets/dca1b205-66ca-4c48-bcfd-9dcc18bd9632
 
 Vídeo de apresentação (1 min 35 s, pt-BR). Como ele foi feito está em
 [`video/pt-br-short`](video/pt-br-short/README.md); a versão longa (2 min 21 s) está em
