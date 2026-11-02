@@ -3,3 +3,6 @@
 .thumbnails/
 .waveform-cache/
 node_modules/
+
+# Small copies for GitHub uploads (issues), not part of the project
+renders/*-10mb.mp4
