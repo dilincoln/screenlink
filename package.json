@@ -1,7 +1,7 @@
 {
   "name": "screenlink",
   "productName": "ScreenLink",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "description": "Compartilhamento de tela com baixa latência entre amigos, repassado peer to peer",
   "private": true,
   "type": "module",
