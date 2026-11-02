@@ -6,9 +6,10 @@ Compartilhamento de tela com baixa latência entre amigos. Um app de bandeja ond
 distribui um código de convite (estilo ZeroTier) e, quando alguém da sala começa a compartilhar,
 todo membro online recebe um popup e pode assistir.
 
-https://github.com/user-attachments/assets/c6d7ed3d-a1d3-40d0-a1c4-f4961c6ea639
+https://github.com/user-attachments/assets/a1f36c94-ab3a-4189-8f2f-4762701f721d
 
-Vídeo de apresentação (2 min 21 s, pt-BR). Como ele foi feito está em
+Vídeo de apresentação (1 min 35 s, pt-BR). Como ele foi feito está em
+[`video/pt-br-short`](video/pt-br-short/README.md); a versão longa (2 min 21 s) está em
 [`video/pt-br`](video/pt-br/README.md).
 
 - **Servidor** — Bun + SQLite (`bun:sqlite`). Contas, salas, códigos de convite e sinalização via
